@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avionics SVQH - P/N List</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1e293b; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; rounded: 9999px; }
+    </style>
+</head>
+<body class="p-4 max-w-md mx-auto pb-20 pt-8">
+
+    <div class="fixed top-2 left-3 z-50 pointer-events-none">
+        <span class="text-[10px] font-black tracking-wider text-rose-500 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+            ONLY FOR REFERENCE
+        </span>
+    </div>
+
+    <header class="text-center my-4 mt-6">
+        <h1 class="text-2xl font-bold text-sky-400 tracking-wide">AVIONICS SVQH</h1>
+        <p class="text-xs text-slate-400">P/N, Tools & Ramps Tasks</p>
+    </header>
+
+    <div class="flex bg-slate-800 rounded-xl p-1 mb-4 text-xs font-semibold">
+        <button id="btn-lista" onclick="cambiarPestana('lista')" class="flex-1 py-2.5 rounded-lg text-center bg-sky-500 text-white transition-all">
+            🔍 Buscar
+        </button>
+        <button id="btn-ramps" onclick="cambiarPestana('ramps')" class="flex-1 py-2.5 rounded-lg text-center text-slate-400 transition-all">
+            📋 Ramps
+        </button>
+        <button id="btn-admin" onclick="cambiarPestana('admin')" class="flex-1 py-2.5 rounded-lg text-center text-slate-400 transition-all">
+            ➕ Añadir
+        </button>
+    </div>
+
+    <div id="pestana-lista" class="space-y-4">
+        <div class="relative">
+            <input type="text" id="buscador" oninput="filtrarYAgrupar()" placeholder="Buscar artículo o Part Number..." 
+                   class="w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-400 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
+        </div>
+        <p class="text-xs text-slate-400 pl-1"><span id="contador-items">0</span> piezas disponibles en total</p>
+        <div id="contenedor-secciones" class="space-y-3"></div>
+    </div>
+
+    <div id="pestana-ramps" class="hidden space-y-6">
+        <div class="space-y-4">
+            <h2 class="text-lg font-black text-amber-400 tracking-wider border-b-2 border-amber-500/20 pb-1">✈️ RAMPS NG</h2>
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
+                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 1 CHECK – RA800</h3>
+                <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
+                    <li><span class="font-semibold text-slate-400">PAGE 2/ ITEM 4.</span> 24-31-11-710-801 MAIN BATTERY DISCHARGE CHECK.</li>
+                    <li><span class="font-semibold text-slate-400">PG10/ ITEM 22.</span> 25-RYR-19 CHECK ALL EMERGENCY LIGHTS.</li>
+                    <li><span class="font-semibold text-slate-400">PG13/ ITEM 25.</span> 52-RYR-03 FLIGHT DECK DOOR SYSTEM OPERATIONAL CHECK.</li>
+                    <li><span class="font-semibold text-slate-400">PG13/ ITEM 26.</span> END OF RAMP1/3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</li>
+                </ul>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
+                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 2 CHECK – RA801</h3>
+                <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
+                    <li><span class="font-semibold text-slate-400">PG1/ ITEM 1.</span> OPERATIONAL CHECK OF CVR IAW BTC 23-040-00-01 Ref: AMM: 23-71-00-710</li>
+                    <li><span class="font-semibold text-slate-400">PG2, PG3/ ITEM 2.</span> 23-100-00-01 OPERATIONALLY CHECK THE ELT.</li>
+                    <li><span class="font-semibold text-slate-400">PG5/ ITEM 9.</span> 33-010-00-01 OPERATIONAL CHECK OF THE EMERGENCY LIGHTS (RAMP 1).</li>
+                    <li><span class="font-semibold text-slate-400">PG6/ ITEM 10.</span> 33-RYR-01 OPERATIONAL CHECK OF PSU/ CABIN WALL /LAVATORY NO SMOKING / FASTEN SEAT BELT SIGN LIGHTS.</li>
+                    <li><span class="font-semibold text-slate-400">PG6/ ITEM 11.</span> 33-RYR-02 OPERATIONAL CHECK OF THE EXTERIOR LIGHTS AND THE CARGO HOLD LIGHTS.</li>
+                    <li><span class="font-semibold text-slate-400">PG7/ ITEM 12.</span> 33-RYR-03 CHECK OF THE COCKPIT INSTRUMENT AND PANEL LIGHTS.</li>
+                    <li><span class="font-semibold text-slate-400">PG7/ ITEM 13.</span> 33-RYR-04 OPERATIONAL CHECK OF THE PASSENGER COMPARTMENT LIGHTS.</li>
+                    <li><span class="font-semibold text-slate-400">PG8/ ITEM 15.</span> .9 EO.13/057 CHECK SPARE BULBS IN THE SPARE BULB COMPARTMENT.</li>
+                </ul>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
+                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP-3 CHECK - RA901</h3>
+                <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
+                    <li><span class="font-semibold text-slate-400">PG1/ ITEM 2.</span> 21-150-00-01 CLEAN OR REPLACE THE CABIN TEMPERATURE SENSOR FILTERS.</li>
+                    <li><span class="font-semibold text-slate-400">PG7/ ITEM 10.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</li>
+                </ul>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
+                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP-4 CHECK - RA902</h3>
+                <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
+                    <li><span class="font-semibold text-slate-400">PG1/ ITEM 3.</span> 27-162-00-01 OPERATIONAL CHECK THE FLAP SKEW AND ASYMMETRY SYSTEM AMM: 27-51-00-740</li>
+                    <li><span class="font-semibold text-slate-400">PG2/ ITEM 4.</span> 27-224-00-01 OPERATIONAL CHECK THE LEADING EDGE DEVICES UNCOMMANDED MOTION PROTECTION AMM: 27-81-00-710.</li>
+                    <li><span class="font-semibold text-slate-400">PG3/ ITEM 6.</span> 29-230-00-01 OPERATIONAL CHECK THE STANDBY RUDDER SYSTEM AMM: 29-21-00-700.</li>
+                    <li><span class="font-semibold text-slate-400">PG4/ ITEM 8.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="space-y-4 pt-4 border-t border-slate-800">
+            <h2 class="text-lg font-black text-emerald-400 tracking-wider border-b-2 border-emerald-500/20 pb-1">🚀 RAMPS MAX</h2>
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
+                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 1 CHECK – RA800</h3>
+                <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
+                    <li><span class="font-semibold text-slate-400">PAGE 2/ ITEM 4.</span> 24-31-11-710-801 MAIN BATTERY DISCHARGE CHECK.</li>
+                    <li><span class="font-semibold text-slate-400">PG10/ ITEM 22.</span> 25-RYR-19 CHECK ALL EMERGENCY LIGHTS.</li>
+                    <li><span class="font-semibold text-slate-400">PG13/ ITEM 25.</span> 52-RYR-03 FLIGHT DECK DOOR SYSTEM OPERATIONAL CHECK.</li>
+                    <li><span class="font-semibold text-slate-400">PG13/ ITEM 26.</span> END OF RAMP1/3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</li>
+                </ul>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
+                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 2A/B CHECK – RA801</h3>
+                <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
+                    <li><span class="font-semibold text-slate-400">A/B- PG1/ ITEM 1.</span> OPERATIONAL CHECK OF CVR IAW BTC 23-040-00-01 Ref: AMM: 23-71-00-710</li>
+                    <li><span class="font-semibold text-slate-400">B- PG5/ ITEM 9.</span> 33-010-00-01 OPERATIONAL CHECK OF THE EMERGENCY LIGHTS (RAMP 1).</li>
+                    <li><span class="font-semibold text-slate-400">A/B- PG6/ ITEM 11.</span> 33-RYR-02 OPERATIONAL CHECK OF THE EXTERIOR LIGHTS AND THE CARGO HOLD LIGHTS.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="pestana-admin" class="hidden space-y-4">
+        <div id="bloqueo-auth" class="bg-slate-800 border border-slate-700 rounded-2xl p-6 text-center space-y-4">
+            <div class="text-4xl">🔒</div>
+            <h3 class="text-base font-semibold">Acceso Protegido</h3>
+            <p class="text-xs text-slate-400">Contraseña de Avionics SVQH para la gestión de componentes.</p>
+            <input type="password" id="input-password" placeholder="Contraseña" class="w-full bg-slate-900 border border-slate-700 text-center rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
+            <button onclick="verificarPassword()" class="w-full bg-sky-500 hover:bg-sky-600 font-semibold py-2 rounded-xl text-sm transition">Acceder</button>
+        </div>
+
+        <div id="formulario-anadir" class="hidden space-y-4">
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-700 pb-2">
+                    <h3 id="titulo-formulario" class="font-semibold text-green-400 text-sm">✓ Añadir Nuevo Artículo</h3>
+                    <button onclick="cerrarSesion()" class="text-xs text-rose-400 underline">Salir</button>
+                </div>
+                
+                <input type="hidden" id="edit-original-pn" value="">
+
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Nombre del Artículo / Material</label>
+                    <input type="text" id="form-articulo" placeholder="Ej. O-RING 3" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none">
+                </div>
+                
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Part Number (P/N)</label>
+                    <input type="text" id="form-pn" placeholder="Ej. MS29513-010" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none">
+                </div>
+                
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Sección o Categoría (Grupo)</label>
+                    <div class="flex space-x-2">
+                        <select id="form-seccion" class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-sky-500">
+                            </select>
+                        <button type="button" onclick="crearNuevoGrupo()" title="Añadir nueva sección" class="bg-slate-700 hover:bg-slate-600 text-white font-bold px-3.5 rounded-xl text-base transition">
+                            ＋
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-2 pt-2">
+                    <button id="btn-cancelar-edit" onclick="cancelarEdicion()" class="hidden flex-1 bg-slate-700 hover:bg-slate-600 text-slate-300 font-semibold py-3 rounded-xl text-sm transition">Cancelar</button>
+                    <button id="btn-guardar" onclick="guardarNuevoArticulo()" class="flex-[2] bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl text-sm transition">Guardar Artículo</button>
+                </div>
+            </div>
+
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-4 space-y-3">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wide border-b border-slate-700 pb-1.5">🎛️ Inventario de Gestión</h3>
+                <div id="lista-gestion" class="max-h-64 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        let listaArticulos = JSON.parse(localStorage.getItem('svqh_items')) || ARTICULOS_INICIALES;
+        let autenticado = false;
+        const CLAVE_CORRECTA = "SVQH1234"; 
+        let seccionesAbiertas = {}; 
+        let seccionesCreadasAdhoc = JSON.parse(localStorage.getItem('svqh_secciones_adhoc')) || [];
+
+        function cambiarPestana(target) {
+            const btnLista = document.getElementById('btn-lista');
+            const btnRamps = document.getElementById('btn-ramps');
+            const btnAdmin = document.getElementById('btn-admin');
+            
+            const pLista = document.getElementById('pestana-lista');
+            const pRamps = document.getElementById('pestana-ramps');
+            const pAdmin = document.getElementById('pestana-admin');
+
+            [btnLista, btnRamps, btnAdmin].forEach(b => b.className = "flex-1 py-2.5 rounded-lg text-center text-slate-400 transition-all");
+            [pLista, pRamps, pAdmin].forEach(p => p.classList.add('hidden'));
+
+            if (target === 'lista') {
+                btnLista.className = "flex-1 py-2.5 rounded-lg text-center bg-sky-500 text-white transition-all";
+                pLista.classList.remove('hidden');
+                cancelarEdicion();
+                filtrarYAgrupar();
+            } else if (target === 'ramps') {
+                btnRamps.className = "flex-1 py-2.5 rounded-lg text-center bg-sky-500 text-white transition-all";
+                pRamps.classList.remove('hidden');
+                cancelarEdicion();
+            } else {
+                btnAdmin.className = "flex-1 py-2.5 rounded-lg text-center bg-sky-500 text-white transition-all";
+                pAdmin.classList.remove('hidden');
+                evaluarAuthUI();
+                actualizarDesplegableSecciones();
+                renderizarListaGestion();
+            }
+        }
+
+        function limpiarTextoSeccion(texto) {
+            if(!texto) return "";
+            return texto.replace(/consumibles\s*/gi, '').replace(/[\(\)]/g, '').trim();
+        }
+
+        function actualizarDesplegableSecciones(seleccionarEsteValor = null) {
+            const selectSeccion = document.getElementById('form-seccion');
+            if (!selectSeccion) return;
+
+            const setSecciones = new Set();
+            listaArticulos.forEach(item => {
+                let nombreLimpio = limpiarTextoSeccion(item.seccion);
+                if(nombreLimpio) setSecciones.add(nombreLimpio);
+            });
+            seccionesCreadasAdhoc.forEach(sec => {
+                let nombreLimpio = limpiarTextoSeccion(sec);
+                if(nombreLimpio) setSecciones.add(nombreLimpio);
+            });
+
+            const listaOrdenada = Array.from(setSecciones).sort();
+            selectSeccion.innerHTML = listaOrdenada.map(sec => 
+                `<option value="${sec}" class="bg-slate-900 text-white">${sec}</option>`
+            ).join('');
+
+            if(seleccionarEsteValor) {
+                selectSeccion.value = limpiarTextoSeccion(seleccionarEsteValor);
+            }
+        }
+
+        function crearNuevoGrupo() {
+            const nuevoGrupo = prompt("Introduce el nombre de la nueva sección o grupo:");
+            if (!nuevoGrupo || nuevoGrupo.trim() === "") return;
+            
+            let grupoSanitizado = limpiarTextoSeccion(nuevoGrupo);
+            if (grupoSanitizado === "") return;
+
+            if(!seccionesCreadasAdhoc.includes(grupoSanitizado)) {
+                seccionesCreadasAdhoc.push(grupoSanitizado);
+                localStorage.setItem('svqh_secciones_adhoc', JSON.stringify(seccionesCreadasAdhoc));
+            }
+            actualizarDesplegableSecciones(grupoSanitizado);
+        }
+
+        function filtrarYAgrupar() {
+            const query = document.getElementById('buscador').value.toLowerCase().trim();
+            const contenedor = document.getElementById('contenedor-secciones');
+            const contadorGral = document.getElementById('contador-items');
+            
+            contenedor.innerHTML = '';
+
+            const filtrados = listaArticulos.filter(item => {
+                let secLimpia = limpiarTextoSeccion(item.seccion);
+                return item.articulo.toLowerCase().includes(query) || 
+                       item.pn.toLowerCase().replace(/\s+/g, '').includes(query.replace(/\s+/g, '')) ||
+                       secLimpia.toLowerCase().includes(query);
+            });
+
+            contadorGral.innerText = filtrados.length;
+
+            if (filtrados.length === 0) {
+                contenedor.innerHTML = `<div class="text-center text-xs text-slate-500 py-8">No se encontraron resultados.</div>`;
+                return;
+            }
+
+            const grupos = {};
+            filtrados.forEach(item => {
+                let nombreLimpio = limpiarTextoSeccion(item.seccion);
+                if (!grupos[nombreLimpio]) grupos[nombreLimpio] = [];
+                grupos[nombreLimpio].push(item);
+            });
+
+            Object.keys(grupos).sort().forEach(nombreSeccion => {
+                const itemsDelGrupo = grupos[nombreSeccion];
+                const estaAbierto = query !== '' ? true : (seccionesAbiertas[nombreSeccion] || false);
+                const idLimpio = nombreSeccion.replace(/[^a-zA-Z0-9]/g, '-');
+
+                const divGrupo = document.createElement('div');
+                divGrupo.className = "bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-md";
+
+                const botonCabecera = document.createElement('button');
+                botonCabecera.className = "w-full flex justify-between items-center bg-slate-800 px-4 py-3 text-left font-bold text-xs text-sky-400 tracking-wider uppercase focus:outline-none transition-colors hover:bg-slate-800/80";
+                botonCabecera.onclick = () => togglerSeccion(nombreSeccion);
+                botonCabecera.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <span>📂 ${nombreSeccion}</span>
+                        <span class="bg-slate-950 text-slate-400 font-mono text-[10px] px-1.5 py-0.5 rounded-full">${itemsDelGrupo.length}</span>
+                    </div>
+                    <span id="flecha-${idLimpio}" class="text-slate-400 font-mono text-sm transition-transform duration-200 ${estaAbierto ? 'rotate-180' : ''}">
+                        ${estaAbierto ? '▲' : '▼'}
+                    </span>
+                `;
+                divGrupo.appendChild(botonCabecera);
+
+                const contenedorTarjetas = document.createElement('div');
+                contenedorTarjetas.id = `bloque-${idLimpio}`;
+                contenedorTarjetas.className = `p-3 space-y-2.5 bg-slate-900/40 ${estaAbierto ? '' : 'hidden'}`;
+
+                itemsDelGrupo.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = "bg-slate-800 border border-slate-700/40 rounded-lg p-3 flex flex-col space-y-1";
+                    card.innerHTML = `
+                        <h4 class="font-bold text-white text-xs tracking-wide uppercase">${item.articulo}</h4>
+                        <div class="flex items-center justify-between text-xs pt-1">
+                            <span class="text-[11px] text-slate-400 font-medium">P/N:</span>
+                            <code class="text-[11px] font-mono font-bold text-amber-400 bg-slate-950 px-2 py-0.5 rounded border border-slate-800 select-all">${item.pn}</code>
+                        </div>
+                    `;
+                    contenedorTarjetas.appendChild(card);
+                });
+
+                divGrupo.appendChild(contenedorTarjetas);
+                contenedor.appendChild(divGrupo);
+            });
+        }
+
+        function togglerSeccion(nombreSeccion) {
+            const idLimpio = nombreSeccion.replace(/[^a-zA-Z0-9]/g, '-');
+            const bloque = document.getElementById(`bloque-${idLimpio}`);
+            const flecha = document.getElementById(`flecha-${idLimpio}`);
+            
+            if (bloque.classList.contains('hidden')) {
+                bloque.classList.remove('hidden');
+                flecha.innerText = '▲';
+                seccionesAbiertas[nombreSeccion] = true;
+            } else {
+                bloque.classList.add('hidden');
+                flecha.innerText = '▼';
+                seccionesAbiertas[nombreSeccion] = false;
+            }
+        }
+
+        // CONTROL DE EDICIÓN Y GESTIÓN CON SEGURIDAD POR P/N EN VEZ DE ÍNDICE
+        function renderizarListaGestion() {
+            const listaG = document.getElementById('lista-gestion');
+            if(!listaG) return;
+            listaG.innerHTML = '';
+
+            listaArticulos.forEach((item) => {
+                const fila = document.createElement('div');
+                fila.className = "flex items-center justify-between bg-slate-900 p-2.5 rounded-xl border border-slate-800 text-xs";
+                
+                // Escapar el P/N para evitar fallos de strings en las llamadas JS de los botones
+                const pnEscapado = encodeURIComponent(item.pn);
+                let secLimpia = limpiarTextoSeccion(item.seccion);
+
+                fila.innerHTML = `
+                    <div class="flex-1 min-w-0 pr-2">
+                        <div class="font-bold text-slate-200 truncate uppercase">${item.articulo}</div>
+                        <div class="text-amber-400 font-mono text-[11px] truncate">${item.pn} <span class="text-[10px] text-slate-500 font-sans">(${secLimpia})</span></div>
+                    </div>
+                    <div class="flex space-x-1.5 flex-shrink-0">
+                        <button onclick="cargarParaEditar('${pnEscapado}')" class="bg-sky-600/20 hover:bg-sky-600/40 text-sky-400 p-1.5 rounded-lg font-bold transition">✏️</button>
+                        <button onclick="eliminarArticulo('${pnEscapado}')" class="bg-rose-600/20 hover:bg-rose-600/40 text-rose-400 p-1.5 rounded-lg font-bold transition">🗑️</button>
+                    </div>
+                `;
+                listaG.appendChild(fila);
+            });
+        }
+
+        function cargarParaEditar(pnOriginalCoded) {
+            const pnOriginal = decodeURIComponent(pnOriginalCoded);
+            const item = listaArticulos.find(i => i.pn === pnOriginal);
+            if(!item) return;
+
+            document.getElementById('edit-original-pn').value = item.pn;
+            document.getElementById('form-articulo').value = item.articulo;
+            document.getElementById('form-pn').value = item.pn;
+            
+            let secLimpia = limpiarTextoSeccion(item.seccion);
+            actualizarDesplegableSecciones(secLimpia);
+
+            document.getElementById('titulo-formulario').innerText = "✏️ Modificar Artículo";
+            document.getElementById('titulo-formulario').className = "font-semibold text-sky-400 text-sm";
+            document.getElementById('btn-guardar').innerText = "Actualizar Cambios";
+            document.getElementById('btn-guardar').className = "flex-[2] bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 rounded-xl text-sm transition";
+            document.getElementById('btn-cancelar-edit').classList.remove('hidden');
+            
+            document.getElementById('formulario-anadir').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function cancelarEdicion() {
+            document.getElementById('edit-original-pn').value = "";
+            document.getElementById('form-articulo').value = '';
+            document.getElementById('form-pn').value = '';
+            document.getElementById('titulo-formulario').innerText = "✓ Añadir Nuevo Artículo";
+            document.getElementById('titulo-formulario').className = "font-semibold text-green-400 text-sm";
+            document.getElementById('btn-guardar').innerText = "Guardar Artículo";
+            document.getElementById('btn-guardar').className = "w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl text-sm transition";
+            document.getElementById('btn-cancelar-edit').classList.add('hidden');
+        }
+
+        function eliminarArticulo(pnOriginalCoded) {
+            const pnOriginal = decodeURIComponent(pnOriginalCoded);
+            const index = listaArticulos.findIndex(i => i.pn === pnOriginal);
+            
+            if(index !== -1) {
+                const item = listaArticulos[index];
+                if (confirm(`¿Seguro que deseas eliminar el artículo "${item.articulo}"?\nP/N: ${item.pn}`)) {
+                    listaArticulos.splice(index, 1);
+                    localStorage.setItem('svqh_items', JSON.stringify(listaArticulos));
+                    renderizarListaGestion();
+                    if(document.getElementById('edit-original-pn').value === pnOriginal) cancelarEdicion();
+                }
+            } else {
+                alert("Error al localizar el componente para eliminar.");
+            }
+        }
+
+        function guardarNuevoArticulo() {
+            const art = document.getElementById('form-articulo').value.trim();
+            const pn = document.getElementById('form-pn').value.trim();
+            const sec = document.getElementById('form-seccion').value;
+            const pnOriginalEdicion = document.getElementById('edit-original-pn').value;
+
+            if (!art || !pn || !sec) {
+                alert("Por favor, completa todos los campos.");
+                return;
+            }
+
+            // Normalización estricta para el detector de duplicados (Quita espacios intermedios y guiones bajos)
+            const normalizar = (txt) => txt.toLowerCase().replace(/[\s_\-]/g, '');
+
+            // DETECTOR DE DUPLICADOS ROBUSTO
+            const existeDuplicado = listaArticulos.some((item) => {
+                // Si estamos editando este mismo artículo, no cuenta como duplicado de sí mismo
+                if (pnOriginalEdicion !== "" && item.pn === pnOriginalEdicion) return false;
+                return normalizar(item.pn) === normalizar(pn);
+            });
+
+            if (existeDuplicado) {
+                alert(`⚠️ BLOQUEADO: Ya existe un artículo registrado con el Part Number: ${pn.toUpperCase()}.\nNo se permiten duplicados.`);
+                return;
+            }
+
+            if (pnOriginalEdicion === "") {
+                // Modo Añadir Nuevo
+                listaArticulos.unshift({ articulo: art, pn: pn, seccion: sec });
+                alert("¡Artículo añadido correctamente!");
+            } else {
+                // Modo Modificar Existente
+                const idx = listaArticulos.findIndex(i => i.pn === pnOriginalEdicion);
+                if(idx !== -1) {
+                    listaArticulos[idx] = { articulo: art, pn: pn, seccion: sec };
+                    alert("¡Artículo modificado correctamente!");
+                }
+                cancelarEdicion();
+            }
+
+            localStorage.setItem('svqh_items', JSON.stringify(listaArticulos));
+            
+            document.getElementById('form-articulo').value = '';
+            document.getElementById('form-pn').value = '';
+            
+            seccionesAbiertas[sec] = true;
+            cambiarPestana('lista');
+        }
+
+        function verificarPassword() {
+            const pass = document.getElementById('input-password').value;
+            if (pass === CLAVE_CORRECTA) {
+                autenticado = true;
+                evaluarAuthUI();
+                actualizarDesplegableSecciones();
+                renderizarListaGestion();
+            } else {
+                alert("Contraseña incorrecta");
+            }
+        }
+
+        function evaluarAuthUI() {
+            const authBlock = document.getElementById('bloqueo-auth');
+            const formBlock = document.getElementById('formulario-anadir');
+            if (autenticado) {
+                authBlock.classList.add('hidden');
+                formBlock.classList.remove('hidden');
+            } else {
+                authBlock.classList.remove('hidden');
+                formBlock.classList.add('hidden');
+            }
+        }
+
+        function cerrarSesion() {
+            autenticado = false;
+            document.getElementById('input-password').value = '';
+            cancelarEdicion();
+            evaluarAuthUI();
+        }
+
+        // Carga Inicial
+        filtrarYAgrupar();
+    </script>
+</body>
+</html>
