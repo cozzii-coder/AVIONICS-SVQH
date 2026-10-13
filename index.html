@@ -4,30 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Avionics SVQH - P/N List</title>
+    <!-- Tailwind CSS desde CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         body { background-color: #0f172a; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #1e293b; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; rounded: 9999px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 9999px; }
     </style>
 </head>
 <body class="p-4 max-w-md mx-auto pb-20 pt-8">
 
+    <!-- AVISO FIJO SOLO LETRAS EN ROJO -->
     <div class="fixed top-2 left-3 z-50 pointer-events-none">
         <span class="text-[10px] font-black tracking-wider text-rose-500 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
             ONLY FOR REFERENCE
         </span>
     </div>
 
+    <!-- Header -->
     <header class="text-center my-4 mt-6">
         <h1 class="text-2xl font-bold text-sky-400 tracking-wide">AVIONICS SVQH</h1>
         <p class="text-xs text-slate-400">P/N, Tools & Ramps Tasks</p>
     </header>
 
-    <div class="flex bg-slate-800 rounded-xl p-1 mb-4 text-xs font-semibold">
+    <!-- Navegación Móvil de 4 Columnas -->
+    <div class="flex bg-slate-800 rounded-xl p-1 mb-4 text-[11px] font-semibold">
         <button id="btn-lista" onclick="cambiarPestana('lista')" class="flex-1 py-2.5 rounded-lg text-center bg-sky-500 text-white transition-all">
             🔍 Buscar
+        </button>
+        <button id="btn-tools" onclick="cambiarPestana('tools')" class="flex-1 py-2.5 rounded-lg text-center text-slate-400 transition-all">
+            🧰 Tools
         </button>
         <button id="btn-ramps" onclick="cambiarPestana('ramps')" class="flex-1 py-2.5 rounded-lg text-center text-slate-400 transition-all">
             📋 Ramps
@@ -37,6 +44,7 @@
         </button>
     </div>
 
+    <!-- PESTAÑA 1: BUSCAR ARTÍCULOS Y CONSUMIBLES -->
     <div id="pestana-lista" class="space-y-4">
         <div class="relative">
             <input type="text" id="buscador" oninput="filtrarYAgrupar()" placeholder="Buscar artículo o Part Number..." 
@@ -46,9 +54,26 @@
         <div id="contenedor-secciones" class="space-y-3"></div>
     </div>
 
+    <!-- PESTAÑA 2: TOOLS (NUEVA PESTAÑA) -->
+    <div id="pestana-tools" class="hidden space-y-4">
+        <div class="relative">
+            <input type="text" id="buscador-tools" oninput="filtrarTools()" placeholder="Buscar herramienta o equipo..." 
+                   class="w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-400 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
+        </div>
+        
+        <p class="text-xs text-slate-400 pl-1"><span id="contador-tools">0</span> herramientas registradas</p>
+
+        <div id="contenedor-tools" class="space-y-3">
+            <!-- Renderizado dinámico de Tools -->
+        </div>
+    </div>
+
+    <!-- PESTAÑA 3: RAMPS (NG Y MAX CORREGIDOS) -->
     <div id="pestana-ramps" class="hidden space-y-6">
+        <!-- Ramps NG -->
         <div class="space-y-4">
             <h2 class="text-lg font-black text-amber-400 tracking-wider border-b-2 border-amber-500/20 pb-1">✈️ RAMPS NG</h2>
+            
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 1 CHECK – RA800</h3>
                 <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
@@ -58,6 +83,7 @@
                     <li><span class="font-semibold text-slate-400">PG13/ ITEM 26.</span> END OF RAMP1/3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</li>
                 </ul>
             </div>
+
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 2 CHECK – RA801</h3>
                 <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
@@ -71,6 +97,7 @@
                     <li><span class="font-semibold text-slate-400">PG8/ ITEM 15.</span> .9 EO.13/057 CHECK SPARE BULBS IN THE SPARE BULB COMPARTMENT.</li>
                 </ul>
             </div>
+
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP-3 CHECK - RA901</h3>
                 <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
@@ -78,6 +105,7 @@
                     <li><span class="font-semibold text-slate-400">PG7/ ITEM 10.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</li>
                 </ul>
             </div>
+
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP-4 CHECK - RA902</h3>
                 <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
@@ -87,10 +115,26 @@
                     <li><span class="font-semibold text-slate-400">PG4/ ITEM 8.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</li>
                 </ul>
             </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
+                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">50FC CHECK – RA858</h3>
+                <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
+                    <li><span class="font-semibold text-slate-400">PG1/ ITEM 3.</span> SPCU AMM: 24-34-00-710</li>
+                    <li><span class="font-semibold text-slate-400">PG1/ ITEM 5.</span> E/E EQUIPMENT CLEANING AND WEATHER RADAR TX/RX INSPECTION</li>
+                    <li><span class="font-semibold text-slate-400">PG2/ ITEM 6.</span> COCKPIT CLEAN AMM: 31-62-11-100-801</li>
+                    <li><span class="font-semibold text-slate-400">PG2/ ITEM 7.</span> P5 GUARDS</li>
+                    <li><span class="font-semibold text-slate-400">PG3/ ITEM 9.</span> GEAR LIGHTS (MASTER DIM TEST)</li>
+                    <li><span class="font-semibold text-slate-400">PG4/ ITEM 12.</span> FMC CDU LEFT ENGINE (SHORT TIME FAULTS)</li>
+                    <li><span class="font-semibold text-slate-400">PG5/ ITEM 13.</span> FMC CDU RIGHT ENGINE (SHORT TIME FAULTS)</li>
+                    <li><span class="font-semibold text-slate-400">PG6/ ITEM 14.</span> BITE CHECK PACK ZONE AMM 21-61-00-700-806-002</li>
+                </ul>
+            </div>
         </div>
 
+        <!-- Ramps MAX -->
         <div class="space-y-4 pt-4 border-t border-slate-800">
             <h2 class="text-lg font-black text-emerald-400 tracking-wider border-b-2 border-emerald-500/20 pb-1">🚀 RAMPS MAX</h2>
+            
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 1 CHECK – RA800</h3>
                 <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
@@ -100,17 +144,55 @@
                     <li><span class="font-semibold text-slate-400">PG13/ ITEM 26.</span> END OF RAMP1/3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</li>
                 </ul>
             </div>
+
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 2A/B CHECK – RA801</h3>
                 <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
                     <li><span class="font-semibold text-slate-400">A/B- PG1/ ITEM 1.</span> OPERATIONAL CHECK OF CVR IAW BTC 23-040-00-01 Ref: AMM: 23-71-00-710</li>
                     <li><span class="font-semibold text-slate-400">B- PG5/ ITEM 9.</span> 33-010-00-01 OPERATIONAL CHECK OF THE EMERGENCY LIGHTS (RAMP 1).</li>
                     <li><span class="font-semibold text-slate-400">A/B- PG6/ ITEM 11.</span> 33-RYR-02 OPERATIONAL CHECK OF THE EXTERIOR LIGHTS AND THE CARGO HOLD LIGHTS.</li>
+                    <li><span class="font-semibold text-slate-400">A/B- PG7/ ITEM 12.</span> 33-RYR-03 CHECK OF THE COCKPIT INSTRUMENT AND PANEL LIGHTS.</li>
+                    <li><span class="font-semibold text-slate-400">A/B- PG8/ ITEM 15.</span> .9 EO.13/057 CHECK SPARE BULBS IN THE SPARE BULB COMPARTMENT.</li>
+                </ul>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
+                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP-3 CHECK - RA901</h3>
+                <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
+                    <li><span class="font-semibold text-slate-400">PG3/ ITEM 3.</span> 27-162-00-01 OPERATIONAL CHECK THE FLAP SKEW AND ASYMMETRY SYSTEM AMM: 27-51-00-740</li>
+                    <li><span class="font-semibold text-slate-400">PG7/ ITEM 2.</span> INOP DECALS ON ALL RADIO</li>
+                    <li><span class="font-semibold text-slate-400">PG7/ ITEM 10.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</li>
+                </ul>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
+                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP-4 CHECK - RA902</h3>
+                <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
+                    <li><span class="font-semibold text-slate-400">PG1/ ITEM 1.</span> 21-150-00-01 CLEAN OR REPLACE THE CABIN TEMPERATURE SENSOR FILTERS.</li>
+                    <li><span class="font-semibold text-slate-400">PG2/ ITEM 4.</span> 27-224-00-01 OPERATIONAL CHECK THE LEADING EDGE DEVICES UNCOMMANDED MOTION PROTECTION AMM: 27-81-00-710.</li>
+                    <li><span class="font-semibold text-slate-400">PG3/ ITEM 6.</span> 29-230-00-01 OPERATIONAL CHECK THE STANDBY RUDDER SYSTEM AMM: 29-21-00-700.</li>
+                    <li><span class="font-semibold text-slate-400">PG4/ ITEM 8.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</li>
+                </ul>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
+                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">50FC CHECK – RA858</h3>
+                <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
+                    <li><span class="font-semibold text-slate-400">PG1/ ITEM 3.</span> SPCU AMM: 24-34-00-710</li>
+                    <li><span class="font-semibold text-slate-400">PG1/ ITEM 5.</span> E/E EQUIPMENT CLEANING AND WEATHER RADAR TX/RX INSPECTION</li>
+                    <li><span class="font-semibold text-slate-400">PG2/ ITEM 6.</span> COCKPIT CLEAN AMM: 31-62-11-100-801</li>
+                    <li><span class="font-semibold text-slate-400">PG2/ ITEM 7.</span> P5 GUARDS</li>
+                    <li><span class="font-semibold text-slate-400">PG4/ ITEM 2.</span> 33-RYR-01 OPERATIONAL CHECK OF PSU/ CABIN WALL /LAVATORY NO SMOKING / FASTEN SEAT BELT SIGN LIGHTS.</li>
+                    <li><span class="font-semibold text-slate-400">PG4/ ITEM 3.</span> 33-RYR-04 OPERATIONAL CHECK OF THE PASSENGER COMPARTMENT LIGHTS.</li>
+                    <li><span class="font-semibold text-slate-400">PG3/ ITEM 9.</span> GEAR LIGHTS (MASTER DIM TEST)</li>
+                    <li><span class="font-semibold text-slate-400">PG4/ ITEM 12.</span> FMC CDU LEFT ENGINE (SHORT TIME FAULTS)</li>
+                    <li><span class="font-semibold text-slate-400">PG5/ ITEM 13.</span> FMC CDU RIGHT ENGINE (SHORT TIME FAULTS)</li>
                 </ul>
             </div>
         </div>
     </div>
 
+    <!-- PESTAÑA 4: AÑADIR (ADMINISTRACIÓN) -->
     <div id="pestana-admin" class="hidden space-y-4">
         <div id="bloqueo-auth" class="bg-slate-800 border border-slate-700 rounded-2xl p-6 text-center space-y-4">
             <div class="text-4xl">🔒</div>
@@ -143,7 +225,7 @@
                     <label class="block text-xs text-slate-400 mb-1">Sección o Categoría (Grupo)</label>
                     <div class="flex space-x-2">
                         <select id="form-seccion" class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-sky-500">
-                            </select>
+                        </select>
                         <button type="button" onclick="crearNuevoGrupo()" title="Añadir nueva sección" class="bg-slate-700 hover:bg-slate-600 text-white font-bold px-3.5 rounded-xl text-base transition">
                             ＋
                         </button>
@@ -159,11 +241,12 @@
             <div class="bg-slate-800 border border-slate-700 rounded-2xl p-4 space-y-3">
                 <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wide border-b border-slate-700 pb-1.5">🎛️ Inventario de Gestión</h3>
                 <div id="lista-gestion" class="max-h-64 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
-                    </div>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Cargar base de datos -->
     <script src="data.js"></script>
     <script>
         let listaArticulos = JSON.parse(localStorage.getItem('svqh_items')) || ARTICULOS_INICIALES;
@@ -172,23 +255,61 @@
         let seccionesAbiertas = {}; 
         let seccionesCreadasAdhoc = JSON.parse(localStorage.getItem('svqh_secciones_adhoc')) || [];
 
+        // BASE DE DATOS COMPLETA DE HERRAMIENTAS DE LA HOJA 'TOOLS' Y NOTAS DE CONSUMIBLES
+        const LISTA_HERRAMIENTAS = [
+            { articulo: "QUICKSET", pn: "QUICKSET", origen: "Tools Sheet" },
+            { articulo: "FLUKE117", pn: "FLUKE117", origen: "Tools Sheet" },
+            { articulo: "STAB TRIM CUTOUT TESTER", pn: "C27007-46", origen: "Tools Sheet" },
+            { articulo: "ELT ADT406AP 50 OHM DUMMY LOAD KIT", pn: "112-3148", origen: "Tools Sheet" },
+            { articulo: "PROBE OVHT AND TESTER", pn: "BH17336A // BH16440-40", origen: "Tools Sheet" },
+            { articulo: "TEMPCAL TESTER", pn: "H394-230", origen: "Tools Sheet" },
+            { articulo: "BONDING METER", pn: "M1", origen: "Tools Sheet" },
+            { articulo: "HAND HELD MULTIPURPOSE I/FACE HHMPI", pn: "FDS400-301", origen: "Tools Sheet" },
+            { articulo: "FIREX TEST CARGO", pn: "C26006-1", origen: "Tools Sheet" },
+            { articulo: "TEST SET / PITOT STATIC", pn: "MPS45", origen: "Tools Sheet" },
+            { articulo: "GROUND FAULT PROTECTION SYS TEST SET", pn: "F72917-19", origen: "Tools Sheet" },
+            { articulo: "PDL LAPTOP WITH TECHSAT PDL MKII", pn: "TECHSATPDLLAPT0P", origen: "Tools Sheet" },
+            { articulo: "FLUKE324 (CLAMP)", pn: "FLUKE324", origen: "Tools Sheet" },
+            { articulo: "CAJA RADIOALTIMETRO", pn: "C34005-16", origen: "Tools Sheet" },
+            { articulo: "RADIO ALTIMETER TEST SET", pn: "DRA707", origen: "Tools Sheet" },
+            { articulo: "TRAMMEL BAR", pn: "F80055-1", origen: "Tools Sheet" },
+            { articulo: "RUDDER PCU TEST SET", pn: "C29002-17", origen: "Tools Sheet" },
+            { articulo: "HIRFS", pn: "906-10247-3 OR XLR-9703-01", origen: "Tools Sheet" },
+            { articulo: "WTB FEEDTHROUGH CONNECTORS ADAPTER (HIRFS)", pn: "WTBADAPTER", origen: "Tools Sheet" },
+            { articulo: "TOOL CONNECTORS FOR BACKSHELLS", pn: "CMS837", origen: "Tools Sheet" },
+            { articulo: "KNIPEX CUTTING SAFTGLO", pn: "9435215", origen: "Tools Sheet" },
+            { articulo: "FIRE EXTINGUISHER BOTTLE SQUIB TESTER", pn: "F80229-69", origen: "Tools Sheet" },
+            { articulo: "WIRE JUMPER KIT MID-CABIN B737MAX", pn: "RYR-EXITS-DDG-JUMPER-KIT", origen: "Tools Sheet" },
+            { articulo: "CRIMP TOOL FOR AIRSTAIRS LIGHTS", pn: "P/N: 9-1478240-0 // DIE SET: 58628-2", origen: "Airstairs" },
+            { articulo: "CRIMP TOOL FOR LANDING LIGHT LUG", pn: "59461", origen: "Landing Lights" },
+            { articulo: "CLAMP BANDS CONNECTOR TOOL", pn: "DBS-1101", origen: "Engines" },
+            { articulo: "END CAP CRIMP TOOL", pn: "IN MODKIT", origen: "Splices" }
+        ];
+
         function cambiarPestana(target) {
             const btnLista = document.getElementById('btn-lista');
+            const btnTools = document.getElementById('btn-tools');
             const btnRamps = document.getElementById('btn-ramps');
             const btnAdmin = document.getElementById('btn-admin');
             
             const pLista = document.getElementById('pestana-lista');
+            const pTools = document.getElementById('pestana-tools');
             const pRamps = document.getElementById('pestana-ramps');
             const pAdmin = document.getElementById('pestana-admin');
 
-            [btnLista, btnRamps, btnAdmin].forEach(b => b.className = "flex-1 py-2.5 rounded-lg text-center text-slate-400 transition-all");
-            [pLista, pRamps, pAdmin].forEach(p => p.classList.add('hidden'));
+            [btnLista, btnTools, btnRamps, btnAdmin].forEach(b => b.className = "flex-1 py-2.5 rounded-lg text-center text-slate-400 transition-all");
+            [pLista, pTools, pRamps, pAdmin].forEach(p => p.classList.add('hidden'));
 
             if (target === 'lista') {
                 btnLista.className = "flex-1 py-2.5 rounded-lg text-center bg-sky-500 text-white transition-all";
                 pLista.classList.remove('hidden');
                 cancelarEdicion();
                 filtrarYAgrupar();
+            } else if (target === 'tools') {
+                btnTools.className = "flex-1 py-2.5 rounded-lg text-center bg-sky-500 text-white transition-all";
+                pTools.classList.remove('hidden');
+                cancelarEdicion();
+                filtrarTools();
             } else if (target === 'ramps') {
                 btnRamps.className = "flex-1 py-2.5 rounded-lg text-center bg-sky-500 text-white transition-all";
                 pRamps.classList.remove('hidden');
@@ -200,6 +321,45 @@
                 actualizarDesplegableSecciones();
                 renderizarListaGestion();
             }
+        }
+
+        function filtrarTools() {
+            const query = document.getElementById('buscador-tools').value.toLowerCase().trim();
+            const contenedor = document.getElementById('contenedor-tools');
+            const contador = document.getElementById('contador-tools');
+            
+            contenedor.innerHTML = '';
+
+            const filtrados = LISTA_HERRAMIENTAS.filter(item => 
+                item.articulo.toLowerCase().includes(query) || 
+                item.pn.toLowerCase().replace(/\s+/g, '').includes(query.replace(/\s+/g, '')) ||
+                item.origen.toLowerCase().includes(query)
+            );
+
+            contador.innerText = filtrados.length;
+
+            if (filtrados.length === 0) {
+                contenedor.innerHTML = `<div class="text-center text-xs text-slate-500 py-8">No se encontraron herramientas.</div>`;
+                return;
+            }
+
+            filtrados.forEach(tool => {
+                const card = document.createElement('div');
+                card.className = "bg-slate-900 border border-slate-800 rounded-xl p-3.5 space-y-1.5 shadow-md";
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-bold text-white text-xs uppercase tracking-wide pr-2">${tool.articulo}</h4>
+                        <span class="text-[9px] bg-slate-950 text-sky-400 font-semibold px-2 py-0.5 rounded border border-slate-800 shrink-0">
+                            ${tool.origen}
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs pt-1">
+                        <span class="text-[11px] text-slate-400 font-medium">P/N:</span>
+                        <code class="text-[11px] font-mono font-bold text-amber-400 bg-slate-950 px-2 py-0.5 rounded border border-slate-800 select-all">${tool.pn}</code>
+                    </div>
+                `;
+                contenedor.appendChild(card);
+            });
         }
 
         function limpiarTextoSeccion(texto) {
@@ -333,7 +493,6 @@
             }
         }
 
-        // CONTROL DE EDICIÓN Y GESTIÓN CON SEGURIDAD POR P/N EN VEZ DE ÍNDICE
         function renderizarListaGestion() {
             const listaG = document.getElementById('lista-gestion');
             if(!listaG) return;
@@ -343,7 +502,6 @@
                 const fila = document.createElement('div');
                 fila.className = "flex items-center justify-between bg-slate-900 p-2.5 rounded-xl border border-slate-800 text-xs";
                 
-                // Escapar el P/N para evitar fallos de strings en las llamadas JS de los botones
                 const pnEscapado = encodeURIComponent(item.pn);
                 let secLimpia = limpiarTextoSeccion(item.seccion);
 
@@ -421,12 +579,9 @@
                 return;
             }
 
-            // Normalización estricta para el detector de duplicados (Quita espacios intermedios y guiones bajos)
             const normalizar = (txt) => txt.toLowerCase().replace(/[\s_\-]/g, '');
 
-            // DETECTOR DE DUPLICADOS ROBUSTO
             const existeDuplicado = listaArticulos.some((item) => {
-                // Si estamos editando este mismo artículo, no cuenta como duplicado de sí mismo
                 if (pnOriginalEdicion !== "" && item.pn === pnOriginalEdicion) return false;
                 return normalizar(item.pn) === normalizar(pn);
             });
@@ -437,11 +592,9 @@
             }
 
             if (pnOriginalEdicion === "") {
-                // Modo Añadir Nuevo
                 listaArticulos.unshift({ articulo: art, pn: pn, seccion: sec });
                 alert("¡Artículo añadido correctamente!");
             } else {
-                // Modo Modificar Existente
                 const idx = listaArticulos.findIndex(i => i.pn === pnOriginalEdicion);
                 if(idx !== -1) {
                     listaArticulos[idx] = { articulo: art, pn: pn, seccion: sec };
