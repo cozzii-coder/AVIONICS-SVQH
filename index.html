@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avio Tech - P/N List & Documentation</title>
+    <title>AvioTech - Avionics Solutions</title>
     <!-- Tailwind CSS desde CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
@@ -22,10 +22,10 @@
         </span>
     </div>
 
-    <!-- Header Principal Tech -->
+    <!-- Header Principal -->
     <header class="text-center my-4 mt-6">
-        <h1 class="text-2xl font-black text-sky-400 tracking-wider">AVIONICS Tech</h1>
-        <p class="text-xs text-slate-400 font-medium">P/N, Tools, Ramps & Manuals</p>
+        <h1 class="text-2xl font-black text-sky-400 tracking-wider">AvioTech</h1>
+        <p class="text-xs text-slate-400 font-medium">Avionics Maintenance & Documentation</p>
     </header>
 
     <!-- Navegación Móvil de 5 Columnas -->
@@ -353,33 +353,33 @@
 
     </div>
 
-    <!-- PESTAÑA 4: DOCUMENTS (SELECTOR CON LOS 17 DOCUMENTOS DE DRIVE) -->
+    <!-- PESTAÑA 4: DOCUMENTS (TODOS LOS 17 CON SUS URLS REALES) -->
     <div id="pestana-docs" class="hidden space-y-4">
         
         <!-- Menú Selector de Manuales Completo -->
         <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 space-y-2 shadow-md">
             <label class="block text-xs font-bold text-sky-400 uppercase tracking-wide">Seleccionar Documento Técnico (17 totales):</label>
             <select id="select-doc" onchange="cargarDocumentoSeleccionado(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:ring-2 focus:ring-sky-500 font-medium">
-                <option value="112-3148">1. 20-61 FRONT RELEASE CONNECTORS</option>
-                <option value="112-3148">2. 20-63 REAR RELEASE CONNECTORS</option>
-                <option value="112-3148">3. 737NG COMPONENT LOCATOR GUIDE</option>
-                <option value="112-3148">4. 737NG Flight Deck Panels</option>
-                <option value="112-3148">5. AOG PARTS LIST</option>
-                <option value="112-3148">6. APU SCMM_49</option>
-                <option value="112-3148">7. BSI LIGHTING SYSTEM</option>
+                <option value="1FL2GrFNo6Nayxkg80e4tW1XFqgzDldlO">1. 20-61 FRONT RELEASE CONNECTORS</option>
+                <option value="1FL2GrFNo6Nayxkg80e4tW1XFqgzDldlO">2. 20-63 REAR RELEASE CONNECTORS</option>
+                <option value="1adDKrCHrUkUIaukFjtEb-Y_cAQbaVV0L">3. 737NG COMPONENT LOCATOR GUIDE</option>
+                <option value="10lMqgWVcna_bWoToLCjfEgM_BFlvNPqB">4. 737NG Flight Deck Panels</option>
+                <option value="1ATcDP2bmVb-FyoMRpGKirJN-4sylB5BB">5. AOG PARTS LIST</option>
+                <option value="1YGZ0bcZLz9s97gmVz4Um-hFacdmU-ZV5">6. APU SCMM_49</option>
+                <option value="1uOID8H4gmVmeWIEOfcf3MqhTZam9bXjT">7. BSI LIGHTING SYSTEM</option>
                 <option value="136Sy63TSLSPhAWHXx1a5G0Bg5NJq_AFQ">8. Buscar un cable (WDM/AMOS)</option>
                 <option value="1LGKOrWHK4XtMfJx0blT1F68qGqQtQ-WB">9. Buscar un conector (SWPM/AAD)</option>
                 <option value="1SfKknSDXAUEzawX_0hoeBc2b-7JVM74e">10. Buscar un splice (Splices/Terminal Lugs)</option>
-                <option value="112-3148">11. CLAMP</option>
-                <option value="112-3148">12. Flight Deck & CB Panels</option>
+                <option value="1d0vSLLoPVselONZSwlKyAuXFiW3cwJvS">11. CLAMP</option>
+                <option value="17Z8lUXNcySm2L8DImPs9xw8qnus6i0aK">12. Flight Deck & CB Panels</option>
                 <option value="1GtnRz4GGOPC6Wx3AFWDn_-gKRnNBlJva">13. Phase 1 - REV 88 (B737 CFM56 B2)</option>
                 <option value="1yKSD2_pSGGW7H1kP_21txczNTpk7M6kx">14. Phase 2 - REV 88 (B737 CFM56 B2)</option>
                 <option value="1FeAu9Rt7Av4TXw41eZMDM9GJb1zLRuoX">15. Phase 3 - REV 88 (B737 CFM56 B2)</option>
                 <option value="1oZxh1RTYTqeD-UYqueA2kKG6l19Go6ym">16. Phase 4 - REV 88 (B737 CFM56 B2)</option>
-                <option value="112-3148">17. Rellenar Tech log</option>
+                <option value="1mYzFByujXZWq0JvgF6ILP0B8D2Ap45pj">17. Rellenar Tech log</option>
             </select>
             <div class="flex items-center justify-between pt-1">
-                <span class="text-[10px] text-slate-400">Base Técnica Avionics Tech</span>
+                <span class="text-[10px] text-slate-400">Base Técnica AvioTech</span>
                 <span class="text-[9px] bg-slate-950 text-emerald-400 font-semibold px-2 py-0.5 rounded border border-slate-800">
                     Solo Lectura
                 </span>
@@ -393,21 +393,21 @@
             
             <iframe 
                 id="iframe-doc-viewer"
-                src="https://drive.google.com/file/d/1LGKOrWHK4XtMfJx0blT1F68qGqQtQ-WB/preview" 
+                src="https://drive.google.com/file/d/1FL2GrFNo6Nayxkg80e4tW1XFqgzDldlO/preview" 
                 class="w-full h-full border-0 relative z-10" 
                 allow="autoplay"
-                title="Visor de Documentación Técnica Avionics Tech">
+                title="Visor de Documentación Técnica AvioTech">
             </iframe>
         </div>
 
     </div>
 
-    <!-- PESTAÑA 5: AÑADIR (ADMINISTRACIÓN CON CONTRASEÑA NUEVA) -->
+    <!-- PESTAÑA 5: AÑADIR (ADMINISTRACIÓN CON CONTRASEÑA) -->
     <div id="pestana-admin" class="hidden space-y-4">
         <div id="bloqueo-auth" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center space-y-4 shadow-xl">
             <div class="text-4xl">🔒</div>
             <h3 class="text-base font-bold text-white tracking-wide">Acceso Protegido</h3>
-            <p class="text-xs text-slate-400">Contraseña de Avionics Tech para la gestión de componentes.</p>
+            <p class="text-xs text-slate-400">Contraseña de AvioTech para la gestión de componentes.</p>
             <input type="password" id="input-password" placeholder="Contraseña" class="w-full bg-slate-950 border border-slate-800 text-center rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
             <button onclick="verificarPassword()" class="w-full bg-sky-500 hover:bg-sky-600 font-bold py-2.5 rounded-xl text-sm transition shadow-md">Acceder</button>
         </div>
@@ -466,34 +466,35 @@
         let seccionesCreadasAdhoc = JSON.parse(localStorage.getItem('svqh_secciones_adhoc')) || [];
         let estadoChecklist = JSON.parse(localStorage.getItem('svqh_checklist_ramps')) || {};
 
+        // LISTA DE HERRAMIENTAS LIMPIA (SIN 'TOOLS SHEET')
         const LISTA_HERRAMIENTAS = [
-            { articulo: "QUICKSET", pn: "QUICKSET", origen: "Tools Sheet" },
-            { articulo: "FLUKE117", pn: "FLUKE117", origen: "Tools Sheet" },
-            { articulo: "STAB TRIM CUTOUT TESTER", pn: "C27007-46", origen: "Tools Sheet" },
-            { articulo: "ELT ADT406AP 50 OHM DUMMY LOAD KIT", pn: "112-3148", origen: "Tools Sheet" },
-            { articulo: "PROBE OVHT AND TESTER", pn: "BH17336A // BH16440-40", origen: "Tools Sheet" },
-            { articulo: "TEMPCAL TESTER", pn: "H394-230", origen: "Tools Sheet" },
-            { articulo: "BONDING METER", pn: "M1", origen: "Tools Sheet" },
-            { articulo: "HAND HELD MULTIPURPOSE I/FACE HHMPI", pn: "FDS400-301", origen: "Tools Sheet" },
-            { articulo: "FIREX TEST CARGO", pn: "C26006-1", origen: "Tools Sheet" },
-            { articulo: "TEST SET / PITOT STATIC", pn: "MPS45", origen: "Tools Sheet" },
-            { articulo: "GROUND FAULT PROTECTION SYS TEST SET", pn: "F72917-19", origen: "Tools Sheet" },
-            { articulo: "PDL LAPTOP WITH TECHSAT PDL MKII", pn: "TECHSATPDLLAPT0P", origen: "Tools Sheet" },
-            { articulo: "FLUKE324 (CLAMP)", pn: "FLUKE324", origen: "Tools Sheet" },
-            { articulo: "CAJA RADIOALTIMETRO", pn: "C34005-16", origen: "Tools Sheet" },
-            { articulo: "RADIO ALTIMETER TEST SET", pn: "DRA707", origen: "Tools Sheet" },
-            { articulo: "TRAMMEL BAR", pn: "F80055-1", origen: "Tools Sheet" },
-            { articulo: "RUDDER PCU TEST SET", pn: "C29002-17", origen: "Tools Sheet" },
-            { articulo: "HIRFS", pn: "906-10247-3 OR XLR-9703-01", origen: "Tools Sheet" },
-            { articulo: "WTB FEEDTHROUGH CONNECTORS ADAPTER (HIRFS)", pn: "WTBADAPTER", origen: "Tools Sheet" },
-            { articulo: "TOOL CONNECTORS FOR BACKSHELLS", pn: "CMS837", origen: "Tools Sheet" },
-            { articulo: "KNIPEX CUTTING SAFTGLO", pn: "9435215", origen: "Tools Sheet" },
-            { articulo: "FIRE EXTINGUISHER BOTTLE SQUIB TESTER", pn: "F80229-69", origen: "Tools Sheet" },
-            { articulo: "WIRE JUMPER KIT MID-CABIN B737MAX", pn: "RYR-EXITS-DDG-JUMPER-KIT", origen: "Tools Sheet" },
-            { articulo: "CRIMP TOOL FOR AIRSTAIRS LIGHTS", pn: "P/N: 9-1478240-0 // DIE SET: 58628-2", origen: "Airstairs" },
-            { articulo: "CRIMP TOOL FOR LANDING LIGHT LUG", pn: "59461", origen: "Landing Lights" },
-            { articulo: "CLAMP BANDS CONNECTOR TOOL", pn: "DBS-1101", origen: "Engines" },
-            { articulo: "END CAP CRIMP TOOL", pn: "IN MODKIT", origen: "Splices" }
+            { articulo: "QUICKSET", pn: "QUICKSET" },
+            { articulo: "FLUKE117", pn: "FLUKE117" },
+            { articulo: "STAB TRIM CUTOUT TESTER", pn: "C27007-46" },
+            { articulo: "ELT ADT406AP 50 OHM DUMMY LOAD KIT", pn: "112-3148" },
+            { articulo: "PROBE OVHT AND TESTER", pn: "BH17336A // BH16440-40" },
+            { articulo: "TEMPCAL TESTER", pn: "H394-230" },
+            { articulo: "BONDING METER", pn: "M1" },
+            { articulo: "HAND HELD MULTIPURPOSE I/FACE HHMPI", pn: "FDS400-301" },
+            { articulo: "FIREX TEST CARGO", pn: "C26006-1" },
+            { articulo: "TEST SET / PITOT STATIC", pn: "MPS45" },
+            { articulo: "GROUND FAULT PROTECTION SYS TEST SET", pn: "F72917-19" },
+            { articulo: "PDL LAPTOP WITH TECHSAT PDL MKII", pn: "TECHSATPDLLAPT0P" },
+            { articulo: "FLUKE324 (CLAMP)", pn: "FLUKE324" },
+            { articulo: "CAJA RADIOALTIMETRO", pn: "C34005-16" },
+            { articulo: "RADIO ALTIMETER TEST SET", pn: "DRA707" },
+            { articulo: "TRAMMEL BAR", pn: "F80055-1" },
+            { articulo: "RUDDER PCU TEST SET", pn: "C29002-17" },
+            { articulo: "HIRFS", pn: "906-10247-3 OR XLR-9703-01" },
+            { articulo: "WTB FEEDTHROUGH CONNECTORS ADAPTER (HIRFS)", pn: "WTBADAPTER" },
+            { articulo: "TOOL CONNECTORS FOR BACKSHELLS", pn: "CMS837" },
+            { articulo: "KNIPEX CUTTING SAFTGLO", pn: "9435215" },
+            { articulo: "FIRE EXTINGUISHER BOTTLE SQUIB TESTER", pn: "F80229-69" },
+            { articulo: "WIRE JUMPER KIT MID-CABIN B737MAX", pn: "RYR-EXITS-DDG-JUMPER-KIT" },
+            { articulo: "CRIMP TOOL FOR AIRSTAIRS LIGHTS", pn: "P/N: 9-1478240-0 // DIE SET: 58628-2" },
+            { articulo: "CRIMP TOOL FOR LANDING LIGHT LUG", pn: "59461" },
+            { articulo: "CLAMP BANDS CONNECTOR TOOL", pn: "DBS-1101" },
+            { articulo: "END CAP CRIMP TOOL", pn: "IN MODKIT" }
         ];
 
         function cambiarPestana(target) {
@@ -576,8 +577,7 @@
 
             const filtrados = LISTA_HERRAMIENTAS.filter(item => 
                 item.articulo.toLowerCase().includes(query) || 
-                item.pn.toLowerCase().replace(/\s+/g, '').includes(query.replace(/\s+/g, '')) ||
-                item.origen.toLowerCase().includes(query)
+                item.pn.toLowerCase().replace(/\s+/g, '').includes(query.replace(/\s+/g, ''))
             );
 
             contador.innerText = filtrados.length;
@@ -593,9 +593,6 @@
                 card.innerHTML = `
                     <div class="flex justify-between items-start">
                         <h4 class="font-bold text-white text-xs uppercase tracking-wide pr-2">${tool.articulo}</h4>
-                        <span class="text-[9px] bg-slate-950 text-sky-400 font-semibold px-2 py-0.5 rounded border border-slate-800 shrink-0">
-                            ${tool.origen}
-                        </span>
                     </div>
                     <div class="flex items-center justify-between text-xs pt-1">
                         <span class="text-[11px] text-slate-400 font-medium">P/N:</span>
