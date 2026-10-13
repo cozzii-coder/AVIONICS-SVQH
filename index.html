@@ -25,21 +25,24 @@
     <!-- Header -->
     <header class="text-center my-4 mt-6">
         <h1 class="text-2xl font-bold text-sky-400 tracking-wide">AVIONICS SVQH</h1>
-        <p class="text-xs text-slate-400">P/N, Tools & Ramps Tasks</p>
+        <p class="text-xs text-slate-400">P/N, Tools, Ramps & Documentation</p>
     </header>
 
-    <!-- Navegación Móvil de 4 Columnas -->
-    <div class="flex bg-slate-800 rounded-xl p-1 mb-4 text-[11px] font-semibold">
-        <button id="btn-lista" onclick="cambiarPestana('lista')" class="flex-1 py-2.5 rounded-lg text-center bg-sky-500 text-white transition-all">
+    <!-- Navegación Móvil de 5 Columnas -->
+    <div class="flex bg-slate-800 rounded-xl p-1 mb-4 text-[10px] font-semibold">
+        <button id="btn-lista" onclick="cambiarPestana('lista')" class="flex-1 py-2 rounded-lg text-center bg-sky-500 text-white transition-all">
             🔍 Buscar
         </button>
-        <button id="btn-tools" onclick="cambiarPestana('tools')" class="flex-1 py-2.5 rounded-lg text-center text-slate-400 transition-all">
+        <button id="btn-tools" onclick="cambiarPestana('tools')" class="flex-1 py-2 rounded-lg text-center text-slate-400 transition-all">
             🧰 Tools
         </button>
-        <button id="btn-ramps" onclick="cambiarPestana('ramps')" class="flex-1 py-2.5 rounded-lg text-center text-slate-400 transition-all">
+        <button id="btn-ramps" onclick="cambiarPestana('ramps')" class="flex-1 py-2 rounded-lg text-center text-slate-400 transition-all">
             📋 Ramps
         </button>
-        <button id="btn-admin" onclick="cambiarPestana('admin')" class="flex-1 py-2.5 rounded-lg text-center text-slate-400 transition-all">
+        <button id="btn-docs" onclick="cambiarPestana('docs')" class="flex-1 py-2 rounded-lg text-center text-slate-400 transition-all">
+            📄 Docs
+        </button>
+        <button id="btn-admin" onclick="cambiarPestana('admin')" class="flex-1 py-2 rounded-lg text-center text-slate-400 transition-all">
             ➕ Añadir
         </button>
     </div>
@@ -54,80 +57,162 @@
         <div id="contenedor-secciones" class="space-y-3"></div>
     </div>
 
-    <!-- PESTAÑA 2: TOOLS (NUEVA PESTAÑA) -->
+    <!-- PESTAÑA 2: TOOLS -->
     <div id="pestana-tools" class="hidden space-y-4">
         <div class="relative">
             <input type="text" id="buscador-tools" oninput="filtrarTools()" placeholder="Buscar herramienta o equipo..." 
                    class="w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-400 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
         </div>
-        
         <p class="text-xs text-slate-400 pl-1"><span id="contador-tools">0</span> herramientas registradas</p>
-
-        <div id="contenedor-tools" class="space-y-3">
-            <!-- Renderizado dinámico de Tools -->
-        </div>
+        <div id="contenedor-tools" class="space-y-3"></div>
     </div>
 
-    <!-- PESTAÑA 3: RAMPS (NG Y MAX CORREGIDOS) -->
+    <!-- PESTAÑA 3: RAMPS CON CHECKLIST INTERACTIVA -->
     <div id="pestana-ramps" class="hidden space-y-6">
+        
+        <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+            <span class="text-xs text-slate-400">Marca las tareas realizadas:</span>
+            <button onclick="resetearChecklist()" class="text-[11px] bg-rose-500/20 text-rose-400 border border-rose-500/30 px-2.5 py-1 rounded-lg hover:bg-rose-500/30 font-semibold transition">
+                🔄 Reset Checklist
+            </button>
+        </div>
+
         <!-- Ramps NG -->
         <div class="space-y-4">
             <h2 class="text-lg font-black text-amber-400 tracking-wider border-b-2 border-amber-500/20 pb-1">✈️ RAMPS NG</h2>
             
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 1 CHECK – RA800</h3>
-                <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
-                    <li><span class="font-semibold text-slate-400">PAGE 2/ ITEM 4.</span> 24-31-11-710-801 MAIN BATTERY DISCHARGE CHECK.</li>
-                    <li><span class="font-semibold text-slate-400">PG10/ ITEM 22.</span> 25-RYR-19 CHECK ALL EMERGENCY LIGHTS.</li>
-                    <li><span class="font-semibold text-slate-400">PG13/ ITEM 25.</span> 52-RYR-03 FLIGHT DECK DOOR SYSTEM OPERATIONAL CHECK.</li>
-                    <li><span class="font-semibold text-slate-400">PG13/ ITEM 26.</span> END OF RAMP1/3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</li>
-                </ul>
+                <div class="text-xs text-slate-300 space-y-2.5 leading-relaxed">
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-ng-r1-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PAGE 2/ ITEM 4.</span> 24-31-11-710-801 MAIN BATTERY DISCHARGE CHECK.</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-ng-r1-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG10/ ITEM 22.</span> 25-RYR-19 CHECK ALL EMERGENCY LIGHTS.</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-ng-r1-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG13/ ITEM 25.</span> 52-RYR-03 FLIGHT DECK DOOR SYSTEM OPERATIONAL CHECK.</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-ng-r1-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG13/ ITEM 26.</span> END OF RAMP1/3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span>
+                    </label>
+                </div>
             </div>
 
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 2 CHECK – RA801</h3>
-                <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
-                    <li><span class="font-semibold text-slate-400">PG1/ ITEM 1.</span> OPERATIONAL CHECK OF CVR IAW BTC 23-040-00-01 Ref: AMM: 23-71-00-710</li>
-                    <li><span class="font-semibold text-slate-400">PG2, PG3/ ITEM 2.</span> 23-100-00-01 OPERATIONALLY CHECK THE ELT.</li>
-                    <li><span class="font-semibold text-slate-400">PG5/ ITEM 9.</span> 33-010-00-01 OPERATIONAL CHECK OF THE EMERGENCY LIGHTS (RAMP 1).</li>
-                    <li><span class="font-semibold text-slate-400">PG6/ ITEM 10.</span> 33-RYR-01 OPERATIONAL CHECK OF PSU/ CABIN WALL /LAVATORY NO SMOKING / FASTEN SEAT BELT SIGN LIGHTS.</li>
-                    <li><span class="font-semibold text-slate-400">PG6/ ITEM 11.</span> 33-RYR-02 OPERATIONAL CHECK OF THE EXTERIOR LIGHTS AND THE CARGO HOLD LIGHTS.</li>
-                    <li><span class="font-semibold text-slate-400">PG7/ ITEM 12.</span> 33-RYR-03 CHECK OF THE COCKPIT INSTRUMENT AND PANEL LIGHTS.</li>
-                    <li><span class="font-semibold text-slate-400">PG7/ ITEM 13.</span> 33-RYR-04 OPERATIONAL CHECK OF THE PASSENGER COMPARTMENT LIGHTS.</li>
-                    <li><span class="font-semibold text-slate-400">PG8/ ITEM 15.</span> .9 EO.13/057 CHECK SPARE BULBS IN THE SPARE BULB COMPARTMENT.</li>
-                </ul>
+                <div class="text-xs text-slate-300 space-y-2.5 leading-relaxed">
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-ng-r2-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG1/ ITEM 1.</span> OPERATIONAL CHECK OF CVR IAW BTC 23-040-00-01 Ref: AMM: 23-71-00-710</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-ng-r2-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG2, PG3/ ITEM 2.</span> 23-100-00-01 OPERATIONALLY CHECK THE ELT.</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-ng-r2-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG5/ ITEM 9.</span> 33-010-00-01 OPERATIONAL CHECK OF THE EMERGENCY LIGHTS (RAMP 1).</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-ng-r2-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG6/ ITEM 10.</span> 33-RYR-01 OPERATIONAL CHECK OF PSU/ CABIN WALL /LAVATORY NO SMOKING / FASTEN SEAT BELT SIGN LIGHTS.</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-ng-r2-5" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG6/ ITEM 11.</span> 33-RYR-02 OPERATIONAL CHECK OF THE EXTERIOR LIGHTS AND THE CARGO HOLD LIGHTS.</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-ng-r2-6" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG7/ ITEM 12.</span> 33-RYR-03 CHECK OF THE COCKPIT INSTRUMENT AND PANEL LIGHTS.</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-ng-r2-7" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG7/ ITEM 13.</span> 33-RYR-04 OPERATIONAL CHECK OF THE PASSENGER COMPARTMENT LIGHTS.</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-ng-r2-8" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG8/ ITEM 15.</span> .9 EO.13/057 CHECK SPARE BULBS IN THE SPARE BULB COMPARTMENT.</span>
+                    </label>
+                </div>
             </div>
 
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP-3 CHECK - RA901</h3>
-                <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
-                    <li><span class="font-semibold text-slate-400">PG1/ ITEM 2.</span> 21-150-00-01 CLEAN OR REPLACE THE CABIN TEMPERATURE SENSOR FILTERS.</li>
-                    <li><span class="font-semibold text-slate-400">PG7/ ITEM 10.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</li>
-                </ul>
+                <div class="text-xs text-slate-300 space-y-2.5 leading-relaxed">
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-ng-r3-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG1/ ITEM 2.</span> 21-150-00-01 CLEAN OR REPLACE THE CABIN TEMPERATURE SENSOR FILTERS.</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-ng-r3-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG7/ ITEM 10.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span>
+                    </label>
+                </div>
             </div>
 
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP-4 CHECK - RA902</h3>
-                <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
-                    <li><span class="font-semibold text-slate-400">PG1/ ITEM 3.</span> 27-162-00-01 OPERATIONAL CHECK THE FLAP SKEW AND ASYMMETRY SYSTEM AMM: 27-51-00-740</li>
-                    <li><span class="font-semibold text-slate-400">PG2/ ITEM 4.</span> 27-224-00-01 OPERATIONAL CHECK THE LEADING EDGE DEVICES UNCOMMANDED MOTION PROTECTION AMM: 27-81-00-710.</li>
-                    <li><span class="font-semibold text-slate-400">PG3/ ITEM 6.</span> 29-230-00-01 OPERATIONAL CHECK THE STANDBY RUDDER SYSTEM AMM: 29-21-00-700.</li>
-                    <li><span class="font-semibold text-slate-400">PG4/ ITEM 8.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</li>
-                </ul>
+                <div class="text-xs text-slate-300 space-y-2.5 leading-relaxed">
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-ng-r4-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG1/ ITEM 3.</span> 27-162-00-01 OPERATIONAL CHECK THE FLAP SKEW AND ASYMMETRY SYSTEM AMM: 27-51-00-740</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-ng-r4-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG2/ ITEM 4.</span> 27-224-00-01 OPERATIONAL CHECK THE LEADING EDGE DEVICES UNCOMMANDED MOTION PROTECTION AMM: 27-81-00-710.</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-ng-r4-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG3/ ITEM 6.</span> 29-230-00-01 OPERATIONAL CHECK THE STANDBY RUDDER SYSTEM AMM: 29-21-00-700.</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-ng-r4-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG4/ ITEM 8.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span>
+                    </label>
+                </div>
             </div>
 
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">50FC CHECK – RA858</h3>
-                <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
-                    <li><span class="font-semibold text-slate-400">PG1/ ITEM 3.</span> SPCU AMM: 24-34-00-710</li>
-                    <li><span class="font-semibold text-slate-400">PG1/ ITEM 5.</span> E/E EQUIPMENT CLEANING AND WEATHER RADAR TX/RX INSPECTION</li>
-                    <li><span class="font-semibold text-slate-400">PG2/ ITEM 6.</span> COCKPIT CLEAN AMM: 31-62-11-100-801</li>
-                    <li><span class="font-semibold text-slate-400">PG2/ ITEM 7.</span> P5 GUARDS</li>
-                    <li><span class="font-semibold text-slate-400">PG3/ ITEM 9.</span> GEAR LIGHTS (MASTER DIM TEST)</li>
-                    <li><span class="font-semibold text-slate-400">PG4/ ITEM 12.</span> FMC CDU LEFT ENGINE (SHORT TIME FAULTS)</li>
-                    <li><span class="font-semibold text-slate-400">PG5/ ITEM 13.</span> FMC CDU RIGHT ENGINE (SHORT TIME FAULTS)</li>
-                    <li><span class="font-semibold text-slate-400">PG6/ ITEM 14.</span> BITE CHECK PACK ZONE AMM 21-61-00-700-806-002</li>
-                </ul>
+                <div class="text-xs text-slate-300 space-y-2.5 leading-relaxed">
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-ng-50fc-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG1/ ITEM 3.</span> SPCU AMM: 24-34-00-710</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-ng-50fc-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG1/ ITEM 5.</span> E/E EQUIPMENT CLEANING AND WEATHER RADAR TX/RX INSPECTION</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-ng-50fc-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG2/ ITEM 6.</span> COCKPIT CLEAN AMM: 31-62-11-100-801</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-ng-50fc-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG2/ ITEM 7.</span> P5 GUARDS</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-ng-50fc-5" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG3/ ITEM 9.</span> GEAR LIGHTS (MASTER DIM TEST)</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-ng-50fc-6" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG4/ ITEM 12.</span> FMC CDU LEFT ENGINE (SHORT TIME FAULTS)</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-ng-50fc-7" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG5/ ITEM 13.</span> FMC CDU RIGHT ENGINE (SHORT TIME FAULTS)</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-ng-50fc-8" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG6/ ITEM 14.</span> BITE CHECK PACK ZONE AMM 21-61-00-700-806-002</span>
+                    </label>
+                </div>
             </div>
         </div>
 
@@ -137,62 +222,165 @@
             
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 1 CHECK – RA800</h3>
-                <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
-                    <li><span class="font-semibold text-slate-400">PAGE 2/ ITEM 4.</span> 24-31-11-710-801 MAIN BATTERY DISCHARGE CHECK.</li>
-                    <li><span class="font-semibold text-slate-400">PG10/ ITEM 22.</span> 25-RYR-19 CHECK ALL EMERGENCY LIGHTS.</li>
-                    <li><span class="font-semibold text-slate-400">PG13/ ITEM 25.</span> 52-RYR-03 FLIGHT DECK DOOR SYSTEM OPERATIONAL CHECK.</li>
-                    <li><span class="font-semibold text-slate-400">PG13/ ITEM 26.</span> END OF RAMP1/3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</li>
-                </ul>
+                <div class="text-xs text-slate-300 space-y-2.5 leading-relaxed">
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-max-r1-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PAGE 2/ ITEM 4.</span> 24-31-11-710-801 MAIN BATTERY DISCHARGE CHECK.</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-max-r1-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG10/ ITEM 22.</span> 25-RYR-19 CHECK ALL EMERGENCY LIGHTS.</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-max-r1-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG13/ ITEM 25.</span> 52-RYR-03 FLIGHT DECK DOOR SYSTEM OPERATIONAL CHECK.</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-max-r1-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG13/ ITEM 26.</span> END OF RAMP1/3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span>
+                    </label>
+                </div>
             </div>
 
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 2A/B CHECK – RA801</h3>
-                <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
-                    <li><span class="font-semibold text-slate-400">A/B- PG1/ ITEM 1.</span> OPERATIONAL CHECK OF CVR IAW BTC 23-040-00-01 Ref: AMM: 23-71-00-710</li>
-                    <li><span class="font-semibold text-slate-400">B- PG5/ ITEM 9.</span> 33-010-00-01 OPERATIONAL CHECK OF THE EMERGENCY LIGHTS (RAMP 1).</li>
-                    <li><span class="font-semibold text-slate-400">A/B- PG6/ ITEM 11.</span> 33-RYR-02 OPERATIONAL CHECK OF THE EXTERIOR LIGHTS AND THE CARGO HOLD LIGHTS.</li>
-                    <li><span class="font-semibold text-slate-400">A/B- PG7/ ITEM 12.</span> 33-RYR-03 CHECK OF THE COCKPIT INSTRUMENT AND PANEL LIGHTS.</li>
-                    <li><span class="font-semibold text-slate-400">A/B- PG8/ ITEM 15.</span> .9 EO.13/057 CHECK SPARE BULBS IN THE SPARE BULB COMPARTMENT.</li>
-                </ul>
+                <div class="text-xs text-slate-300 space-y-2.5 leading-relaxed">
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-max-r2-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">A/B- PG1/ ITEM 1.</span> OPERATIONAL CHECK OF CVR IAW BTC 23-040-00-01 Ref: AMM: 23-71-00-710</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-max-r2-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">B- PG5/ ITEM 9.</span> 33-010-00-01 OPERATIONAL CHECK OF THE EMERGENCY LIGHTS (RAMP 1).</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-max-r2-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">A/B- PG6/ ITEM 11.</span> 33-RYR-02 OPERATIONAL CHECK OF THE EXTERIOR LIGHTS AND THE CARGO HOLD LIGHTS.</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-max-r2-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">A/B- PG7/ ITEM 12.</span> 33-RYR-03 CHECK OF THE COCKPIT INSTRUMENT AND PANEL LIGHTS.</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-max-r2-5" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">A/B- PG8/ ITEM 15.</span> .9 EO.13/057 CHECK SPARE BULBS IN THE SPARE BULB COMPARTMENT.</span>
+                    </label>
+                </div>
             </div>
 
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP-3 CHECK - RA901</h3>
-                <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
-                    <li><span class="font-semibold text-slate-400">PG3/ ITEM 3.</span> 27-162-00-01 OPERATIONAL CHECK THE FLAP SKEW AND ASYMMETRY SYSTEM AMM: 27-51-00-740</li>
-                    <li><span class="font-semibold text-slate-400">PG7/ ITEM 2.</span> INOP DECALS ON ALL RADIO</li>
-                    <li><span class="font-semibold text-slate-400">PG7/ ITEM 10.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</li>
-                </ul>
+                <div class="text-xs text-slate-300 space-y-2.5 leading-relaxed">
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-max-r3-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG3/ ITEM 3.</span> 27-162-00-01 OPERATIONAL CHECK THE FLAP SKEW AND ASYMMETRY SYSTEM AMM: 27-51-00-740</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-max-r3-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG7/ ITEM 2.</span> INOP DECALS ON ALL RADIO</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-max-r3-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG7/ ITEM 10.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span>
+                    </label>
+                </div>
             </div>
 
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP-4 CHECK - RA902</h3>
-                <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
-                    <li><span class="font-semibold text-slate-400">PG1/ ITEM 1.</span> 21-150-00-01 CLEAN OR REPLACE THE CABIN TEMPERATURE SENSOR FILTERS.</li>
-                    <li><span class="font-semibold text-slate-400">PG2/ ITEM 4.</span> 27-224-00-01 OPERATIONAL CHECK THE LEADING EDGE DEVICES UNCOMMANDED MOTION PROTECTION AMM: 27-81-00-710.</li>
-                    <li><span class="font-semibold text-slate-400">PG3/ ITEM 6.</span> 29-230-00-01 OPERATIONAL CHECK THE STANDBY RUDDER SYSTEM AMM: 29-21-00-700.</li>
-                    <li><span class="font-semibold text-slate-400">PG4/ ITEM 8.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</li>
-                </ul>
+                <div class="text-xs text-slate-300 space-y-2.5 leading-relaxed">
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-max-r4-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG1/ ITEM 1.</span> 21-150-00-01 CLEAN OR REPLACE THE CABIN TEMPERATURE SENSOR FILTERS.</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-max-r4-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG2/ ITEM 4.</span> 27-224-00-01 OPERATIONAL CHECK THE LEADING EDGE DEVICES UNCOMMANDED MOTION PROTECTION AMM: 27-81-00-710.</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-max-r4-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG3/ ITEM 6.</span> 29-230-00-01 OPERATIONAL CHECK THE STANDBY RUDDER SYSTEM AMM: 29-21-00-700.</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-max-r4-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG4/ ITEM 8.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span>
+                    </label>
+                </div>
             </div>
 
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">50FC CHECK – RA858</h3>
-                <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
-                    <li><span class="font-semibold text-slate-400">PG1/ ITEM 3.</span> SPCU AMM: 24-34-00-710</li>
-                    <li><span class="font-semibold text-slate-400">PG1/ ITEM 5.</span> E/E EQUIPMENT CLEANING AND WEATHER RADAR TX/RX INSPECTION</li>
-                    <li><span class="font-semibold text-slate-400">PG2/ ITEM 6.</span> COCKPIT CLEAN AMM: 31-62-11-100-801</li>
-                    <li><span class="font-semibold text-slate-400">PG2/ ITEM 7.</span> P5 GUARDS</li>
-                    <li><span class="font-semibold text-slate-400">PG4/ ITEM 2.</span> 33-RYR-01 OPERATIONAL CHECK OF PSU/ CABIN WALL /LAVATORY NO SMOKING / FASTEN SEAT BELT SIGN LIGHTS.</li>
-                    <li><span class="font-semibold text-slate-400">PG4/ ITEM 3.</span> 33-RYR-04 OPERATIONAL CHECK OF THE PASSENGER COMPARTMENT LIGHTS.</li>
-                    <li><span class="font-semibold text-slate-400">PG3/ ITEM 9.</span> GEAR LIGHTS (MASTER DIM TEST)</li>
-                    <li><span class="font-semibold text-slate-400">PG4/ ITEM 12.</span> FMC CDU LEFT ENGINE (SHORT TIME FAULTS)</li>
-                    <li><span class="font-semibold text-slate-400">PG5/ ITEM 13.</span> FMC CDU RIGHT ENGINE (SHORT TIME FAULTS)</li>
-                </ul>
+                <div class="text-xs text-slate-300 space-y-2.5 leading-relaxed">
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-max-50fc-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG1/ ITEM 3.</span> SPCU AMM: 24-34-00-710</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-max-50fc-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG1/ ITEM 5.</span> E/E EQUIPMENT CLEANING AND WEATHER RADAR TX/RX INSPECTION</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-max-50fc-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG2/ ITEM 6.</span> COCKPIT CLEAN AMM: 31-62-11-100-801</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-max-50fc-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG2/ ITEM 7.</span> P5 GUARDS</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-max-50fc-5" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG4/ ITEM 2.</span> 33-RYR-01 OPERATIONAL CHECK OF PSU/ CABIN WALL /LAVATORY NO SMOKING / FASTEN SEAT BELT SIGN LIGHTS.</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-max-50fc-6" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG4/ ITEM 3.</span> 33-RYR-04 OPERATIONAL CHECK OF THE PASSENGER COMPARTMENT LIGHTS.</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-max-50fc-7" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG3/ ITEM 9.</span> GEAR LIGHTS (MASTER DIM TEST)</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-max-50fc-8" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG4/ ITEM 12.</span> FMC CDU LEFT ENGINE (SHORT TIME FAULTS)</span>
+                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-max-50fc-9" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG5/ ITEM 13.</span> FMC CDU RIGHT ENGINE (SHORT TIME FAULTS)</span>
+                    </label>
+                </div>
             </div>
         </div>
+
     </div>
 
-    <!-- PESTAÑA 4: AÑADIR (ADMINISTRACIÓN) -->
+    <!-- PESTAÑA 4: DOCUMENTS (NUEVA PESTAÑA PROTEGIDA) -->
+    <div id="pestana-docs" class="hidden space-y-4">
+        
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 space-y-2 shadow-md">
+            <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide flex items-center justify-between">
+                <span>📘 EWIS G - CÓMO BUSCAR UN CONECTOR</span>
+                <span class="text-[9px] bg-slate-950 text-emerald-400 font-semibold px-2 py-0.5 rounded border border-slate-800">
+                    Solo Lectura
+                </span>
+            </h3>
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+                Guía técnica de procedimientos para la localización de conectores, identificación de WDM y SWPM en flota B737.
+            </p>
+        </div>
+
+        <!-- Visor Integrado de Google Drive (Desactivadas Descargas) -->
+        <div class="relative w-full rounded-2xl overflow-hidden border border-slate-800 shadow-2xl bg-slate-950 h-[70vh]">
+            <iframe 
+                src="https://drive.google.com/file/d/1V2xR0zXAHx66gupS-5OR9wii1MukuvyV/preview" 
+                class="w-full h-full border-0" 
+                allow="autoplay"
+                title="EWIS G - CÓMO BUSCAR UN CONECTOR">
+            </iframe>
+        </div>
+
+    </div>
+
+    <!-- PESTAÑA 5: AÑADIR (ADMINISTRACIÓN) -->
     <div id="pestana-admin" class="hidden space-y-4">
         <div id="bloqueo-auth" class="bg-slate-800 border border-slate-700 rounded-2xl p-6 text-center space-y-4">
             <div class="text-4xl">🔒</div>
@@ -254,8 +442,8 @@
         const CLAVE_CORRECTA = "SVQH1234"; 
         let seccionesAbiertas = {}; 
         let seccionesCreadasAdhoc = JSON.parse(localStorage.getItem('svqh_secciones_adhoc')) || [];
+        let estadoChecklist = JSON.parse(localStorage.getItem('svqh_checklist_ramps')) || {};
 
-        // BASE DE DATOS COMPLETA DE HERRAMIENTAS DE LA HOJA 'TOOLS' Y NOTAS DE CONSUMIBLES
         const LISTA_HERRAMIENTAS = [
             { articulo: "QUICKSET", pn: "QUICKSET", origen: "Tools Sheet" },
             { articulo: "FLUKE117", pn: "FLUKE117", origen: "Tools Sheet" },
@@ -290,36 +478,64 @@
             const btnLista = document.getElementById('btn-lista');
             const btnTools = document.getElementById('btn-tools');
             const btnRamps = document.getElementById('btn-ramps');
+            const btnDocs = document.getElementById('btn-docs');
             const btnAdmin = document.getElementById('btn-admin');
             
             const pLista = document.getElementById('pestana-lista');
             const pTools = document.getElementById('pestana-tools');
             const pRamps = document.getElementById('pestana-ramps');
+            const pDocs = document.getElementById('pestana-docs');
             const pAdmin = document.getElementById('pestana-admin');
 
-            [btnLista, btnTools, btnRamps, btnAdmin].forEach(b => b.className = "flex-1 py-2.5 rounded-lg text-center text-slate-400 transition-all");
-            [pLista, pTools, pRamps, pAdmin].forEach(p => p.classList.add('hidden'));
+            [btnLista, btnTools, btnRamps, btnDocs, btnAdmin].forEach(b => b.className = "flex-1 py-2 rounded-lg text-center text-slate-400 transition-all");
+            [pLista, pTools, pRamps, pDocs, pAdmin].forEach(p => p.classList.add('hidden'));
 
             if (target === 'lista') {
-                btnLista.className = "flex-1 py-2.5 rounded-lg text-center bg-sky-500 text-white transition-all";
+                btnLista.className = "flex-1 py-2 rounded-lg text-center bg-sky-500 text-white transition-all";
                 pLista.classList.remove('hidden');
                 cancelarEdicion();
                 filtrarYAgrupar();
             } else if (target === 'tools') {
-                btnTools.className = "flex-1 py-2.5 rounded-lg text-center bg-sky-500 text-white transition-all";
+                btnTools.className = "flex-1 py-2 rounded-lg text-center bg-sky-500 text-white transition-all";
                 pTools.classList.remove('hidden');
                 cancelarEdicion();
                 filtrarTools();
             } else if (target === 'ramps') {
-                btnRamps.className = "flex-1 py-2.5 rounded-lg text-center bg-sky-500 text-white transition-all";
+                btnRamps.className = "flex-1 py-2 rounded-lg text-center bg-sky-500 text-white transition-all";
                 pRamps.classList.remove('hidden');
                 cancelarEdicion();
+                cargarEstadoChecklist();
+            } else if (target === 'docs') {
+                btnDocs.className = "flex-1 py-2 rounded-lg text-center bg-sky-500 text-white transition-all";
+                pDocs.classList.remove('hidden');
+                cancelarEdicion();
             } else {
-                btnAdmin.className = "flex-1 py-2.5 rounded-lg text-center bg-sky-500 text-white transition-all";
+                btnAdmin.className = "flex-1 py-2 rounded-lg text-center bg-sky-500 text-white transition-all";
                 pAdmin.classList.remove('hidden');
                 evaluarAuthUI();
                 actualizarDesplegableSecciones();
                 renderizarListaGestion();
+            }
+        }
+
+        // FUNCIONES CHECKLIST INTERACTIVA RAMPS
+        function guardarEstadoCheck(checkbox) {
+            estadoChecklist[checkbox.id] = checkbox.checked;
+            localStorage.setItem('svqh_checklist_ramps', JSON.stringify(estadoChecklist));
+        }
+
+        function cargarEstadoChecklist() {
+            Object.keys(estadoChecklist).forEach(id => {
+                const element = document.getElementById(id);
+                if(element) element.checked = estadoChecklist[id];
+            });
+        }
+
+        function resetearChecklist() {
+            if (confirm("¿Quieres desmarcar todas las tareas realizadas en Ramps?")) {
+                estadoChecklist = {};
+                localStorage.removeItem('svqh_checklist_ramps');
+                document.querySelectorAll('#pestana-ramps input[type="checkbox"]').forEach(chk => chk.checked = false);
             }
         }
 
@@ -645,6 +861,7 @@
 
         // Carga Inicial
         filtrarYAgrupar();
+        cargarEstadoChecklist();
     </script>
 </body>
 </html>
