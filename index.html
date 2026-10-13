@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avionics Tech - P/N List & Documentation</title>
+    <title>Avio Tech - P/N List & Documentation</title>
     <!-- Tailwind CSS desde CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
@@ -15,7 +15,7 @@
 </head>
 <body class="p-4 max-w-md mx-auto pb-20 pt-8">
 
-    <!-- AVISO FIJO SOLO LETRAS EN ROJO (AUMENTADO 2 PUNTOS DE TAMAÑO) -->
+    <!-- AVISO FIJO SOLO LETRAS EN ROJO -->
     <div class="fixed top-2 left-3 z-50 pointer-events-none">
         <span class="text-xs font-black tracking-wider text-rose-500 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
             ONLY FOR REFERENCE
@@ -353,22 +353,33 @@
 
     </div>
 
-    <!-- PESTAÑA 4: DOCUMENTS (SELECTOR Y VISOR PROTEGIDO CON CAPA ESCUDO) -->
+    <!-- PESTAÑA 4: DOCUMENTS (SELECTOR CON LOS 17 DOCUMENTOS DE DRIVE) -->
     <div id="pestana-docs" class="hidden space-y-4">
         
-        <!-- Menú Selector de Manuales de la Carpeta Drive -->
+        <!-- Menú Selector de Manuales Completo -->
         <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 space-y-2 shadow-md">
-            <label class="block text-xs font-bold text-sky-400 uppercase tracking-wide">Seleccionar Documento Técnico:</label>
+            <label class="block text-xs font-bold text-sky-400 uppercase tracking-wide">Seleccionar Documento Técnico (17 totales):</label>
             <select id="select-doc" onchange="cargarDocumentoSeleccionado(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:ring-2 focus:ring-sky-500 font-medium">
-                <option value="1V2xR0zXAHx66gupS-5OR9wii1MukuvyV">EWIS G - CÓMO BUSCAR UN CONECTOR</option>
-                <option value="1LGKOrWHK4XtMfJx0blT1F68qGqQtQ-WB">CÓMO BUSCAR UN CONECTOR (Manual AAD/SWPM)</option>
-                <option value="136Sy63TSLSPhAWHXx1a5G0Bg5NJq_AFQ">CÓMO BUSCAR UN CABLE (Manual AMOS/WDM)</option>
-                <option value="1GtnRz4GGOPC6Wx3AFWDn_-gKRnNBlJva">Phase 1 - REV 88 (B737 CFM56 B2 Course)</option>
-                <option value="109V2lA21m9V2YJRDrvRx-atlzC05jKgg">20-61 FRONT RELEASE CONNECTORS</option>
-                <option value="1y7_jDLbmxQTWmPBQZMw9P8TPn5BbTarf">20-63 REAR RELEASE CONNECTORS</option>
+                <option value="112-3148">1. 20-61 FRONT RELEASE CONNECTORS</option>
+                <option value="112-3148">2. 20-63 REAR RELEASE CONNECTORS</option>
+                <option value="112-3148">3. 737NG COMPONENT LOCATOR GUIDE</option>
+                <option value="112-3148">4. 737NG Flight Deck Panels</option>
+                <option value="112-3148">5. AOG PARTS LIST</option>
+                <option value="112-3148">6. APU SCMM_49</option>
+                <option value="112-3148">7. BSI LIGHTING SYSTEM</option>
+                <option value="136Sy63TSLSPhAWHXx1a5G0Bg5NJq_AFQ">8. Buscar un cable (WDM/AMOS)</option>
+                <option value="1LGKOrWHK4XtMfJx0blT1F68qGqQtQ-WB">9. Buscar un conector (SWPM/AAD)</option>
+                <option value="1SfKknSDXAUEzawX_0hoeBc2b-7JVM74e">10. Buscar un splice (Splices/Terminal Lugs)</option>
+                <option value="112-3148">11. CLAMP</option>
+                <option value="112-3148">12. Flight Deck & CB Panels</option>
+                <option value="1GtnRz4GGOPC6Wx3AFWDn_-gKRnNBlJva">13. Phase 1 - REV 88 (B737 CFM56 B2)</option>
+                <option value="1yKSD2_pSGGW7H1kP_21txczNTpk7M6kx">14. Phase 2 - REV 88 (B737 CFM56 B2)</option>
+                <option value="1FeAu9Rt7Av4TXw41eZMDM9GJb1zLRuoX">15. Phase 3 - REV 88 (B737 CFM56 B2)</option>
+                <option value="1oZxh1RTYTqeD-UYqueA2kKG6l19Go6ym">16. Phase 4 - REV 88 (B737 CFM56 B2)</option>
+                <option value="112-3148">17. Rellenar Tech log</option>
             </select>
             <div class="flex items-center justify-between pt-1">
-                <span class="text-[10px] text-slate-400">Visor de la base técnica Avionics</span>
+                <span class="text-[10px] text-slate-400">Base Técnica Avionics Tech</span>
                 <span class="text-[9px] bg-slate-950 text-emerald-400 font-semibold px-2 py-0.5 rounded border border-slate-800">
                     Solo Lectura
                 </span>
@@ -382,10 +393,10 @@
             
             <iframe 
                 id="iframe-doc-viewer"
-                src="https://drive.google.com/file/d/1V2xR0zXAHx66gupS-5OR9wii1MukuvyV/preview" 
+                src="https://drive.google.com/file/d/1LGKOrWHK4XtMfJx0blT1F68qGqQtQ-WB/preview" 
                 class="w-full h-full border-0 relative z-10" 
                 allow="autoplay"
-                title="Visor de Documentación Técnica Avionics">
+                title="Visor de Documentación Técnica Avionics Tech">
             </iframe>
         </div>
 
@@ -529,7 +540,6 @@
             }
         }
 
-        // CARGA DINÁMICA DE DOCUMENTOS DE LA CARPETA DRIVE EN EL VISOR PROTEGIDO
         function cargarDocumentoSeleccionado(fileId) {
             const iframe = document.getElementById('iframe-doc-viewer');
             if(iframe) {
@@ -537,7 +547,6 @@
             }
         }
 
-        // FUNCIONES CHECKLIST INTERACTIVA RAMPS
         function guardarEstadoCheck(checkbox) {
             estadoChecklist[checkbox.id] = checkbox.checked;
             localStorage.setItem('svqh_checklist_ramps', JSON.stringify(estadoChecklist));
