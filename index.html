@@ -353,7 +353,7 @@
 
     </div>
 
-    <!-- PESTAÑA 4: DOCUMENTS (NUEVA PESTAÑA PROTEGIDA) -->
+    <!-- PESTAÑA 4: DOCUMENTS (CON BLOQUEO DE BARRA DE DESCARGA) -->
     <div id="pestana-docs" class="hidden space-y-4">
         
         <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 space-y-2 shadow-md">
@@ -368,11 +368,14 @@
             </p>
         </div>
 
-        <!-- Visor Integrado de Google Drive (Desactivadas Descargas) -->
+        <!-- Visor Integrado con Capa Protectora Anti-Botón de Descarga -->
         <div class="relative w-full rounded-2xl overflow-hidden border border-slate-800 shadow-2xl bg-slate-950 h-[70vh]">
+            <!-- CAPA ESCUDO: Bloquea toques/clics sobre la barra superior de Drive (Flecha/Descarga) -->
+            <div class="absolute top-0 left-0 w-full h-14 z-20 bg-transparent"></div>
+            
             <iframe 
                 src="https://drive.google.com/file/d/1V2xR0zXAHx66gupS-5OR9wii1MukuvyV/preview" 
-                class="w-full h-full border-0" 
+                class="w-full h-full border-0 relative z-10" 
                 allow="autoplay"
                 title="EWIS G - CÓMO BUSCAR UN CONECTOR">
             </iframe>
