@@ -353,30 +353,30 @@
 
     </div>
 
-    <!-- PESTAÑA 4: DOCUMENTS (LISTA CORREGIDA CON IDs EXACTOS Y ORDENADOS) -->
+    <!-- PESTAÑA 4: DOCUMENTS (LISTA CON SYNOPTIC Y TAGS & TOOLS) -->
     <div id="pestana-docs" class="hidden space-y-4">
         
         <!-- Menú Selector de Manuales Completo -->
         <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 space-y-2 shadow-md">
             <label class="block text-xs font-bold text-sky-400 uppercase tracking-wide">Seleccionar Documento Técnico (17 totales):</label>
             <select id="select-doc" onchange="cargarDocumentoSeleccionado(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:ring-2 focus:ring-sky-500 font-medium">
-                <option value="1FL2GrFNo6Nayxkg80e4tW1XFqgzDldlO">1. 20-61 FRONT RELEASE CONNECTORS</option>
-                <option value="1SfKknSDXAUEzawX_0hoeBc2b-7JVM74e">2. 20-63 REAR RELEASE CONNECTORS</option>
-                <option value="1adDKrCHrUkUIaukFjtEb-Y_cAQbaVV0L">3. 737NG COMPONENT LOCATOR GUIDE</option>
-                <option value="10lMqgWVcna_bWoToLCjfEgM_BFlvNPqB">4. 737NG Flight Deck Panels</option>
-                <option value="1ATcDP2bmVb-FyoMRpGKirJN-4sylB5BB">5. AOG PARTS LIST</option>
-                <option value="1YGZ0bcZLz9s97gmVz4Um-hFacdmU-ZV5">6. APU SCMM_49</option>
-                <option value="1uOID8H4gmVmeWIEOfcf3MqhTZam9bXjT">7. BSI LIGHTING SYSTEM</option>
-                <option value="136Sy63TSLSPhAWHXx1a5G0Bg5NJq_AFQ">8. Buscar un cable (WDM/AMOS)</option>
-                <option value="1LGKOrWHK4XtMfJx0blT1F68qGqQtQ-WB">9. Buscar un conector (SWPM/AAD)</option>
-                <option value="1mYzFByujXZWq0JvgF6ILP0B8D2Ap45pj">10. Buscar un splice (Splices/Terminal Lugs)</option>
-                <option value="1d0vSLLoPVselONZSwlKyAuXFiW3cwJvS">11. CLAMP</option>
-                <option value="17Z8lUXNcySm2L8DImPs9xw8qnus6i0aK">12. Flight Deck & CB Panels</option>
-                <option value="1GtnRz4GGOPC6Wx3AFWDn_-gKRnNBlJva">13. Phase 1 - REV 88 (B737 CFM56 B2)</option>
-                <option value="1yKSD2_pSGGW7H1kP_21txczNTpk7M6kx">14. Phase 2 - REV 88 (B737 CFM56 B2)</option>
-                <option value="1FeAu9Rt7Av4TXw41eZMDM9GJb1zLRuoX">15. Phase 3 - REV 88 (B737 CFM56 B2)</option>
-                <option value="1oZxh1RTYTqeD-UYqueA2kKG6l19Go6ym">16. Phase 4 - REV 88 (B737 CFM56 B2)</option>
-                <option value="1tXtye6542FvjdAF1cBDUROhADGLlAsI5">17. Synoptic Diagrams (November 2014)</option>
+                <option value="1adDKrCHrUkUIaukFjtEb-Y_cAQbaVV0L">1. 737NG COMPONENT LOCATOR GUIDE</option>
+                <option value="10lMqgWVcna_bWoToLCjfEgM_BFlvNPqB">2. 737NG Flight Deck Panels</option>
+                <option value="1ATcDP2bmVb-FyoMRpGKirJN-4sylB5BB">3. AOG PARTS LIST</option>
+                <option value="1YGZ0bcZLz9s97gmVz4Um-hFacdmU-ZV5">4. APU SCMM_49</option>
+                <option value="1uOID8H4gmVmeWIEOfcf3MqhTZam9bXjT">5. BSI LIGHTING SYSTEM</option>
+                <option value="136Sy63TSLSPhAWHXx1a5G0Bg5NJq_AFQ">6. Buscar un cable (WDM/AMOS)</option>
+                <option value="1LGKOrWHK4XtMfJx0blT1F68qGqQtQ-WB">7. Buscar un conector (SWPM/AAD)</option>
+                <option value="1SfKknSDXAUEzawX_0hoeBc2b-7JVM74e">8. Buscar un splice (Splices/Terminal Lugs)</option>
+                <option value="1d0vSLLoPVselONZSwlKyAuXFiW3cwJvS">9. CLAMP</option>
+                <option value="17Z8lUXNcySm2L8DImPs9xw8qnus6i0aK">10. Flight Deck & CB Panels</option>
+                <option value="1GtnRz4GGOPC6Wx3AFWDn_-gKRnNBlJva">11. Phase 1 - REV 88 (B737 CFM56 B2)</option>
+                <option value="1yKSD2_pSGGW7H1kP_21txczNTpk7M6kx">12. Phase 2 - REV 88 (B737 CFM56 B2)</option>
+                <option value="1FeAu9Rt7Av4TXw41eZMDM9GJb1zLRuoX">13. Phase 3 - REV 88 (B737 CFM56 B2)</option>
+                <option value="1oZxh1RTYTqeD-UYqueA2kKG6l19Go6ym">14. Phase 4 - REV 88 (B737 CFM56 B2)</option>
+                <option value="1mYzFByujXZWq0JvgF6ILP0B8D2Ap45pj">15. Rellenar Tech log</option>
+                <option value="1tXtye6542FvjdAF1cBDUROhADGLlAsI5">16. Synoptic Diagrams (November 2014)</option>
+                <option value="1FL2GrFNo6Nayxkg80e4tW1XFqgzDldlO">17. TAGS & TOOLS</option>
             </select>
             <div class="flex items-center justify-between pt-1">
                 <span class="text-[10px] text-slate-400">Base Técnica AvioTech</span>
@@ -393,7 +393,7 @@
             
             <iframe 
                 id="iframe-doc-viewer"
-                src="https://drive.google.com/file/d/1FL2GrFNo6Nayxkg80e4tW1XFqgzDldlO/preview" 
+                src="https://drive.google.com/file/d/1adDKrCHrUkUIaukFjtEb-Y_cAQbaVV0L/preview" 
                 class="w-full h-full border-0 relative z-10" 
                 allow="autoplay"
                 title="Visor de Documentación Técnica AvioTech">
