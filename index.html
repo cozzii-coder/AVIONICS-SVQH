@@ -353,7 +353,7 @@
 
     </div>
 
-    <!-- PESTAÑA 4: DOCUMENTS (TODOS LOS 17 CON SUS URLS REALES) -->
+    <!-- PESTAÑA 4: DOCUMENTS (LISTA CORREGIDA CON IDs ÚNICOS) -->
     <div id="pestana-docs" class="hidden space-y-4">
         
         <!-- Menú Selector de Manuales Completo -->
@@ -361,7 +361,7 @@
             <label class="block text-xs font-bold text-sky-400 uppercase tracking-wide">Seleccionar Documento Técnico (17 totales):</label>
             <select id="select-doc" onchange="cargarDocumentoSeleccionado(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:ring-2 focus:ring-sky-500 font-medium">
                 <option value="1FL2GrFNo6Nayxkg80e4tW1XFqgzDldlO">1. 20-61 FRONT RELEASE CONNECTORS</option>
-                <option value="1FL2GrFNo6Nayxkg80e4tW1XFqgzDldlO">2. 20-63 REAR RELEASE CONNECTORS</option>
+                <option value="109V2lA21m9V2YJRDrvRx-atlzC05jKgg">2. 20-63 REAR RELEASE CONNECTORS</option>
                 <option value="1adDKrCHrUkUIaukFjtEb-Y_cAQbaVV0L">3. 737NG COMPONENT LOCATOR GUIDE</option>
                 <option value="10lMqgWVcna_bWoToLCjfEgM_BFlvNPqB">4. 737NG Flight Deck Panels</option>
                 <option value="1ATcDP2bmVb-FyoMRpGKirJN-4sylB5BB">5. AOG PARTS LIST</option>
@@ -466,7 +466,6 @@
         let seccionesCreadasAdhoc = JSON.parse(localStorage.getItem('svqh_secciones_adhoc')) || [];
         let estadoChecklist = JSON.parse(localStorage.getItem('svqh_checklist_ramps')) || {};
 
-        // LISTA DE HERRAMIENTAS LIMPIA (SIN 'TOOLS SHEET')
         const LISTA_HERRAMIENTAS = [
             { articulo: "QUICKSET", pn: "QUICKSET" },
             { articulo: "FLUKE117", pn: "FLUKE117" },
