@@ -18,9 +18,12 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: 9999px; }
         .toast-active { transform: translateY(0); opacity: 1; }
+        /* Capa anti-robos / anti-descargas para iframes de Drive */
+        .secure-container { position: relative; }
+        .secure-overlay { position: absolute; top: 0; right: 0; width: 140px; height: 60px; z-index: 20; background: transparent; }
     </style>
 </head>
-<body class="p-4 max-w-md mx-auto pb-24 pt-8">
+<body class="p-4 max-w-md mx-auto pb-24 pt-8" oncontextmenu="return false;">
 
     <!-- AVISO FIJO SOLO LETRAS EN ROJO Y BOTÓN MODO SOL -->
     <div class="fixed top-2 left-3 right-3 z-50 pointer-events-none flex justify-between items-center">
@@ -113,7 +116,7 @@
         <div id="contenedor-favs" class="space-y-3"></div>
     </div>
 
-    <!-- PESTAÑA 2: TOOLS -->
+    <!-- PESTAÑA 2: TOOLS (SIN S/N NI CALIBRACIÓN) -->
     <div id="pestana-tools" class="hidden space-y-3">
         <div class="relative">
             <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-500">🔍</span>
@@ -121,13 +124,13 @@
                    class="w-full bg-slate-900/90 border border-slate-800 text-white placeholder-slate-500 rounded-2xl pl-11 pr-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/50 shadow-inner">
         </div>
         <div class="flex justify-between items-center px-1">
-            <span class="text-[11px] text-slate-400 font-medium">Equipos de apoyo</span>
+            <span class="text-[11px] text-slate-400 font-medium">Equipos de apoyo y útiles</span>
             <span class="text-[11px] text-slate-400 font-medium"><span id="contador-tools" class="text-sky-400 font-bold">0</span> herramientas</span>
         </div>
         <div id="contenedor-tools" class="space-y-2.5"></div>
     </div>
 
-    <!-- PESTAÑA 3: RAMPS -->
+    <!-- PESTAÑA 3: RAMPS (CON LOCALSTORAGE Y RESET) -->
     <div id="pestana-ramps" class="hidden space-y-6">
         <div class="flex justify-between items-center border-b border-slate-800 pb-2">
             <span class="text-xs text-slate-400 font-medium">Marca las tareas realizadas:</span>
@@ -136,6 +139,7 @@
             </button>
         </div>
 
+        <!-- RAMPS NG -->
         <div class="space-y-4">
             <h2 class="text-sm font-black text-amber-400 tracking-wider border-b border-amber-500/20 pb-1.5">✈️ RAMPS NG</h2>
             <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
@@ -143,22 +147,36 @@
                 <div class="text-xs text-slate-300 space-y-2.5">
                     <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r1-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PAGE 2/ ITEM 4.</span> 24-31-11-710-801 MAIN BATTERY DISCHARGE CHECK.</span></label>
                     <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r1-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG10/ ITEM 22.</span> 25-RYR-19 CHECK ALL EMERGENCY LIGHTS.</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r1-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG13/ ITEM 25.</span> 52-RYR-03 FLIGHT DECK DOOR SYSTEM OPERATIONAL CHECK.</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r1-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG13/ ITEM 26.</span> END OF RAMP1/3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span></label>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
+                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 2 CHECK – RA801</h3>
+                <div class="text-xs text-slate-300 space-y-2.5">
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r2-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 1.</span> OPERATIONAL CHECK OF CVR IAW BTC 23-040-00-01 Ref: AMM: 23-71-00-710</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r2-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG2, PG3/ ITEM 2.</span> 23-100-00-01 OPERATIONALLY CHECK THE ELT.</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r2-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG5/ ITEM 9.</span> 33-010-00-01 OPERATIONAL CHECK OF EMERGENCY LIGHTS (RAMP 1).</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r2-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG6/ ITEM 10.</span> 33-RYR-01 OPERATIONAL CHECK PSU / NO SMOKING SIGN LIGHTS.</span></label>
                 </div>
             </div>
         </div>
 
+        <!-- RAMPS MAX -->
         <div class="space-y-4 pt-4 border-t border-slate-800">
             <h2 class="text-sm font-black text-emerald-400 tracking-wider border-b border-emerald-500/20 pb-1.5">🚀 RAMPS MAX</h2>
             <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 1 CHECK – RA800</h3>
                 <div class="text-xs text-slate-300 space-y-2.5">
                     <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r1-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PAGE 2/ ITEM 4.</span> 24-31-11-710-801 MAIN BATTERY DISCHARGE CHECK.</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r1-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG10/ ITEM 22.</span> 25-RYR-19 CHECK ALL EMERGENCY LIGHTS.</span></label>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- PESTAÑA 4: DOCUMENTS -->
+    <!-- PESTAÑA 4: DOCUMENTS (CON CAPA DE SEGURIDAD ANTI-ROBO/DESCARGA) -->
     <div id="pestana-docs" class="hidden space-y-4">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 space-y-2 shadow-lg">
             <label class="block text-xs font-bold text-sky-400 uppercase tracking-wide">Seleccionar Documento Técnico:</label>
@@ -174,12 +192,13 @@
                 <option value="1SfKknSDXAUEzawX_0hoeBc2b-7JVM74e">8. Buscar un splice (Splices/Terminal Lugs)</option>
                 <option value="1d0vSLLoPVselONZSwlKyAuXFiW3cwJvS">9. CLAMP</option>
                 <option value="17Z8lUXNcySm2L8DImPs9xw8qnus6i0aK">10. Flight Deck & CB Panels</option>
-                <option value="1mYzFByujXZWq0JvgF6ILP0B8D2Ap45pj">15. Rellenar Tech log</option>
-                <option value="1FL2GrFNo6Nayxkg80e4tW1XFqgzDldlO">17. TAGS & TOOLS</option>
-                <option value="1yncOpHr8G60YE1aRBH0LbeEiAnb0Mf01">18. TIE STRAPS</option>
+                <option value="1mYzFByujXZWq0JvgF6ILP0B8D2Ap45pj">11. Rellenar Tech log</option>
+                <option value="1FL2GrFNo6Nayxkg80e4tW1XFqgzDldlO">12. TAGS & TOOLS</option>
+                <option value="1yncOpHr8G60YE1aRBH0LbeEiAnb0Mf01">13. TIE STRAPS</option>
             </select>
         </div>
-        <div class="relative w-full rounded-2xl overflow-hidden border border-slate-800 shadow-2xl bg-slate-950 h-[65vh]">
+        <div class="relative w-full rounded-2xl overflow-hidden border border-slate-800 shadow-2xl bg-slate-950 h-[65vh] secure-container">
+            <div class="secure-overlay" title="Protección de documento"></div>
             <div id="doc-placeholder" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center text-slate-400 space-y-2 z-5 bg-slate-950">
                 <span class="text-3xl">📂</span>
                 <p class="text-xs font-medium">Selecciona un documento para visualizar.</p>
@@ -193,7 +212,7 @@
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
             <div class="border-b border-slate-800 pb-2">
                 <h3 class="font-bold text-amber-400 text-sm">💬 Buzón de Sugerencias y Erratas</h3>
-                <p class="text-[11px] text-slate-400 mt-1">Comunica erratas al administrador.</p>
+                <p class="text-[11px] text-slate-400 mt-1">Comunica erratas o sugerencias al administrador.</p>
             </div>
             <div class="space-y-3">
                 <select id="feed-tipo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
@@ -211,8 +230,8 @@
     <div id="pestana-admin" class="hidden space-y-4">
         <div id="bloqueo-auth" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center space-y-4 shadow-xl">
             <div class="text-4xl">🔒</div>
-            <h3 class="text-base font-bold text-white">Admin</h3>
-            <input type="password" id="input-password" placeholder="Contraseña (1234)" class="w-full bg-slate-950 border border-slate-800 text-center rounded-xl px-4 py-2.5 text-sm">
+            <h3 class="text-base font-bold text-white">Panel de Administración</h3>
+            <input type="password" id="input-password" placeholder="Contraseña (1234)" class="w-full bg-slate-950 border border-slate-800 text-center rounded-xl px-4 py-2.5 text-sm text-white">
             <button onclick="verificarPassword()" class="w-full bg-sky-500 font-bold py-2.5 rounded-xl text-sm">Acceder</button>
         </div>
         <div id="formulario-anadir" class="hidden space-y-4">
@@ -220,154 +239,16 @@
                 <h3 class="font-bold text-amber-400 text-xs">📥 Buzón Recibido</h3>
                 <div id="lista-feedback-admin" class="space-y-2 text-xs"></div>
             </div>
-            <button onclick="cerrarSesion()" class="text-xs text-rose-400 underline">Salir</button>
+            <button onclick="cerrarSesion()" class="text-xs text-rose-400 underline">Cerrar Sesión</button>
         </div>
     </div>
 
-    <!-- Script Principal con los 122 consumibles del Excel -->
+    <!-- Incluir los datos -->
+    <script src="data.js"></script>
+
+    <!-- Script Principal de la aplicación -->
     <script>
-        const articulosBaseOriginales = [
-            { articulo: "O-RING 1", pn: "MS9385-07", seccion: "AIR PACK OVHT SENSOR" },
-            { articulo: "O-RING 2", pn: "S9028A905", seccion: "AIR PACK OVHT SENSOR" },
-            { articulo: "MOLYKOTE4", pn: "M0LYKOTE44", seccion: "AIR PACK OVHT SENSOR" },
-            { articulo: "KRYTOX P", pn: "GPL206", seccion: "AIR PACK OVHT SENSOR" },
-            { articulo: "NEVER SEEZ COMPOUND", pn: "NSBT8N", seccion: "AIR PACK OVHT SENSOR" },
-            { articulo: "PACKING", pn: "AS3582-028", seccion: "ATC ANTENNAS" },
-            { articulo: "SEALANT", pn: "BMS5-95 / PS870B1-2", seccion: "ATC ANTENNAS" },
-            { articulo: "COMPOUND", pn: "DC4", seccion: "ATC ANTENNAS" },
-            { articulo: "EMERGENCY LIGHT SIGNS SMALL LAMPS", pn: "3071BPEGPL", seccion: "CABIN LIGHTS" },
-            { articulo: "EMERGENCY LIGHTS EXTERIOR LAMPS", pn: "767", seccion: "CABIN LIGHTS" },
-            { articulo: "BELT AND NO SMOKE LIGHT", pn: "387", seccion: "CABIN LIGHTS" },
-            { articulo: "READING LIGHT", pn: "9204", seccion: "CABIN LIGHTS" },
-            { articulo: "FUEL STATION LIGHT", pn: "GE1495", seccion: "CABIN LIGHTS" },
-            { articulo: "WORK LIGHT COVER", pn: "239052-13", seccion: "CABIN LIGHTS" },
-            { articulo: "FIRE TEST LIGHT COVER GREEN", pn: "682-1001-001", seccion: "CABIN LIGHTS" },
-            { articulo: "LENS COVER FOR GALLEY LIGHT", pn: "239004-19", seccion: "CABIN LIGHTS" },
-            { articulo: "LAMP BULB FOR EEC ALT SWITCH", pn: "MS24515-685AS15", seccion: "CABIN LIGHTS" },
-            { articulo: "ASSY LOWER EMERG SIGN", pn: "70-0366-11", seccion: "CABIN LIGHTS" },
-            { articulo: "GALLEY BULB", pn: "OLN115-18K", seccion: "CABIN LIGHTS" },
-            { articulo: "BASE WHITE EMERG SIGNS", pn: "207330", seccion: "CABIN LIGHTS" },
-            { articulo: "EMERG SIGNS LENS (EXIT)", pn: "207377-1001", seccion: "CABIN LIGHTS" },
-            { articulo: "FMC CDU SHIM", pn: "137300-78", seccion: "CDU" },
-            { articulo: "FMC CDU SCREW", pn: "117357-21", seccion: "CDU" },
-            { articulo: "BATTERIES", pn: "ADD71701-100", seccion: "EMERG BATTERIES" },
-            { articulo: "FUSE", pn: "B215-06", seccion: "EMERG BATTERIES" },
-            { articulo: "BATTERIES", pn: "P4-01-0021", seccion: "FLASHLIGHT" },
-            { articulo: "SHIELD", pn: "A1-18-1030", seccion: "FLASHLIGHT" },
-            { articulo: "MEGAPHONE SET SCREW KIT", pn: "9416", seccion: "MEGAPHONE" },
-            { articulo: "FLOORPATH COVER (BLUE)", pn: "5180453792", seccion: "FLOORPATH" },
-            { articulo: "FLOORPATH ENDCAP 1CM", pn: "417N5212-1CM", seccion: "FLOORPATH" },
-            { articulo: "FLOORPATH BULB", pn: "3071BPEGPL", seccion: "FLOORPATH" },
-            { articulo: "FLOORPATH LIGHT ASSY", pn: "81000-22608ATS", seccion: "FLOORPATH" },
-            { articulo: "FLOORPATH RECEPTACLE - PIN", pn: "60983-3", seccion: "FLOORPATH" },
-            { articulo: "FLOORPATH LIGHT", pn: "60888-4", seccion: "FLOORPATH" },
-            { articulo: "CRIMP TOOL PIN", pn: "10131-4", seccion: "FLOORPATH" },
-            { articulo: "COVER TRACK (BLACK)", pn: "ACIFL00121-02", seccion: "FLOORPATH" },
-            { articulo: "RED LENS", pn: "S417N509-6", seccion: "FLOORPATH" },
-            { articulo: "WHITE LENS", pn: "S417N509-2", seccion: "FLOORPATH" },
-            { articulo: "SOCKETS EMERG LIGHTS", pn: "60988-3", seccion: "FLOORPATH" },
-            { articulo: "SAFTGLO TAPE", pn: "POLYKEN108FR0-5", seccion: "FLOORPATH" },
-            { articulo: "LOGO LIGHT", pn: "HLX64621", seccion: "LOGO LIGHTS" },
-            { articulo: "SCREWS LARGE", pn: "BACB30ZE4-8", seccion: "LOGO LIGHTS" },
-            { articulo: "SCREWS SMALL", pn: "BACB30XD3K8", seccion: "LOGO LIGHTS" },
-            { articulo: "SPRING A", pn: "81116-37601", seccion: "LOGO LIGHTS" },
-            { articulo: "SPRING B", pn: "81115-37601", seccion: "LOGO LIGHTS" },
-            { articulo: "SOCKET", pn: "81004-37602", seccion: "LOGO LIGHTS" },
-            { articulo: "RED SEALANT", pn: "PR1428B1-2", seccion: "LRRA" },
-            { articulo: "BLACK SEALANT", pn: "BMS5-95 / PS870B1-2", seccion: "LRRA" },
-            { articulo: "GASKET", pn: "AG723000-40", seccion: "LRRA" },
-            { articulo: "GREEN SEALANT", pn: "HT3326-5-50", seccion: "LRRA" },
-            { articulo: "ANTENNA", pn: "S67-2002-28", seccion: "LRRA" },
-            { articulo: "MAIN & AUX BATTERY SCREWS", pn: "BACB30NM3K4", seccion: "MAIN & AUX BATTERIES" },
-            { articulo: "BATTERY", pn: "024147-000", seccion: "MAIN & AUX BATTERIES" },
-            { articulo: "CONNECTOR", pn: "BACC45FT12-12P", seccion: "MAIN & AUX BATTERIES" },
-            { articulo: "FUEL PANEL E&E SCREW", pn: "NAS514P1032-16", seccion: "PANELS SCREWS" },
-            { articulo: "E&E DOOR SWITCH PANEL SCREW", pn: "NAS514P832-12", seccion: "PANELS SCREWS" },
-            { articulo: "NUTPLATE FUEL PANEL E&E", pn: "BACN10ZR3CD", seccion: "PANELS SCREWS" },
-            { articulo: "RAMPS COCKPIT CAP (ROSCA)", pn: "15PA90-6W", seccion: "RAMPS" },
-            { articulo: "RAMPS COCKPIT CAP (FINO)", pn: "69-44578-2", seccion: "RAMPS" },
-            { articulo: "CABIN TEMP SENSOR FILTER (SMALL)", pn: "412A1605-41", seccion: "RAMPS" },
-            { articulo: "FLT COMP TEMP SENSOR FILTER (BIG)", pn: "213A6404-1", seccion: "RAMPS" },
-            { articulo: "INOP STICKER", pn: "INT1072", seccion: "RAMPS" },
-            { articulo: "GRILLE (FILTRO CABINA)", pn: "412N1122-3A", seccion: "RAMPS" },
-            { articulo: "BULB GALLEY", pn: "MSC115", seccion: "RAMPS" },
-            { articulo: "BEZEL", pn: "11-6557-7GATS", seccion: "RAMPS" },
-            { articulo: "COVER CALL LIGHT FOR CABIN CREW", pn: "25-1734-15", seccion: "RAMPS" },
-            { articulo: "SKEW SENSOR LACING TAPE", pn: "BMS13-54TY3CL1FC", seccion: "SKEW SENSOR" },
-            { articulo: "SKEW SENSOR TAPE", pn: "SCOTH70", seccion: "SKEW SENSOR" },
-            { articulo: "AV25", pn: "AV25", seccion: "SKEW SENSOR" },
-            { articulo: "D50", pn: "D5026NS", seccion: "SKEW SENSOR" },
-            { articulo: "NUT SCREWS HARNESS EGT", pn: "AS3486-10", seccion: "ENGINES" },
-            { articulo: "MOX TAPE", pn: "M0XNESS620B1", seccion: "ENGINES" },
-            { articulo: "TAPE HIGH TEMP ALUMINIUM FOIL", pn: "3M363", seccion: "ENGINES" },
-            { articulo: "TAPE GLASS CLOTH HIGH TEMP", pn: "3M361", seccion: "ENGINES" },
-            { articulo: "LOCKWIRE FOR HARNESS REPAIR", pn: "MS20995C15", seccion: "ENGINES" },
-            { articulo: "CLAMP BANDS CONNECTOR", pn: "600-052", seccion: "ENGINES" },
-            { articulo: "INSERT/EXTRACTOR YELLOW / WHITE", pn: "M81969-14-04", seccion: "INSERTS/EXTRACTORS" },
-            { articulo: "INSERT/EXTRACTOR BLUE / WHITE", pn: "M81969-14-03", seccion: "INSERTS/EXTRACTORS" },
-            { articulo: "INSERT/EXTRACTOR RED / WHITE", pn: "M81969-14-02", seccion: "INSERTS/EXTRACTORS" },
-            { articulo: "INSERT/EXTRACTOR RED / WHITE (VAR)", pn: "M81969-14-11", seccion: "INSERTS/EXTRACTORS" },
-            { articulo: "INSERT/EXTRACTOR GREEN / WHITE", pn: "M81969-14-01", seccion: "INSERTS/EXTRACTORS" },
-            { articulo: "INSERT/EXTRACTOR VERDE / ROJO", pn: "CTA1160", seccion: "INSERTS/EXTRACTORS" },
-            { articulo: "INSERT/EXTRACTOR GREEN / WHITE METAL", pn: "M81969-1-01", seccion: "INSERTS/EXTRACTORS" },
-            { articulo: "INSERT/EXTRACTOR RED / WHITE METAL", pn: "M81969-1-02", seccion: "INSERTS/EXTRACTORS" },
-            { articulo: "INSERT/EXTRACTOR BLUE / WHITE METAL", pn: "M81969-1-03", seccion: "INSERTS/EXTRACTORS" },
-            { articulo: "ELEVATOR PLUG", pn: "MS21913V6P", seccion: "OTHERS" },
-            { articulo: "LOCKWIRE FLIGHT DECK SWITCHES", pn: "MS20995CY15", seccion: "OTHERS" },
-            { articulo: "RODFILLER CLAMPS", pn: "69B47961-2", seccion: "OTHERS" },
-            { articulo: "ANTISTATIC BAGS", pn: "ESDBAG62X48", seccion: "OTHERS" },
-            { articulo: "STATIC DISCHARGER LARGE", pn: "740001", seccion: "OTHERS" },
-            { articulo: "STATIC DISCHARGER SHORT", pn: "740007", seccion: "OTHERS" },
-            { articulo: "SPLICE MOISTURE RED", pn: "D436-36", seccion: "SPLICES" },
-            { articulo: "SPLICE MOISTURE BLUE", pn: "D436-37", seccion: "SPLICES" },
-            { articulo: "SPLICE MOISTURE YELLOW", pn: "D436-38", seccion: "SPLICES" },
-            { articulo: "END CAP CRIMP TYPE (RED)", pn: "324485", seccion: "SPLICES" },
-            { articulo: "TERMINAL LUG LANDING LIGHT", pn: "323750", seccion: "SPLICES" },
-            { articulo: "TERMINAL SPADE TYPE", pn: "3-350816-2", seccion: "SPLICES" },
-            { articulo: "TEFLON TAPE", pn: "P421", seccion: "TAPES TO REPAIR HARNESS" },
-            { articulo: "HEATSHRINK 1/4 YELLOW", pn: "RNF100-1-4-4", seccion: "HEATSHRINKS" },
-            { articulo: "SMALL SCREW RACK CONNECTOR", pn: "BACS12HN06-6", seccion: "RACKS/ RECEPTABLES AND OTHER SCREWS" },
-            { articulo: "STRAP - CABLE TIE (BACS38K6)", pn: "BACS38K6", seccion: "STRAP - CABLE TIE (Bridas)" },
-            { articulo: "STRAP - CABLE TIE (BACS38K3)", pn: "BACS38K3", seccion: "STRAP - CABLE TIE (Bridas)" },
-            { articulo: "STRAP - CABLE TIE (BACS38K2)", pn: "BACS38K2", seccion: "STRAP - CABLE TIE (Bridas)" },
-            { articulo: "STRAP - CABLE TIE (BACS38K7)", pn: "BACS38K7", seccion: "STRAP - CABLE TIE (Bridas)" },
-            { articulo: "STRAP - CABLE TIE (BACS38K10)", pn: "BACS38K10", seccion: "STRAP - CABLE TIE (Bridas)" },
-            { articulo: "STRAP - CABLE TIE (BACS38K1)", pn: "BACS38K1", seccion: "STRAP - CABLE TIE (Bridas)" },
-            { articulo: "STRAP - CABLE TIE (BACS38K4)", pn: "BACS38K4", seccion: "STRAP - CABLE TIE (Bridas)" },
-            { articulo: "STRAP - CABLE TIE (BACS38K9)", pn: "BACS38K9", seccion: "STRAP - CABLE TIE (Bridas)" },
-            { articulo: "STRAP - CABLE TIE (BACS38K5)", pn: "BACS38K5", seccion: "STRAP - CABLE TIE (Bridas)" },
-            { articulo: "MCP SCREW (BLACK)", pn: "BACS12CK3H7", seccion: "COCKPIT" },
-            { articulo: "MCP WASHER (BLACK)", pn: "NAS1149C0332B", seccion: "COCKPIT" },
-            { articulo: "CAP PSU CONNECTORS", pn: "M85049/138-47A", seccion: "CABIN PARTS" },
-            { articulo: "AIRSTAIRS LAMPS", pn: "1864", seccion: "AIRSTAIRS" }
-        ];
-
-        const LISTA_HERRAMIENTAS = [
-            { articulo: "QUICKSET", pn: "QUICKSET" },
-            { articulo: "FLUKE117", pn: "FLUKE117" },
-            { articulo: "STAB TRIM CUTOUT TESTER", pn: "C27007-46" },
-            { articulo: "ELT ADT406AP 50 OHM DUMMY LOAD KIT", pn: "112-3148" },
-            { articulo: "PROBE OVHT AND TESTER", pn: "BH17336A // BH16440-40" },
-            { articulo: "TEMPCAL TESTER", pn: "H394-230" },
-            { articulo: "BONDING METER", pn: "M1" },
-            { articulo: "HAND HELD MULTIPURPOSE I/FACE HHMPI", pn: "FDS400-301" },
-            { articulo: "FIREX TEST CARGO", pn: "C26006-1" },
-            { articulo: "TEST SET / PITOT STATIC", pn: "MPS45" },
-            { articulo: "GROUND FAULT PROTECTION SYS TEST SET", pn: "F72917-19" },
-            { articulo: "PDL LAPTOP WITH TECHSAT PDL MKII", pn: "TECHSATPDLLAPT0P" },
-            { articulo: "FLUKE324 (CLAMP)", pn: "FLUKE324" },
-            { articulo: "CAJA RADIOALTIMETRO", pn: "C34005-16" },
-            { articulo: "RADIO ALTIMETER TEST SET", pn: "DRA707" },
-            { articulo: "TRAMMEL BAR", pn: "F80055-1" },
-            { articulo: "RUDDER PCU TEST SET", pn: "C29002-17" },
-            { articulo: "HIRFS", pn: "906-10247-3 OR XLR-9703-01" },
-            { articulo: "WTB FEEDTHROUGH CONNECTORS ADAPTER (HIRFS)", pn: "WTBADAPTER" },
-            { articulo: "TOOL CONNECTORS FOR BACKSHELLS", pn: "CMS837" },
-            { articulo: "KNIPEX CUTTING SAFTGLO", pn: "9435215" },
-            { articulo: "FIRE EXTINGUISHER BOTTLE SQUIB TESTER", pn: "F80229-69" }
-        ];
-
-        let listaArticulos = JSON.parse(localStorage.getItem('svqh_items_v9')) || articulosBaseOriginales;
+        let listaArticulos = JSON.parse(localStorage.getItem('svqh_items_v10')) || ARTICULOS_INICIALES;
         let favoritos = JSON.parse(localStorage.getItem('svqh_favoritos')) || [];
         let historialPns = JSON.parse(localStorage.getItem('svqh_historial_pns')) || [];
         let feedbackList = JSON.parse(localStorage.getItem('svqh_feedback')) || [];
@@ -387,6 +268,8 @@
 
             if (target === 'lista') { filtrarYAgrupar(); renderizarHistorialPns(); }
             if (target === 'tools') filtrarTools();
+            if (target === 'favs') renderizarFavoritos();
+            if (target === 'ramps') cargarEstadoChecks();
             if (target === 'admin') { evaluarAuthUI(); renderizarFeedbackAdmin(); }
         }
 
@@ -420,6 +303,38 @@
             `).join('');
         }
 
+        function toggleFavorito(articuloPn) {
+            const index = favoritos.indexOf(articuloPn);
+            if (index > -1) { favoritos.splice(index, 1); } else { favoritos.push(articuloPn); }
+            localStorage.setItem('svqh_favoritos', JSON.stringify(favoritos));
+            filtrarYAgrupar();
+            renderizarFavoritos();
+        }
+
+        function renderizarFavoritos() {
+            const contenedor = document.getElementById('contenedor-favs');
+            const contador = document.getElementById('contador-favs');
+            const favsItems = listaArticulos.filter(i => favoritos.includes(i.pn));
+            contador.innerText = `${favsItems.length} items`;
+            if (favsItems.length === 0) {
+                contenedor.innerHTML = `<div class="text-center text-xs text-slate-500 py-12">No hay favoritos guardados todavía.</div>`;
+                return;
+            }
+            contenedor.innerHTML = favsItems.map(i => `
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex justify-between items-center text-xs">
+                    <div>
+                        <span class="font-bold text-white uppercase block">${i.articulo}</span>
+                        <span class="text-[10px] text-sky-400">${i.seccion}</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <code class="text-amber-400 font-mono">${i.pn}</code>
+                        <button onclick="copiarAlPortapapeles('${i.pn}')" class="bg-sky-500/15 text-sky-400 px-2.5 py-1 rounded-xl font-bold">Copiar</button>
+                        <button onclick="toggleFavorito('${i.pn}')" class="text-amber-400 text-sm">⭐</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
         function enviarFeedback() {
             const tipo = document.getElementById('feed-tipo').value;
             const elemento = document.getElementById('feed-elemento').value.trim();
@@ -427,14 +342,22 @@
             if (!elemento || !mensaje) { alert("Rellena todos los campos"); return; }
             feedbackList.unshift({ tipo, elemento, mensaje, fecha: new Date().toLocaleString() });
             localStorage.setItem('svqh_feedback', JSON.stringify(feedbackList));
-            alert("Enviado con éxito");
+            alert("¡Enviado con éxito al administrador!");
+            document.getElementById('feed-elemento').value = '';
+            document.getElementById('feed-mensaje').value = '';
             cambiarPestana('lista');
         }
 
         function renderizarFeedbackAdmin() {
             const contenedor = document.getElementById('lista-feedback-admin');
             if(!contenedor) return;
-            contenedor.innerHTML = feedbackList.length === 0 ? '<div class="text-slate-500">No hay avisos.</div>' : feedbackList.map(fb => `<div class="bg-slate-950 p-2 rounded">${fb.tipo}: ${fb.elemento}</div>`).join('');
+            contenedor.innerHTML = feedbackList.length === 0 ? '<div class="text-slate-500">No hay avisos pendientes.</div>' : feedbackList.map(fb => `
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1">
+                    <div class="flex justify-between text-[10px] text-slate-400"><span>${fb.fecha}</span><span class="text-amber-400 font-bold">${fb.tipo}</span></div>
+                    <div class="font-bold text-white">${fb.elemento}</div>
+                    <div class="text-slate-300 text-[11px]">${fb.mensaje}</div>
+                </div>
+            `).join('');
         }
 
         function copiarAlPortapapeles(texto) {
@@ -484,7 +407,22 @@
                         <span class="text-slate-400 text-xs">${estaAbierto ? '▲' : '▼'}</span>
                     </button>
                     <div class="p-3 space-y-2 ${estaAbierto ? '' : 'hidden'}">
-                        ${items.map(i => `<div class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex justify-between items-center text-xs"><span class="font-bold text-white uppercase">${i.articulo}</span><div class="flex items-center space-x-2"><code class="text-amber-400 font-mono">${i.pn}</code><button onclick="copiarAlPortapapeles('${i.pn}')" class="bg-sky-500/15 text-sky-400 px-2.5 py-1 rounded-xl font-bold">Copiar</button></div></div>`).join('')}
+                        ${items.map(i => {
+                            const esFav = favoritos.includes(i.pn);
+                            const notaBadge = i.nota ? `<span class="bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[9px] px-1.5 py-0.5 rounded font-bold">${i.nota}</span>` : '';
+                            return `
+                                <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex justify-between items-center text-xs">
+                                    <div class="space-y-1">
+                                        <span class="font-bold text-white uppercase block">${i.articulo}</span>${notaBadge}
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <code class="text-amber-400 font-mono">${i.pn}</code>
+                                        <button onclick="copiarAlPortapapeles('${i.pn}')" class="bg-sky-500/15 text-sky-400 px-2.5 py-1 rounded-xl font-bold">Copiar</button>
+                                        <button onclick="toggleFavorito('${i.pn}')" class="text-sm">${esFav ? '⭐' : '☆'}</button>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
                     </div>
                 `;
                 contenedor.appendChild(div);
@@ -492,14 +430,63 @@
         }
 
         function toggleAcordeon(sec) { seccionesAbiertas[sec] = !seccionesAbiertas[sec]; filtrarYAgrupar(); }
-        function verificarPassword() { if (document.getElementById('input-password').value === "1234") { autenticado = true; evaluarAuthUI(); renderizarFeedbackAdmin(); } else alert("Error"); }
-        function evaluarAuthUI() { document.getElementById('bloqueo-auth').classList.toggle('hidden', autenticado); document.getElementById('formulario-anadir').classList.toggle('hidden', !autenticado); }
-        function cerrarSesion() { autenticado = false; evaluarAuthUI(); }
-        function cargarDocumentoSeleccionado(id) { if(!id) return; document.getElementById('doc-placeholder').classList.add('hidden'); document.getElementById('iframe-doc-viewer').src = `https://drive.google.com/file/d/${id}/preview`; }
 
+        // Funciones para Ramps Checklists con LocalStorage
+        function guardarEstadoCheck(checkbox) {
+            localStorage.setItem(checkbox.id, checkbox.checked);
+        }
+
+        function cargarEstadoChecks() {
+            const checkboxes = document.querySelectorAll('#pestana-ramps input[type="checkbox"]');
+            checkboxes.forEach(chk => {
+                const guardado = localStorage.getItem(chk.id);
+                if (guardado !== null) {
+                    chk.checked = (guardado === 'true');
+                }
+            });
+        }
+
+        function resetearChecklist() {
+            if (confirm("¿Estás seguro de resetear todas las marcas de las rampas?")) {
+                const checkboxes = document.querySelectorAll('#pestana-ramps input[type="checkbox"]');
+                checkboxes.forEach(chk => {
+                    chk.checked = false;
+                    localStorage.removeItem(chk.id);
+                });
+            }
+        }
+
+        function verificarPassword() { 
+            if (document.getElementById('input-password').value === "1234") { 
+                autenticado = true; 
+                evaluarAuthUI(); 
+                renderizarFeedbackAdmin(); 
+            } else { 
+                alert("Contraseña incorrecta"); 
+            } 
+        }
+
+        function evaluarAuthUI() { 
+            document.getElementById('bloqueo-auth').classList.toggle('hidden', autenticado); 
+            document.getElementById('formulario-anadir').classList.toggle('hidden', !autenticado); 
+        }
+
+        function cerrarSesion() { 
+            autenticado = false; 
+            evaluarAuthUI(); 
+        }
+
+        function cargarDocumentoSeleccionado(id) { 
+            if(!id) return; 
+            document.getElementById('doc-placeholder').classList.add('hidden'); 
+            document.getElementById('iframe-doc-viewer').src = `https://drive.google.com/file/d/${id}/preview`; 
+        }
+
+        // Inicialización
         filtrarYAgrupar();
         renderizarHistorialPns();
         filtrarTools();
+        cargarEstadoChecks();
     </script>
 </body>
 </html>
