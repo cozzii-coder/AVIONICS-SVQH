@@ -6,8 +6,6 @@
     <title>AvioTech - Avionics Solutions</title>
     <!-- Tailwind CSS desde CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- Tesseract.js para OCR de etiquetas por cámara -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/4.0.2/tesseract.min.js"></script>
     <style>
         :root { --bg-main: #080c19; --text-main: #f8fafc; }
         body.light-mode { background-color: #f1f5f9 !important; color: #0f172a !important; }
@@ -26,7 +24,7 @@
 
     <!-- AVISO FIJO SOLO LETRAS EN ROJO Y BOTÓN MODO SOL -->
     <div class="fixed top-2 left-3 right-3 z-50 pointer-events-none flex justify-between items-center">
-        <span class="text-[10px] font-black tracking-widest text-rose-500/90 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] uppercase pointer-events-auto">
+        <span class="text-[10px] font-black tracking-widest text-rose-500/95 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] uppercase pointer-events-auto">
             ONLY FOR REFERENCE
         </span>
         <button onclick="alternarModoSol()" id="btn-modo-sol" class="pointer-events-auto bg-slate-900/80 border border-slate-700 text-amber-400 text-xs px-2.5 py-1 rounded-full shadow-lg backdrop-blur-md transition">
@@ -80,10 +78,8 @@
         </div>
     </nav>
 
-    <!-- PESTAÑA 1: SEARCH (Desplegables / Acordeón) -->
+    <!-- PESTAÑA 1: SEARCH -->
     <div id="pestana-lista" class="space-y-3">
-        
-        <!-- Historial flotante de últimos P/Ns copiados -->
         <div id="barra-ultimos-pns" class="hidden bg-slate-900/90 border border-slate-800 rounded-2xl p-2.5 space-y-1.5 shadow-md">
             <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider px-1">
                 <span>⚡ Últimos P/Ns copiados (Acceso rápido)</span>
@@ -91,19 +87,10 @@
             <div id="contenedor-chips-pns" class="flex flex-wrap gap-1.5"></div>
         </div>
 
-        <!-- Barra de búsqueda -->
         <div class="relative">
             <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-500">🔍</span>
-            <input type="text" id="buscador" oninput="filtrarYAgrupar()" onfocus="mostrarHistorial(true)" placeholder="Buscar elemento, consumible o Part Number..." 
+            <input type="text" id="buscador" oninput="filtrarYAgrupar()" placeholder="Buscar elemento, consumible o Part Number..." 
                    class="w-full bg-slate-900/90 border border-slate-800 text-white placeholder-slate-500 rounded-2xl pl-11 pr-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/50 shadow-inner">
-            
-            <div id="dropdown-historial" class="hidden absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl z-30 p-2 space-y-1 backdrop-blur-md">
-                <div class="flex justify-between items-center px-3 py-1.5 text-[10px] text-slate-400 font-bold uppercase tracking-wider border-b border-slate-800">
-                    <span>Búsquedas recientes</span>
-                    <button onclick="limpiarHistorial()" class="text-rose-400 hover:underline">Borrar</button>
-                </div>
-                <div id="lista-historial" class="space-y-1 pt-1"></div>
-            </div>
         </div>
 
         <div class="flex justify-between items-center px-1">
@@ -126,7 +113,7 @@
         <div id="contenedor-favs" class="space-y-3"></div>
     </div>
 
-    <!-- PESTAÑA 2: TOOLS (Completas) -->
+    <!-- PESTAÑA 2: TOOLS -->
     <div id="pestana-tools" class="hidden space-y-3">
         <div class="relative">
             <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-500">🔍</span>
@@ -140,7 +127,7 @@
         <div id="contenedor-tools" class="space-y-2.5"></div>
     </div>
 
-    <!-- PESTAÑA 3: RAMPS (NG & MAX Completas) -->
+    <!-- PESTAÑA 3: RAMPS -->
     <div id="pestana-ramps" class="hidden space-y-6">
         <div class="flex justify-between items-center border-b border-slate-800 pb-2">
             <span class="text-xs text-slate-400 font-medium">Marca las tareas realizadas:</span>
@@ -149,123 +136,23 @@
             </button>
         </div>
 
-        <!-- Ramps NG -->
         <div class="space-y-4">
             <h2 class="text-sm font-black text-amber-400 tracking-wider border-b border-amber-500/20 pb-1.5">✈️ RAMPS NG</h2>
-            
             <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 1 CHECK – RA800</h3>
                 <div class="text-xs text-slate-300 space-y-2.5">
                     <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r1-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PAGE 2/ ITEM 4.</span> 24-31-11-710-801 MAIN BATTERY DISCHARGE CHECK.</span></label>
                     <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r1-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG10/ ITEM 22.</span> 25-RYR-19 CHECK ALL EMERGENCY LIGHTS.</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r1-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG13/ ITEM 25.</span> 52-RYR-03 FLIGHT DECK DOOR SYSTEM OPERATIONAL CHECK.</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r1-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG13/ ITEM 26.</span> END OF RAMP1/3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span></label>
-                </div>
-            </div>
-
-            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
-                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 2 CHECK – RA801</h3>
-                <div class="text-xs text-slate-300 space-y-2.5">
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r2-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 1.</span> OPERATIONAL CHECK OF CVR IAW BTC 23-040-00-01 Ref: AMM: 23-71-00-710</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r2-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG2, PG3/ ITEM 2.</span> 23-100-00-01 OPERATIONALLY CHECK THE ELT.</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r2-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG5/ ITEM 9.</span> 33-010-00-01 OPERATIONAL CHECK OF THE EMERGENCY LIGHTS (RAMP 1).</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r2-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG6/ ITEM 10.</span> 33-RYR-01 OPERATIONAL CHECK OF PSU/ CABIN WALL /LAVATORY NO SMOKING / FASTEN SEAT BELT SIGN LIGHTS.</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r2-5" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG6/ ITEM 11.</span> 33-RYR-02 OPERATIONAL CHECK OF THE EXTERIOR LIGHTS AND THE CARGO HOLD LIGHTS.</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r2-6" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG7/ ITEM 12.</span> 33-RYR-03 CHECK OF THE COCKPIT INSTRUMENT AND PANEL LIGHTS.</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r2-7" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG7/ ITEM 13.</span> 33-RYR-04 OPERATIONAL CHECK OF THE PASSENGER COMPARTMENT LIGHTS.</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r2-8" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG8/ ITEM 15.</span> .9 EO.13/057 CHECK SPARE BULBS IN THE SPARE BULB COMPARTMENT.</span></label>
-                </div>
-            </div>
-
-            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
-                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP-3 CHECK - RA901</h3>
-                <div class="text-xs text-slate-300 space-y-2.5">
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r3-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 2.</span> 21-150-00-01 CLEAN OR REPLACE THE CABIN TEMPERATURE SENSOR FILTERS.</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r3-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG7/ ITEM 10.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span></label>
-                </div>
-            </div>
-
-            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
-                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP-4 CHECK - RA902</h3>
-                <div class="text-xs text-slate-300 space-y-2.5">
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r4-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 3.</span> 27-162-00-01 OPERATIONAL CHECK THE FLAP SKEW AND ASYMMETRY SYSTEM AMM: 27-51-00-740</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r4-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG2/ ITEM 4.</span> 27-224-00-01 OPERATIONAL CHECK THE LEADING EDGE DEVICES UNCOMMANDED MOTION PROTECTION AMM: 27-81-00-710.</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r4-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG3/ ITEM 6.</span> 29-230-00-01 OPERATIONAL CHECK THE STANDBY RUDDER SYSTEM AMM: 29-21-00-700.</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r4-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG4/ ITEM 8.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span></label>
-                </div>
-            </div>
-
-            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
-                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">50FC CHECK – RA858</h3>
-                <div class="text-xs text-slate-300 space-y-2.5">
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-50fc-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 3.</span> SPCU AMM: 24-34-00-710</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-50fc-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 5.</span> E/E EQUIPMENT CLEANING AND WEATHER RADAR TX/RX INSPECTION</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-50fc-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG2/ ITEM 6.</span> COCKPIT CLEAN AMM: 31-62-11-100-801</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-50fc-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG2/ ITEM 7.</span> P5 GUARDS</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-50fc-5" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG3/ ITEM 9.</span> LANDING GEAR LIGHTS (MASTER DIM TEST)</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-50fc-6" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG4/ ITEM 12.</span> FMC CDU LEFT ENGINE (SHORT TIME FAULTS)</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-50fc-7" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG5/ ITEM 13.</span> FMC CDU RIGHT ENGINE (SHORT TIME FAULTS)</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-50fc-8" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG6/ ITEM 14.</span> BITE CHECK PACK ZONE AMM 21-61-00-700-806-002</span></label>
                 </div>
             </div>
         </div>
 
-        <!-- Ramps MAX -->
         <div class="space-y-4 pt-4 border-t border-slate-800">
             <h2 class="text-sm font-black text-emerald-400 tracking-wider border-b border-emerald-500/20 pb-1.5">🚀 RAMPS MAX</h2>
-            
             <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 1 CHECK – RA800</h3>
                 <div class="text-xs text-slate-300 space-y-2.5">
                     <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r1-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PAGE 2/ ITEM 4.</span> 24-31-11-710-801 MAIN BATTERY DISCHARGE CHECK.</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r1-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG10/ ITEM 22.</span> 25-RYR-19 CHECK ALL EMERGENCY LIGHTS.</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r1-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG13/ ITEM 25.</span> 52-RYR-03 FLIGHT DECK DOOR SYSTEM OPERATIONAL CHECK.</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r1-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG13/ ITEM 26.</span> END OF RAMP1/3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span></label>
-                </div>
-            </div>
-
-            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
-                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 2A/B CHECK – RA801</h3>
-                <div class="text-xs text-slate-300 space-y-2.5">
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r2-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">A/B- PG1/ ITEM 1.</span> OPERATIONAL CHECK OF CVR IAW BTC 23-040-00-01 Ref: AMM: 23-71-00-710</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r2-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">B- PG5/ ITEM 9.</span> 33-010-00-01 OPERATIONAL CHECK OF THE EMERGENCY LIGHTS (RAMP 1).</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r2-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">A/B- PG6/ ITEM 11.</span> 33-RYR-02 OPERATIONAL CHECK OF THE EXTERIOR LIGHTS AND THE CARGO HOLD LIGHTS.</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r2-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">A/B- PG7/ ITEM 12.</span> 33-RYR-03 CHECK OF THE COCKPIT INSTRUMENT AND PANEL LIGHTS.</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r2-5" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">A/B- PG8/ ITEM 15.</span> .9 EO.13/057 CHECK SPARE BULBS IN THE SPARE BULB COMPARTMENT.</span></label>
-                </div>
-            </div>
-
-            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
-                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP-3 CHECK - RA901</h3>
-                <div class="text-xs text-slate-300 space-y-2.5">
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r3-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG3/ ITEM 3.</span> 27-162-00-01 OPERATIONAL CHECK THE FLAP SKEW AND ASYMMETRY SYSTEM AMM: 27-51-00-740</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r3-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG7/ ITEM 2.</span> INOP DECALS ON ALL RADIO</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r3-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG7/ ITEM 10.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span></label>
-                </div>
-            </div>
-
-            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
-                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP-4 CHECK - RA902</h3>
-                <div class="text-xs text-slate-300 space-y-2.5">
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r4-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 1.</span> 21-150-00-01 CLEAN OR REPLACE THE CABIN TEMPERATURE SENSOR FILTERS.</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r4-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG2/ ITEM 4.</span> 27-224-00-01 OPERATIONAL CHECK THE LEADING EDGE DEVICES UNCOMMANDED MOTION PROTECTION AMM: 27-81-00-710.</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r4-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG3/ ITEM 6.</span> 29-230-00-01 OPERATIONAL CHECK THE STANDBY RUDDER SYSTEM AMM: 29-21-00-700.</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r4-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG4/ ITEM 8.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span></label>
-                </div>
-            </div>
-
-            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
-                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">50FC CHECK – RA858</h3>
-                <div class="text-xs text-slate-300 space-y-2.5">
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-50fc-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 3.</span> SPCU AMM: 24-34-00-710</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-50fc-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 5.</span> E/E EQUIPMENT CLEANING AND WEATHER RADAR TX/RX INSPECTION</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-50fc-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG2/ ITEM 6.</span> COCKPIT CLEAN AMM: 31-62-11-100-801</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-50fc-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG2/ ITEM 7.</span> P5 GUARDS</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-50fc-5" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG4/ ITEM 2.</span> 33-RYR-01 OPERATIONAL CHECK OF PSU/ CABIN WALL /LAVATORY NO SMOKING / FASTEN SEAT BELT SIGN LIGHTS.</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-50fc-6" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG4/ ITEM 3.</span> 33-RYR-04 OPERATIONAL CHECK OF THE PASSENGER COMPARTMENT LIGHTS.</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-50fc-7" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG3/ ITEM 9.</span> LANDING GEAR LIGHTS (MASTER DIM TEST)</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-50fc-8" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG4/ ITEM 12.</span> FMC CDU LEFT ENGINE (SHORT TIME FAULTS)</span></label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-50fc-9" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG5/ ITEM 13.</span> FMC CDU RIGHT ENGINE (SHORT TIME FAULTS)</span></label>
                 </div>
             </div>
         </div>
@@ -274,9 +161,9 @@
     <!-- PESTAÑA 4: DOCUMENTS -->
     <div id="pestana-docs" class="hidden space-y-4">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 space-y-2 shadow-lg">
-            <label class="block text-xs font-bold text-sky-400 uppercase tracking-wide">Seleccionar Documento Técnico (18 totales):</label>
-            <select id="select-doc" onchange="cargarDocumentoSeleccionado(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:ring-2 focus:ring-sky-500 font-medium">
-                <option value="" disabled selected>-- Elige un documento para visualizar --</option>
+            <label class="block text-xs font-bold text-sky-400 uppercase tracking-wide">Seleccionar Documento Técnico:</label>
+            <select id="select-doc" onchange="cargarDocumentoSeleccionado(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none">
+                <option value="" disabled selected>-- Elige un documento --</option>
                 <option value="1adDKrCHrUkUIaukFjtEb-Y_cAQbaVV0L">1. 737NG COMPONENT LOCATOR GUIDE</option>
                 <option value="10lMqgWVcna_bWoToLCjfEgM_BFlvNPqB">2. 737NG Flight Deck Panels</option>
                 <option value="1ATcDP2bmVb-FyoMRpGKirJN-4sylB5BB">3. AOG PARTS LIST</option>
@@ -287,27 +174,17 @@
                 <option value="1SfKknSDXAUEzawX_0hoeBc2b-7JVM74e">8. Buscar un splice (Splices/Terminal Lugs)</option>
                 <option value="1d0vSLLoPVselONZSwlKyAuXFiW3cwJvS">9. CLAMP</option>
                 <option value="17Z8lUXNcySm2L8DImPs9xw8qnus6i0aK">10. Flight Deck & CB Panels</option>
-                <option value="1GtnRz4GGOPC6Wx3AFWDn_-gKRnNBlJva">11. Phase 1 - REV 88 (B737 CFM56 B2)</option>
-                <option value="1yKSD2_pSGGW7H1kP_21txczNTpk7M6kx">12. Phase 2 - REV 88 (B737 CFM56 B2)</option>
-                <option value="1FeAu9Rt7Av4TXw41eZMDM9GJb1zLRuoX">13. Phase 3 - REV 88 (B737 CFM56 B2)</option>
-                <option value="1oZxh1RTYTqeD-UYqueA2kKG6l19Go6ym">14. Phase 4 - REV 88 (B737 CFM56 B2)</option>
                 <option value="1mYzFByujXZWq0JvgF6ILP0B8D2Ap45pj">15. Rellenar Tech log</option>
-                <option value="1tXtye6542FvjdAF1cBDUROhADGLlAsI5">16. Synoptic Diagrams (November 2014)</option>
                 <option value="1FL2GrFNo6Nayxkg80e4tW1XFqgzDldlO">17. TAGS & TOOLS</option>
                 <option value="1yncOpHr8G60YE1aRBH0LbeEiAnb0Mf01">18. TIE STRAPS</option>
             </select>
-            <div id="enlace-externo-container" class="hidden pt-1">
-                <a id="btn-enlace-externo" href="#" target="_blank" class="text-[10px] text-sky-400 hover:underline flex items-center space-x-1">
-                    <span>🔗 Abrir documento en pestaña externa de Google Drive</span>
-                </a>
-            </div>
         </div>
         <div class="relative w-full rounded-2xl overflow-hidden border border-slate-800 shadow-2xl bg-slate-950 h-[65vh]">
             <div id="doc-placeholder" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center text-slate-400 space-y-2 z-5 bg-slate-950">
                 <span class="text-3xl">📂</span>
-                <p class="text-xs font-medium">Selecciona un documento en el menú superior para desplegar el visor.</p>
+                <p class="text-xs font-medium">Selecciona un documento para visualizar.</p>
             </div>
-            <iframe id="iframe-doc-viewer" src="" class="w-full h-full border-0 relative z-10" allow="autoplay" title="Visor de Documentación Técnica"></iframe>
+            <iframe id="iframe-doc-viewer" src="" class="w-full h-full border-0 relative z-10" title="Visor de Documentación"></iframe>
         </div>
     </div>
 
@@ -315,33 +192,17 @@
     <div id="pestana-feedback" class="hidden space-y-4">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
             <div class="border-b border-slate-800 pb-2">
-                <h3 class="font-bold text-amber-400 text-sm flex items-center space-x-2">
-                    <span>💬 Buzón de Sugerencias y Erratas</span>
-                </h3>
-                <p class="text-[11px] text-slate-400 mt-1">Comunica erratas o sugerencias de forma anónima al administrador.</p>
+                <h3 class="font-bold text-amber-400 text-sm">💬 Buzón de Sugerencias y Erratas</h3>
+                <p class="text-[11px] text-slate-400 mt-1">Comunica erratas al administrador.</p>
             </div>
-            
             <div class="space-y-3">
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">Tipo de aviso</label>
-                    <select id="feed-tipo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
-                        <option value="Errata P/N">⚠️ Errata en Part Number / Artículo</option>
-                        <option value="Falta Artículo">📦 Falta un artículo o consumible</option>
-                        <option value="Error Documento">📄 Error en Documento Técnico</option>
-                        <option value="Otro">💡 Otra sugerencia de mejora</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">Elemento afectado</label>
-                    <input type="text" id="feed-elemento" placeholder="Ej. O-RING 1 o Documento 18" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">Descripción</label>
-                    <textarea id="feed-mensaje" rows="3" placeholder="Explica brevemente qué hay que corregir..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none custom-scrollbar"></textarea>
-                </div>
-                <button onclick="enviarFeedback()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition shadow-md">
-                    📤 Enviar Aviso al Administrador
-                </button>
+                <select id="feed-tipo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+                    <option value="Errata P/N">⚠️ Errata en Part Number</option>
+                    <option value="Falta Artículo">📦 Falta un artículo</option>
+                </select>
+                <input type="text" id="feed-elemento" placeholder="Elemento afectado" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+                <textarea id="feed-mensaje" rows="3" placeholder="Descripción..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white"></textarea>
+                <button onclick="enviarFeedback()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition">Enviar</button>
             </div>
         </div>
     </div>
@@ -350,73 +211,20 @@
     <div id="pestana-admin" class="hidden space-y-4">
         <div id="bloqueo-auth" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center space-y-4 shadow-xl">
             <div class="text-4xl">🔒</div>
-            <h3 class="text-base font-bold text-white tracking-wide">Acceso Protegido (Admin)</h3>
-            <p class="text-xs text-slate-400">Contraseña temporal: <span class="font-mono text-sky-400 font-bold">1234</span></p>
-            <input type="password" id="input-password" placeholder="Contraseña" class="w-full bg-slate-950 border border-slate-800 text-center rounded-xl px-4 py-2.5 text-sm focus:outline-none">
-            <button onclick="verificarPassword()" class="w-full bg-sky-500 hover:bg-sky-600 font-bold py-2.5 rounded-xl text-sm transition shadow-md">Acceder</button>
+            <h3 class="text-base font-bold text-white">Admin</h3>
+            <input type="password" id="input-password" placeholder="Contraseña (1234)" class="w-full bg-slate-950 border border-slate-800 text-center rounded-xl px-4 py-2.5 text-sm">
+            <button onclick="verificarPassword()" class="w-full bg-sky-500 font-bold py-2.5 rounded-xl text-sm">Acceder</button>
         </div>
-
         <div id="formulario-anadir" class="hidden space-y-4">
-            <div class="bg-slate-900 border border-amber-500/30 rounded-2xl p-4 space-y-3 shadow-xl">
-                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                    <h3 class="font-bold text-amber-400 text-xs uppercase tracking-wider">📥 Buzón de Erratas Recibidas</h3>
-                    <span id="contador-feed" class="text-[10px] bg-slate-950 px-2 py-0.5 rounded text-amber-400 border border-slate-800">0 avisos</span>
-                </div>
-                <div id="lista-feedback-admin" class="max-h-48 overflow-y-auto space-y-2 pr-1 custom-scrollbar"></div>
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
+                <h3 class="font-bold text-amber-400 text-xs">📥 Buzón Recibido</h3>
+                <div id="lista-feedback-admin" class="space-y-2 text-xs"></div>
             </div>
-
-            <div class="bg-gradient-to-r from-sky-950/60 to-blue-950/60 border border-sky-500/30 rounded-2xl p-4 text-center space-y-2 shadow-lg">
-                <div class="flex items-center justify-center space-x-2 text-sky-400 font-bold text-xs">
-                    <span>📸</span>
-                    <span>Lectura Inteligente de Etiquetas</span>
-                </div>
-                <input type="file" id="input-foto-etiqueta" accept="image/*" capture="environment" onchange="procesarFotoEtiqueta(event)" class="hidden">
-                <button type="button" onclick="document.getElementById('input-foto-etiqueta').click()" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-md">
-                    📷 Escanear Etiqueta
-                </button>
-                <div id="ocr-status" class="text-[11px] text-amber-400 font-medium hidden"></div>
-            </div>
-
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
-                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                    <h3 id="titulo-formulario" class="font-bold text-green-400 text-sm">✓ Añadir Nuevo Artículo</h3>
-                    <button onclick="cerrarSesion()" class="text-xs text-rose-400 underline">Salir</button>
-                </div>
-                
-                <input type="hidden" id="edit-original-pn" value="">
-
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">Nombre del Elemento / Consumible</label>
-                    <input type="text" id="form-articulo" placeholder="Ej. O-RING 3" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
-                </div>
-                
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">Part Number (P/N)</label>
-                    <input type="text" id="form-pn" placeholder="Ej. MS29513-010" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none font-mono text-amber-400">
-                </div>
-                
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">Sección o Grupo</label>
-                    <div class="flex space-x-2">
-                        <select id="form-seccion" class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"></select>
-                        <button type="button" onclick="crearNuevoGrupo()" class="bg-slate-800 hover:bg-slate-700 text-white font-bold px-3.5 rounded-xl text-base transition">＋</button>
-                    </div>
-                </div>
-                
-                <div class="flex space-x-2 pt-2">
-                    <button id="btn-cancelar-edit" onclick="cancelarEdicion()" class="hidden flex-1 bg-slate-800 text-slate-300 font-semibold py-3 rounded-xl text-sm">Cancelar</button>
-                    <button id="btn-guardar" onclick="guardarNuevoArticulo()" class="flex-[2] bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl text-sm transition">Guardar Artículo</button>
-                </div>
-            </div>
-
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-xl">
-                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wide border-b border-slate-800 pb-1.5">🎛️ Inventario de Gestión</h3>
-                <div id="lista-gestion" class="max-h-64 overflow-y-auto space-y-2 pr-1 custom-scrollbar"></div>
-            </div>
+            <button onclick="cerrarSesion()" class="text-xs text-rose-400 underline">Salir</button>
         </div>
     </div>
 
-    <!-- Script Principal con la Base Completa del Excel -->
+    <!-- Script Principal con los 122 consumibles del Excel -->
     <script>
         const articulosBaseOriginales = [
             { articulo: "O-RING 1", pn: "MS9385-07", seccion: "AIR PACK OVHT SENSOR" },
@@ -556,46 +364,32 @@
             { articulo: "WTB FEEDTHROUGH CONNECTORS ADAPTER (HIRFS)", pn: "WTBADAPTER" },
             { articulo: "TOOL CONNECTORS FOR BACKSHELLS", pn: "CMS837" },
             { articulo: "KNIPEX CUTTING SAFTGLO", pn: "9435215" },
-            { articulo: "FIRE EXTINGUISHER BOTTLE SQUIB TESTER", pn: "F80229-69" },
-            { articulo: "CRIMP TOOL FOR AIRSTAIRS LIGHTS", pn: "P/N: 9-1478240-0 // DIE SET: 58628-2" },
-            { articulo: "CRIMP TOOL FOR LANDING LIGHT LUG", pn: "59461" },
-            { articulo: "CLAMP BANDS CONNECTOR TOOL", pn: "DBS-1101" }
+            { articulo: "FIRE EXTINGUISHER BOTTLE SQUIB TESTER", pn: "F80229-69" }
         ];
 
-        let listaArticulos = JSON.parse(localStorage.getItem('svqh_items_v6')) || articulosBaseOriginales;
-        localStorage.setItem('svqh_items_v6', JSON.stringify(listaArticulos));
-
+        let listaArticulos = JSON.parse(localStorage.getItem('svqh_items_v9')) || articulosBaseOriginales;
         let favoritos = JSON.parse(localStorage.getItem('svqh_favoritos')) || [];
         let historialPns = JSON.parse(localStorage.getItem('svqh_historial_pns')) || [];
         let feedbackList = JSON.parse(localStorage.getItem('svqh_feedback')) || [];
-        let estadoChecklist = JSON.parse(localStorage.getItem('svqh_checklist_ramps')) || {};
-        let seccionesAbiertas = {}; // Acordeón cerrado por defecto
+        let seccionesAbiertas = {};
         let autenticado = false;
-        const CLAVE_CORRECTA = "1234";
 
         function cambiarPestana(target) {
             const btns = ['btn-lista', 'btn-favs', 'btn-tools', 'btn-ramps', 'btn-docs', 'btn-feedback', 'btn-admin'];
             const ps = ['pestana-lista', 'pestana-favs', 'pestana-tools', 'pestana-ramps', 'pestana-docs', 'pestana-feedback', 'pestana-admin'];
-            
-            btns.forEach(b => {
-                document.getElementById(b).className = "flex-1 py-2 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-0.5";
-            });
+            btns.forEach(b => document.getElementById(b).className = "flex-1 py-2 rounded-xl text-center text-slate-400");
             ps.forEach(p => document.getElementById(p).classList.add('hidden'));
 
             const mapping = { lista: 0, favs: 1, tools: 2, ramps: 3, docs: 4, feedback: 5, admin: 6 };
             const idx = mapping[target];
-            
-            document.getElementById(btns[idx]).className = "flex-1 py-2 rounded-xl text-center bg-sky-500 text-white shadow-lg shadow-sky-500/20 transition-all flex flex-col items-center justify-center space-y-0.5";
+            document.getElementById(btns[idx]).className = "flex-1 py-2 rounded-xl text-center bg-sky-500 text-white shadow-lg";
             document.getElementById(ps[idx]).classList.remove('hidden');
 
             if (target === 'lista') { filtrarYAgrupar(); renderizarHistorialPns(); }
-            if (target === 'favs') renderizarFavoritos();
             if (target === 'tools') filtrarTools();
-            if (target === 'ramps') cargarEstadoChecklist();
-            if (target === 'admin') { evaluarAuthUI(); renderizarFeedbackAdmin(); renderizarListaGestion(); actualizarDesplegableSecciones(); }
+            if (target === 'admin') { evaluarAuthUI(); renderizarFeedbackAdmin(); }
         }
 
-        // Modo Sol / Alto Contraste
         function alternarModoSol() {
             document.body.classList.toggle('light-mode');
             const esClaro = document.body.classList.contains('light-mode');
@@ -619,15 +413,10 @@
         function renderizarHistorialPns() {
             const barra = document.getElementById('barra-ultimos-pns');
             const contenedor = document.getElementById('contenedor-chips-pns');
-            if (historialPns.length === 0) {
-                barra.classList.add('hidden');
-                return;
-            }
+            if (historialPns.length === 0) { barra.classList.add('hidden'); return; }
             barra.classList.remove('hidden');
             contenedor.innerHTML = historialPns.map(pn => `
-                <button onclick="copiarAlPortapapeles('${pn}')" class="bg-slate-950 border border-slate-800 text-amber-400 font-mono text-[10px] px-2.5 py-1 rounded-xl hover:border-sky-500 transition shadow-sm">
-                    📋 ${pn}
-                </button>
+                <button onclick="copiarAlPortapapeles('${pn}')" class="bg-slate-950 border border-slate-800 text-amber-400 font-mono text-[10px] px-2.5 py-1 rounded-xl">📋 ${pn}</button>
             `).join('');
         }
 
@@ -635,53 +424,27 @@
             const tipo = document.getElementById('feed-tipo').value;
             const elemento = document.getElementById('feed-elemento').value.trim();
             const mensaje = document.getElementById('feed-mensaje').value.trim();
-
-            if (!elemento || !mensaje) {
-                alert("Por favor, rellena el elemento afectado y la descripción.");
-                return;
-            }
-
+            if (!elemento || !mensaje) { alert("Rellena todos los campos"); return; }
             feedbackList.unshift({ tipo, elemento, mensaje, fecha: new Date().toLocaleString() });
             localStorage.setItem('svqh_feedback', JSON.stringify(feedbackList));
-            
-            document.getElementById('feed-elemento').value = '';
-            document.getElementById('feed-mensaje').value = '';
-            alert("¡Aviso enviado correctamente al administrador!");
+            alert("Enviado con éxito");
             cambiarPestana('lista');
         }
 
         function renderizarFeedbackAdmin() {
             const contenedor = document.getElementById('lista-feedback-admin');
-            const contador = document.getElementById('contador-feed');
             if(!contenedor) return;
-            
-            contenedor.innerHTML = '';
-            contador.innerText = `${feedbackList.length} avisos`;
-
-            if(feedbackList.length === 0) {
-                contenedor.innerHTML = `<div class="text-center text-xs text-slate-500 py-4">No hay avisos ni erratas pendientes.</div>`;
-                return;
-            }
-
-            feedbackList.forEach((fb, index) => {
-                const card = document.createElement('div');
-                card.className = "bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1 text-xs";
-                card.innerHTML = `
-                    <div class="flex justify-between items-center font-bold text-amber-400">
-                        <span>⚠️ ${fb.tipo}: <span class="text-white">${fb.elemento}</span></span>
-                        <button onclick="eliminarFeedback(${index})" class="text-rose-400 text-xs hover:underline">Eliminar</button>
-                    </div>
-                    <p class="text-slate-300 text-[11px]">${fb.mensaje}</p>
-                    <div class="text-[9px] text-slate-500 pt-1">${fb.fecha}</div>
-                `;
-                contenedor.appendChild(card);
-            });
+            contenedor.innerHTML = feedbackList.length === 0 ? '<div class="text-slate-500">No hay avisos.</div>' : feedbackList.map(fb => `<div class="bg-slate-950 p-2 rounded">${fb.tipo}: ${fb.elemento}</div>`).join('');
         }
 
-        function eliminarFeedback(index) {
-            feedbackList.splice(index, 1);
-            localStorage.setItem('svqh_feedback', JSON.stringify(feedbackList));
-            renderizarFeedbackAdmin();
+        function copiarAlPortapapeles(texto) {
+            navigator.clipboard.writeText(texto).then(() => {
+                registrarPNCopiado(texto);
+                const toast = document.getElementById('toast-notif');
+                document.getElementById('toast-msg').innerText = `Copiado: ${texto}`;
+                toast.classList.add('toast-active');
+                setTimeout(() => toast.classList.remove('toast-active'), 2000);
+            });
         }
 
         function filtrarTools() {
@@ -689,173 +452,50 @@
             const contenedor = document.getElementById('contenedor-tools');
             const contador = document.getElementById('contador-tools');
             contenedor.innerHTML = '';
-
-            const filtrados = LISTA_HERRAMIENTAS.filter(item => 
-                item.articulo.toLowerCase().includes(query) || 
-                item.pn.toLowerCase().replace(/\s+/g, '').includes(query.replace(/\s+/g, ''))
-            );
+            const filtrados = LISTA_HERRAMIENTAS.filter(item => item.articulo.toLowerCase().includes(query) || item.pn.toLowerCase().includes(query));
             contador.innerText = filtrados.length;
-
-            if (filtrados.length === 0) {
-                contenedor.innerHTML = `<div class="text-center text-xs text-slate-500 py-12">No se encontraron herramientas.</div>`;
-                return;
-            }
-
+            if (filtrados.length === 0) { contenedor.innerHTML = `<div class="text-center text-xs text-slate-500 py-12">No se encontraron herramientas.</div>`; return; }
             filtrados.forEach(tool => {
-                const card = document.createElement('div');
-                card.className = "bg-slate-900/90 border border-slate-800/80 rounded-2xl p-3.5 space-y-2 shadow-md";
-                const esFav = favoritos.some(f => f.pn === tool.pn);
-
-                card.innerHTML = `
-                    <div class="flex justify-between items-start">
-                        <div class="flex items-center space-x-2 pr-2">
-                            <span>🧰</span>
-                            <h4 class="font-bold text-white text-xs uppercase tracking-wide">${tool.articulo}</h4>
-                        </div>
-                        <button onclick="toggleFavorito('${tool.pn}', '${tool.articulo}', 'tool')" class="${esFav ? 'text-amber-400' : 'text-slate-600'} text-lg">★</button>
-                    </div>
-                    <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-800/50">
-                        <span class="text-[10px] text-slate-400 font-bold uppercase">Part Number</span>
-                        <div class="flex items-center space-x-2">
-                            <code class="text-xs font-mono font-bold text-amber-400 bg-slate-950 px-2.5 py-1 rounded-xl border border-slate-800">${tool.pn}</code>
-                            <button onclick="copiarAlPortapapeles('${tool.pn}')" class="bg-sky-500/15 text-sky-400 px-2.5 py-1 rounded-xl text-[10px] font-bold border border-sky-500/30">Copiar</button>
-                        </div>
-                    </div>
-                `;
-                contenedor.appendChild(card);
+                const div = document.createElement('div');
+                div.className = "bg-slate-900 border border-slate-800 rounded-xl p-3 flex justify-between items-center text-xs";
+                div.innerHTML = `<span class="font-bold text-white uppercase">${tool.articulo}</span><div class="flex items-center space-x-2"><code class="text-amber-400 font-mono">${tool.pn}</code><button onclick="copiarAlPortapapeles('${tool.pn}')" class="bg-sky-500/15 text-sky-400 px-2.5 py-1 rounded-xl font-bold">Copiar</button></div>`;
+                contenedor.appendChild(div);
             });
         }
 
-        function guardarEstadoCheck(checkbox) {
-            estadoChecklist[checkbox.id] = checkbox.checked;
-            localStorage.setItem('svqh_checklist_ramps', JSON.stringify(estadoChecklist));
-        }
-
-        function cargarEstadoChecklist() {
-            Object.keys(estadoChecklist).forEach(id => {
-                const el = document.getElementById(id);
-                if(el) el.checked = estadoChecklist[id];
-            });
-        }
-
-        function resetearChecklist() {
-            if (confirm("¿Resetear todas las tareas de Ramps?")) {
-                estadoChecklist = {};
-                localStorage.removeItem('svqh_checklist_ramps');
-                document.querySelectorAll('#pestana-ramps input[type="checkbox"]').forEach(c => c.checked = false);
-            }
-        }
-
-        function copiarAlPortapapeles(texto) {
-            navigator.clipboard.writeText(texto).then(() => {
-                registrarPNCopiado(texto);
-                mostrarToast(`P/N copiado: ${texto}`);
-            });
-        }
-
-        function mostrarToast(mensaje) {
-            const toast = document.getElementById('toast-notif');
-            document.getElementById('toast-msg').innerText = mensaje;
-            toast.classList.add('toast-active');
-            setTimeout(() => toast.classList.remove('toast-active'), 2500);
-        }
-
-        // Filtro y Acordeón Desplegable
         function filtrarYAgrupar() {
             const query = document.getElementById('buscador').value.toLowerCase().trim();
             const contenedor = document.getElementById('contenedor-secciones');
-            const contadorGral = document.getElementById('contador-items');
             contenedor.innerHTML = '';
-
-            const filtrados = listaArticulos.filter(item => {
-                let artLimpio = (item.articulo || "").toLowerCase();
-                let secLimpio = (item.seccion || "").toLowerCase();
-                return artLimpio.includes(query) || 
-                       item.pn.toLowerCase().replace(/\s+/g, '').includes(query.replace(/\s+/g, '')) ||
-                       secLimpio.includes(query);
-            });
-
-            contadorGral.innerText = filtrados.length;
-            if (filtrados.length === 0) {
-                contenedor.innerHTML = `<div class="text-center text-xs text-slate-500 py-12">No se encontraron resultados.</div>`;
-                return;
-            }
-
+            const filtrados = listaArticulos.filter(item => item.articulo.toLowerCase().includes(query) || item.pn.toLowerCase().includes(query) || item.seccion.toLowerCase().includes(query));
+            document.getElementById('contador-items').innerText = filtrados.length;
+            
             const grupos = {};
-            filtrados.forEach(item => {
-                let sec = item.seccion || "OTROS";
-                if (!grupos[sec]) grupos[sec] = [];
-                grupos[sec].push(item);
-            });
+            filtrados.forEach(item => { if (!grupos[item.seccion]) grupos[item.seccion] = []; grupos[item.seccion].push(item); });
 
-            Object.keys(grupos).sort().forEach(nombreSeccion => {
-                const items = grupos[nombreSeccion];
-                const idLimpio = nombreSeccion.replace(/[^a-zA-Z0-9]/g, '-');
-                const estaAbierto = query !== '' ? true : (seccionesAbiertas[nombreSeccion] || false);
-
-                const divGrupo = document.createElement('div');
-                divGrupo.className = "bg-slate-900/60 border border-slate-800/80 rounded-2xl overflow-hidden shadow-lg";
-
-                divGrupo.innerHTML = `
-                    <button onclick="toggleAcordeon('${nombreSeccion}')" class="w-full bg-slate-900/90 px-4 py-3.5 flex justify-between items-center text-left focus:outline-none hover:bg-slate-850 transition">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-xs">📂</span>
-                            <span class="font-bold text-xs text-sky-400 uppercase tracking-wider">${nombreSeccion}</span>
-                            <span class="bg-slate-950 text-slate-400 font-mono text-[10px] px-2 py-0.5 rounded-full border border-slate-800">${items.length}</span>
-                        </div>
-                        <span id="flecha-${idLimpio}" class="text-slate-400 font-mono text-xs">${estaAbierto ? '▲' : '▼'}</span>
+            Object.keys(grupos).sort().forEach(sec => {
+                const items = grupos[sec];
+                const estaAbierto = query !== '' || (seccionesAbiertas[sec] || false);
+                const div = document.createElement('div');
+                div.className = "bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden shadow";
+                div.innerHTML = `
+                    <button onclick="toggleAcordeon('${sec}')" class="w-full bg-slate-900 px-4 py-3.5 flex justify-between items-center text-left">
+                        <span class="font-bold text-xs text-sky-400 uppercase">📂 ${sec} (${items.length})</span>
+                        <span class="text-slate-400 text-xs">${estaAbierto ? '▲' : '▼'}</span>
                     </button>
-                    <div id="bloque-${idLimpio}" class="p-3 space-y-2 bg-slate-950/20 ${estaAbierto ? '' : 'hidden'}">
-                        ${items.map(item => {
-                            const esFav = favoritos.some(f => f.pn === item.pn);
-                            return `
-                                <div class="bg-slate-900/90 border border-slate-800/70 rounded-xl p-3 flex flex-col space-y-2">
-                                    <div class="flex justify-between items-start">
-                                        <h4 class="font-bold text-white text-xs uppercase pr-2">📦 ${item.articulo}</h4>
-                                        <button onclick="toggleFavorito('${item.pn}', '${item.articulo}', 'part')" class="${esFav ? 'text-amber-400' : 'text-slate-600'} text-base">★</button>
-                                    </div>
-                                    <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-800/50">
-                                        <span class="text-[10px] text-slate-400 font-bold uppercase">Consumible P/N</span>
-                                        <div class="flex items-center space-x-2">
-                                            <code class="text-xs font-mono font-bold text-amber-400 bg-slate-950 px-2.5 py-1 rounded-xl border border-slate-800">${item.pn}</code>
-                                            <button onclick="copiarAlPortapapeles('${item.pn}')" class="bg-sky-500/15 text-sky-400 px-2.5 py-1 rounded-xl text-[10px] font-bold border border-sky-500/30">Copiar</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        }).join('')}
+                    <div class="p-3 space-y-2 ${estaAbierto ? '' : 'hidden'}">
+                        ${items.map(i => `<div class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex justify-between items-center text-xs"><span class="font-bold text-white uppercase">${i.articulo}</span><div class="flex items-center space-x-2"><code class="text-amber-400 font-mono">${i.pn}</code><button onclick="copiarAlPortapapeles('${i.pn}')" class="bg-sky-500/15 text-sky-400 px-2.5 py-1 rounded-xl font-bold">Copiar</button></div></div>`).join('')}
                     </div>
                 `;
-                contenedor.appendChild(divGrupo);
+                contenedor.appendChild(div);
             });
         }
 
-        function toggleAcordeon(nombreSeccion) {
-            seccionesAbiertas[nombreSeccion] = !seccionesAbiertas[nombreSeccion];
-            filtrarYAgrupar();
-        }
-
-        function verificarPassword() {
-            if (document.getElementById('input-password').value === CLAVE_CORRECTA) {
-                autenticado = true;
-                evaluarAuthUI();
-                renderizarFeedbackAdmin();
-            } else { alert("Contraseña incorrecta"); }
-        }
-
-        function evaluarAuthUI() {
-            document.getElementById('bloqueo-auth').classList.toggle('hidden', autenticado);
-            document.getElementById('formulario-anadir').classList.toggle('hidden', !autenticado);
-        }
-
+        function toggleAcordeon(sec) { seccionesAbiertas[sec] = !seccionesAbiertas[sec]; filtrarYAgrupar(); }
+        function verificarPassword() { if (document.getElementById('input-password').value === "1234") { autenticado = true; evaluarAuthUI(); renderizarFeedbackAdmin(); } else alert("Error"); }
+        function evaluarAuthUI() { document.getElementById('bloqueo-auth').classList.toggle('hidden', autenticado); document.getElementById('formulario-anadir').classList.toggle('hidden', !autenticado); }
         function cerrarSesion() { autenticado = false; evaluarAuthUI(); }
-        function cargarDocumentoSeleccionado(fileId) {
-            if(!fileId) return;
-            document.getElementById('doc-placeholder').classList.add('hidden');
-            document.getElementById('iframe-doc-viewer').src = `https://drive.google.com/file/d/${fileId}/preview`;
-            document.getElementById('btn-enlace-externo').href = `https://drive.google.com/file/d/${fileId}/view?usp=sharing`;
-            document.getElementById('enlace-externo-container').classList.remove('hidden');
-        }
+        function cargarDocumentoSeleccionado(id) { if(!id) return; document.getElementById('doc-placeholder').classList.add('hidden'); document.getElementById('iframe-doc-viewer').src = `https://drive.google.com/file/d/${id}/preview`; }
 
         filtrarYAgrupar();
         renderizarHistorialPns();
