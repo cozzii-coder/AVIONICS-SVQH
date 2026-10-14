@@ -67,15 +67,13 @@
         </div>
     </nav>
 
-    <!-- PESTAÑA 1: SEARCH (DISEÑO MEJORADO Y LIMPIO) -->
+    <!-- PESTAÑA 1: SEARCH (SOLO CONSUMIBLES/PIEZAS) -->
     <div id="pestana-lista" class="space-y-4">
-        <!-- Buscador con icono integrado -->
         <div class="relative">
             <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-500">🔍</span>
             <input type="text" id="buscador" oninput="manejarBusqueda()" onfocus="mostrarHistorial(true)" placeholder="Buscar artículo o Part Number..." 
-                   class="w-full bg-slate-900/90 border border-slate-800 text-white placeholder-slate-500 rounded-2xl pl-11 pr-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 shadow-inner transition">
+                   class="w-full bg-slate-900/90 border border-slate-800 text-white placeholder-slate-500 rounded-2xl pl-11 pr-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/50 shadow-inner">
             
-            <!-- Desplegable Historial de Búsquedas -->
             <div id="dropdown-historial" class="hidden absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl z-30 p-2 space-y-1 backdrop-blur-md">
                 <div class="flex justify-between items-center px-3 py-1.5 text-[10px] text-slate-400 font-bold uppercase tracking-wider border-b border-slate-800">
                     <span>Búsquedas recientes</span>
@@ -85,7 +83,7 @@
             </div>
         </div>
 
-        <!-- Filtros Rápidos (Píldoras mejoradas) -->
+        <!-- Filtros Rápidos -->
         <div class="flex overflow-x-auto space-x-2 pb-1 custom-scrollbar">
             <button onclick="filtrarPorPildora('')" id="pill-all" class="px-3.5 py-1.5 bg-sky-500 text-white rounded-xl text-[11px] font-bold whitespace-nowrap shadow-sm shadow-sky-500/20 transition">Todo</button>
             <button onclick="filtrarPorPildora('oring')" id="pill-oring" class="px-3.5 py-1.5 bg-slate-900 border border-slate-800 text-slate-300 rounded-xl text-[11px] font-semibold whitespace-nowrap transition hover:bg-slate-800">O-Rings</button>
@@ -100,7 +98,6 @@
             <span class="text-[11px] text-slate-400 font-medium"><span id="contador-items" class="text-sky-400 font-bold">0</span> elementos</span>
         </div>
 
-        <!-- Contenedor principal de secciones -->
         <div id="contenedor-secciones" class="space-y-3"></div>
     </div>
 
@@ -116,7 +113,7 @@
         <div id="contenedor-favs" class="space-y-3"></div>
     </div>
 
-    <!-- PESTAÑA 2: TOOLS -->
+    <!-- PESTAÑA 2: TOOLS (INDEPENDIENTE) -->
     <div id="pestana-tools" class="hidden space-y-3">
         <div class="relative">
             <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-500">🔍</span>
@@ -513,8 +510,8 @@
                 </div>
                 
                 <div class="flex space-x-2 pt-2">
-                    <button id="btn-cancelar-edit" onclick="cancelarEdicion()" class="hidden flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-3 rounded-xl text-xs transition">Cancelar</button>
-                    <button id="btn-guardar" onclick="guardarNuevoArticulo()" class="flex-[2] bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl text-xs transition">Guardar Artículo</button>
+                    <button id="btn-cancelar-edit" onclick="cancelarEdicion()" class="hidden flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-3 rounded-xl text-sm transition">Cancelar</button>
+                    <button id="btn-guardar" onclick="guardarNuevoArticulo()" class="flex-[2] bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl text-sm transition">Guardar Artículo</button>
                 </div>
             </div>
 
@@ -528,7 +525,13 @@
     <!-- Cargar base de datos -->
     <script src="data.js"></script>
     <script>
-        let listaArticulos = JSON.parse(localStorage.getItem('svqh_items')) || ARTICULOS_INICIALES;
+        // Limpiamos los ítems iniciales para excluir herramientas (Tools se gestiona en su propia pestaña)
+        let listaArticulos = JSON.parse(localStorage.getItem('svqh_items')) || (typeof ARTICULOS_INICIALES !== 'undefined' ? ARTICULOS_INICIALES.filter(item => {
+            let sec = (item.seccion || "").toLowerCase();
+            let art = (item.articulo || "").toLowerCase();
+            return !sec.includes('tool') && !art.includes('tool') && sec !== 'tools';
+        }) : []);
+
         let autenticado = false;
         const CLAVE_CORRECTA = "1234";
         let seccionesAbiertas = {}; 
@@ -866,11 +869,11 @@
             const setSecciones = new Set();
             listaArticulos.forEach(item => {
                 let nombreLimpio = limpiarTextoSeccion(item.seccion);
-                if(nombreLimpio) setSecciones.add(nombreLimpio);
+                if(nombreLimpio && !nombreLimpio.toLowerCase().includes('tool')) setSecciones.add(nombreLimpio);
             });
             seccionesCreadasAdhoc.forEach(sec => {
                 let nombreLimpio = limpiarTextoSeccion(sec);
-                if(nombreLimpio) setSecciones.add(nombreLimpio);
+                if(nombreLimpio && !nombreLimpio.toLowerCase().includes('tool')) setSecciones.add(nombreLimpio);
             });
 
             const listaOrdenada = Array.from(setSecciones).sort();
@@ -894,7 +897,6 @@
             actualizarDesplegableSecciones(grupoSanitizado);
         }
 
-        // --- RENDERIZADO VISIBLEMENTE MEJORADO PARA SEARCH ---
         function filtrarYAgrupar() {
             const query = document.getElementById('buscador').value.toLowerCase().trim();
             const contenedor = document.getElementById('contenedor-secciones');
@@ -903,6 +905,8 @@
 
             const filtrados = listaArticulos.filter(item => {
                 let secLimpia = limpiarTextoSeccion(item.seccion);
+                if (secLimpia.toLowerCase().includes('tool')) return false; // Excluir cualquier rastro de tool en search
+
                 let cumpleTexto = item.articulo.toLowerCase().includes(query) || 
                                   item.pn.toLowerCase().replace(/\s+/g, '').includes(query.replace(/\s+/g, '')) ||
                                   secLimpia.toLowerCase().includes(query);
