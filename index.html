@@ -427,6 +427,11 @@
                 <option value="1FL2GrFNo6Nayxkg80e4tW1XFqgzDldlO">17. TAGS & TOOLS</option>
                 <option value="1YpR6eW7ue83ehh9lAs7sDwijy13JPVKP">18. TIE STRAPS</option>
             </select>
+            <div id="enlace-externo-container" class="hidden pt-1">
+                <a id="btn-enlace-externo" href="#" target="_blank" class="text-[10px] text-sky-400 hover:underline flex items-center space-x-1">
+                    <span>🔗 Si el visor no carga, abrir documento en pestaña externa de Google Drive</span>
+                </a>
+            </div>
             <div class="flex items-center justify-between pt-1">
                 <span class="text-[10px] text-slate-400">Base Técnica AvioTech</span>
                 <span class="text-[9px] bg-slate-950 text-emerald-400 font-semibold px-2 py-0.5 rounded border border-slate-800">
@@ -516,8 +521,8 @@
     <!-- Cargar base de datos -->
     <script src="data.js"></script>
     <script>
-        // Base de datos completa
-        let listaArticulos = JSON.parse(localStorage.getItem('svqh_items')) || [
+        // Definición completa base con AIR PACK OVHT SENSOR actualizado
+        const articulosBaseOriginales = [
             { articulo: "AIR PACK OVHT SENSOR", pn: "REFERENCE-AIR-PACK", seccion: "AIR PACK OVHT SENSOR" },
             { articulo: "O-RING", pn: "1MS9385-07", seccion: "AIR PACK OVHT SENSOR" },
             { articulo: "O-RING", pn: "S9028A905", seccion: "AIR PACK OVHT SENSOR" },
@@ -639,7 +644,20 @@
             { articulo: "AIRSTAIRS LAMPS", pn: "1864", seccion: "AIRSTAIRS" }
         ];
 
-        // Depurar para asegurar que no haya herramientas en la lista de consumibles
+        // Sincronización automática de almacenamiento local asegurando que Air Pack OVHT SENSOR esté presente
+        let listaArticulos = JSON.parse(localStorage.getItem('svqh_items')) || [];
+        if (listaArticulos.length === 0) {
+            listaArticulos = articulosBaseOriginales;
+        } else {
+            // Asegurar que los elementos de AIR PACK OVHT SENSOR existen en la lista guardada
+            articulosBaseOriginales.forEach(itemBase => {
+                if (!listaArticulos.some(i => i.pn === itemBase.pn)) {
+                    listaArticulos.push(itemBase);
+                }
+            });
+        }
+        
+        // Filtrar herramientas duplicadas en consumibles
         listaArticulos = listaArticulos.filter(item => {
             let sec = (item.seccion || "").toLowerCase();
             let art = (item.articulo || "").toLowerCase();
@@ -884,9 +902,16 @@
             if(!fileId) return;
             const iframe = document.getElementById('iframe-doc-viewer');
             const placeholder = document.getElementById('doc-placeholder');
+            const enlaceContainer = document.getElementById('enlace-externo-container');
+            const btnEnlaceExterno = document.getElementById('btn-enlace-externo');
+            
             if(iframe && placeholder) {
                 placeholder.classList.add('hidden');
                 iframe.src = `https://drive.google.com/file/d/${fileId}/preview`;
+                
+                // Configurar enlace de respaldo externo por si Google Drive bloquea el frame
+                btnEnlaceExterno.href = `https://drive.google.com/file/d/${fileId}/view?usp=sharing`;
+                enlaceContainer.classList.remove('hidden');
             }
         }
 
