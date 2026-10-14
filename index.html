@@ -353,13 +353,14 @@
 
     </div>
 
-    <!-- PESTAÑA 4: DOCUMENTS (LISTA CON SYNOPTIC Y TAGS & TOOLS) -->
+    <!-- PESTAÑA 4: DOCUMENTS (CARGA DIFERIDA / BAJO DEMANDA) -->
     <div id="pestana-docs" class="hidden space-y-4">
         
         <!-- Menú Selector de Manuales Completo -->
         <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 space-y-2 shadow-md">
             <label class="block text-xs font-bold text-sky-400 uppercase tracking-wide">Seleccionar Documento Técnico (17 totales):</label>
             <select id="select-doc" onchange="cargarDocumentoSeleccionado(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:ring-2 focus:ring-sky-500 font-medium">
+                <option value="" disabled selected>-- Elige un documento para visualizar --</option>
                 <option value="1adDKrCHrUkUIaukFjtEb-Y_cAQbaVV0L">1. 737NG COMPONENT LOCATOR GUIDE</option>
                 <option value="10lMqgWVcna_bWoToLCjfEgM_BFlvNPqB">2. 737NG Flight Deck Panels</option>
                 <option value="1ATcDP2bmVb-FyoMRpGKirJN-4sylB5BB">3. AOG PARTS LIST</option>
@@ -386,14 +387,20 @@
             </div>
         </div>
 
-        <!-- Visor Integrado Protegido con Capa Escudo Superior -->
+        <!-- Visor Integrado Protegido (Vacío por defecto hasta seleccionar) -->
         <div class="relative w-full rounded-2xl overflow-hidden border border-slate-800 shadow-2xl bg-slate-950 h-[70vh]">
-            <!-- CAPA ESCUDO: Bloquea interacción táctil en la barra superior (botón de abrir/descargar) -->
+            <!-- CAPA ESCUDO: Bloquea interacción táctil en la barra superior -->
             <div class="absolute top-0 left-0 w-full h-14 z-20 bg-transparent"></div>
             
+            <!-- Mensaje inicial cuando no hay documento seleccionado -->
+            <div id="doc-placeholder" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center text-slate-400 space-y-2 z-5 bg-slate-950">
+                <span class="text-3xl">📂</span>
+                <p class="text-xs font-medium">Selecciona un documento en el menú desplegable superior para cargarlo en el visor.</p>
+            </div>
+
             <iframe 
                 id="iframe-doc-viewer"
-                src="https://drive.google.com/file/d/1adDKrCHrUkUIaukFjtEb-Y_cAQbaVV0L/preview" 
+                src="" 
                 class="w-full h-full border-0 relative z-10" 
                 allow="autoplay"
                 title="Visor de Documentación Técnica AvioTech">
@@ -541,8 +548,13 @@
         }
 
         function cargarDocumentoSeleccionado(fileId) {
+            if(!fileId) return;
             const iframe = document.getElementById('iframe-doc-viewer');
-            if(iframe) {
+            const placeholder = document.getElementById('doc-placeholder');
+            
+            if(iframe && placeholder) {
+                // Ocultar el mensaje guía y asignar la URL al iframe bajo demanda
+                placeholder.classList.add('hidden');
                 iframe.src = `https://drive.google.com/file/d/${fileId}/preview`;
             }
         }
@@ -881,6 +893,7 @@
             document.getElementById('input-password').value = '';
             cancelarEdicion();
             evaluarAuthUI();
+            
         }
 
         // Carga Inicial
