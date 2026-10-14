@@ -85,16 +85,16 @@
         
         <!-- Historial flotante de últimos P/Ns copiados -->
         <div id="barra-ultimos-pns" class="hidden bg-slate-900/90 border border-slate-800 rounded-2xl p-2.5 space-y-1.5 shadow-md">
-            <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider px-1 flex justify-between">
+            <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider px-1">
                 <span>⚡ Últimos P/Ns copiados (Acceso rápido)</span>
             </div>
             <div id="contenedor-chips-pns" class="flex flex-wrap gap-1.5"></div>
         </div>
 
-        <!-- Barra de búsqueda limpia -->
+        <!-- Barra de búsqueda -->
         <div class="relative">
             <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-500">🔍</span>
-            <input type="text" id="buscador" oninput="filtrarYAgrupar()" onfocus="mostrarHistorial(true)" placeholder="Buscar tarea, consumible o Part Number..." 
+            <input type="text" id="buscador" oninput="filtrarYAgrupar()" onfocus="mostrarHistorial(true)" placeholder="Buscar elemento, consumible o Part Number..." 
                    class="w-full bg-slate-900/90 border border-slate-800 text-white placeholder-slate-500 rounded-2xl pl-11 pr-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/50 shadow-inner">
             
             <div id="dropdown-historial" class="hidden absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl z-30 p-2 space-y-1 backdrop-blur-md">
@@ -107,11 +107,11 @@
         </div>
 
         <div class="flex justify-between items-center px-1">
-            <span class="text-[11px] text-slate-400 font-medium">Tareas y consumibles necesarios</span>
-            <span class="text-[11px] text-slate-400 font-medium"><span id="contador-items" class="text-sky-400 font-bold">0</span> elementos</span>
+            <span class="text-[11px] text-slate-400 font-medium">Elementos agrupados (pulsa para desplegar)</span>
+            <span class="text-[11px] text-slate-400 font-medium"><span id="contador-items" class="text-sky-400 font-bold">0</span> consumibles</span>
         </div>
 
-        <div id="contenedor-secciones" class="space-y-3"></div>
+        <div id="contenedor-secciones" class="space-y-2.5"></div>
     </div>
 
     <!-- PESTAÑA FAVORITOS -->
@@ -140,7 +140,7 @@
         <div id="contenedor-tools" class="space-y-2.5"></div>
     </div>
 
-    <!-- PESTAÑA 3: RAMPS -->
+    <!-- PESTAÑA 3: RAMPS (NG & MAX Restaudas completas) -->
     <div id="pestana-ramps" class="hidden space-y-6">
         <div class="flex justify-between items-center border-b border-slate-800 pb-2">
             <span class="text-xs text-slate-400 font-medium">Marca las tareas realizadas:</span>
@@ -148,8 +148,9 @@
                 🔄 Reset Checklist
             </button>
         </div>
+
         <div class="space-y-4">
-            <h2 class="text-sm font-black text-amber-400 tracking-wider border-b border-amber-500/20 pb-1.5">✈️ RAMPS NG & 🚀 MAX</h2>
+            <h2 class="text-sm font-black text-amber-400 tracking-wider border-b border-amber-500/20 pb-1.5">✈️ RAMPS NG</h2>
             <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 1 CHECK – RA800</h3>
                 <div class="text-xs text-slate-300 space-y-2.5">
@@ -157,12 +158,29 @@
                         <input type="checkbox" id="chk-ng-r1-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500">
                         <span><span class="font-semibold text-slate-400">PAGE 2/ ITEM 4.</span> 24-31-11-710-801 MAIN BATTERY DISCHARGE CHECK.</span>
                     </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-ng-r1-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500">
+                        <span><span class="font-semibold text-slate-400">PG10/ ITEM 22.</span> 25-RYR-19 CHECK ALL EMERGENCY LIGHTS.</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-4 pt-4 border-t border-slate-800">
+            <h2 class="text-sm font-black text-emerald-400 tracking-wider border-b border-emerald-500/20 pb-1.5">🚀 RAMPS MAX</h2>
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
+                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 1 CHECK – RA800</h3>
+                <div class="text-xs text-slate-300 space-y-2.5">
+                    <label class="flex items-start space-x-2.5 cursor-pointer">
+                        <input type="checkbox" id="chk-max-r1-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500">
+                        <span><span class="font-semibold text-slate-400">PAGE 2/ ITEM 4.</span> 24-31-11-710-801 MAIN BATTERY DISCHARGE CHECK.</span>
+                    </label>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- PESTAÑA 4: DOCUMENTS (Con Documento 18 Corregido) -->
+    <!-- PESTAÑA 4: DOCUMENTS -->
     <div id="pestana-docs" class="hidden space-y-4">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 space-y-2 shadow-lg">
             <label class="block text-xs font-bold text-sky-400 uppercase tracking-wide">Seleccionar Documento Técnico (18 totales):</label>
@@ -202,7 +220,7 @@
         </div>
     </div>
 
-    <!-- PESTAÑA 5: BUZÓN DE SUGERENCIAS / ERRATAS -->
+    <!-- PESTAÑA 5: BUZÓN -->
     <div id="pestana-feedback" class="hidden space-y-4">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
             <div class="border-b border-slate-800 pb-2">
@@ -277,7 +295,7 @@
                 <input type="hidden" id="edit-original-pn" value="">
 
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">Nombre del Artículo / Tarea</label>
+                    <label class="block text-xs text-slate-400 mb-1">Nombre del Elemento / Consumible</label>
                     <input type="text" id="form-articulo" placeholder="Ej. O-RING 3" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
                 </div>
                 
@@ -287,7 +305,7 @@
                 </div>
                 
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">Sección o Tarea Asociada</label>
+                    <label class="block text-xs text-slate-400 mb-1">Sección o Grupo</label>
                     <div class="flex space-x-2">
                         <select id="form-seccion" class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"></select>
                         <button type="button" onclick="crearNuevoGrupo()" class="bg-slate-800 hover:bg-slate-700 text-white font-bold px-3.5 rounded-xl text-base transition">＋</button>
@@ -334,12 +352,39 @@
             { articulo: "STRAP - CABLE TIE (BACS38K4)", pn: "BACS38K4", seccion: "STRAP - CABLE TIE (Bridas)" }
         ];
 
-        let listaArticulos = JSON.parse(localStorage.getItem('svqh_items_v4')) || articulosBaseOriginales;
-        localStorage.setItem('svqh_items_v4', JSON.stringify(listaArticulos));
+        const LISTA_HERRAMIENTAS = [
+            { articulo: "QUICKSET", pn: "QUICKSET" },
+            { articulo: "FLUKE117", pn: "FLUKE117" },
+            { articulo: "STAB TRIM CUTOUT TESTER", pn: "C27007-46" },
+            { articulo: "ELT ADT406AP 50 OHM DUMMY LOAD KIT", pn: "112-3148" },
+            { articulo: "PROBE OVHT AND TESTER", pn: "BH17336A // BH16440-40" },
+            { articulo: "TEMPCAL TESTER", pn: "H394-230" },
+            { articulo: "BONDING METER", pn: "M1" },
+            { articulo: "HAND HELD MULTIPURPOSE I/FACE HHMPI", pn: "FDS400-301" },
+            { articulo: "FIREX TEST CARGO", pn: "C26006-1" },
+            { articulo: "TEST SET / PITOT STATIC", pn: "MPS45" },
+            { articulo: "GROUND FAULT PROTECTION SYS TEST SET", pn: "F72917-19" },
+            { articulo: "PDL LAPTOP WITH TECHSAT PDL MKII", pn: "TECHSATPDLLAPT0P" },
+            { articulo: "FLUKE324 (CLAMP)", pn: "FLUKE324" },
+            { articulo: "CAJA RADIOALTIMETRO", pn: "C34005-16" },
+            { articulo: "RADIO ALTIMETER TEST SET", pn: "DRA707" },
+            { articulo: "TRAMMEL BAR", pn: "F80055-1" },
+            { articulo: "RUDDER PCU TEST SET", pn: "C29002-17" },
+            { articulo: "HIRFS", pn: "906-10247-3 OR XLR-9703-01" },
+            { articulo: "WTB FEEDTHROUGH CONNECTORS ADAPTER (HIRFS)", pn: "WTBADAPTER" },
+            { articulo: "TOOL CONNECTORS FOR BACKSHELLS", pn: "CMS837" },
+            { articulo: "KNIPEX CUTTING SAFTGLO", pn: "9435215" },
+            { articulo: "FIRE EXTINGUISHER BOTTLE SQUIB TESTER", pn: "F80229-69" }
+        ];
+
+        let listaArticulos = JSON.parse(localStorage.getItem('svqh_items_v5')) || articulosBaseOriginales;
+        localStorage.setItem('svqh_items_v5', JSON.stringify(listaArticulos));
 
         let favoritos = JSON.parse(localStorage.getItem('svqh_favoritos')) || [];
         let historialPns = JSON.parse(localStorage.getItem('svqh_historial_pns')) || [];
         let feedbackList = JSON.parse(localStorage.getItem('svqh_feedback')) || [];
+        let estadoChecklist = JSON.parse(localStorage.getItem('svqh_checklist_ramps')) || {};
+        let seccionesAbiertas = {}; // Estado del acordeón
         let autenticado = false;
         const CLAVE_CORRECTA = "1234";
 
@@ -361,6 +406,7 @@
             if (target === 'lista') { filtrarYAgrupar(); renderizarHistorialPns(); }
             if (target === 'favs') renderizarFavoritos();
             if (target === 'tools') filtrarTools();
+            if (target === 'ramps') cargarEstadoChecklist();
             if (target === 'admin') { evaluarAuthUI(); renderizarFeedbackAdmin(); renderizarListaGestion(); actualizarDesplegableSecciones(); }
         }
 
@@ -453,6 +499,68 @@
             renderizarFeedbackAdmin();
         }
 
+        function filtrarTools() {
+            const query = document.getElementById('buscador-tools').value.toLowerCase().trim();
+            const contenedor = document.getElementById('contenedor-tools');
+            const contador = document.getElementById('contador-tools');
+            contenedor.innerHTML = '';
+
+            const filtrados = LISTA_HERRAMIENTAS.filter(item => 
+                item.articulo.toLowerCase().includes(query) || 
+                item.pn.toLowerCase().replace(/\s+/g, '').includes(query.replace(/\s+/g, ''))
+            );
+            contador.innerText = filtrados.length;
+
+            if (filtrados.length === 0) {
+                contenedor.innerHTML = `<div class="text-center text-xs text-slate-500 py-12">No se encontraron herramientas.</div>`;
+                return;
+            }
+
+            filtrados.forEach(tool => {
+                const card = document.createElement('div');
+                card.className = "bg-slate-900/90 border border-slate-800/80 rounded-2xl p-3.5 space-y-2 shadow-md";
+                const esFav = favoritos.some(f => f.pn === tool.pn);
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div class="flex items-center space-x-2 pr-2">
+                            <span>🧰</span>
+                            <h4 class="font-bold text-white text-xs uppercase tracking-wide">${tool.articulo}</h4>
+                        </div>
+                        <button onclick="toggleFavorito('${tool.pn}', '${tool.articulo}', 'tool')" class="${esFav ? 'text-amber-400' : 'text-slate-600'} text-lg">★</button>
+                    </div>
+                    <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-800/50">
+                        <span class="text-[10px] text-slate-400 font-bold uppercase">Part Number</span>
+                        <div class="flex items-center space-x-2">
+                            <code class="text-xs font-mono font-bold text-amber-400 bg-slate-950 px-2.5 py-1 rounded-xl border border-slate-800">${tool.pn}</code>
+                            <button onclick="copiarAlPortapapeles('${tool.pn}')" class="bg-sky-500/15 text-sky-400 px-2.5 py-1 rounded-xl text-[10px] font-bold border border-sky-500/30">Copiar</button>
+                        </div>
+                    </div>
+                `;
+                contenedor.appendChild(card);
+            });
+        }
+
+        function guardarEstadoCheck(checkbox) {
+            estadoChecklist[checkbox.id] = checkbox.checked;
+            localStorage.setItem('svqh_checklist_ramps', JSON.stringify(estadoChecklist));
+        }
+
+        function cargarEstadoChecklist() {
+            Object.keys(estadoChecklist).forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.checked = estadoChecklist[id];
+            });
+        }
+
+        function resetearChecklist() {
+            if (confirm("¿Resetear todas las tareas de Ramps?")) {
+                estadoChecklist = {};
+                localStorage.removeItem('svqh_checklist_ramps');
+                document.querySelectorAll('#pestana-ramps input[type="checkbox"]').forEach(c => c.checked = false);
+            }
+        }
+
         function copiarAlPortapapeles(texto) {
             navigator.clipboard.writeText(texto).then(() => {
                 registrarPNCopiado(texto);
@@ -467,6 +575,7 @@
             setTimeout(() => toast.classList.remove('toast-active'), 2500);
         }
 
+        // Filtro y Acordeón Desplegable
         function filtrarYAgrupar() {
             const query = document.getElementById('buscador').value.toLowerCase().trim();
             const contenedor = document.getElementById('contenedor-secciones');
@@ -496,14 +605,22 @@
 
             Object.keys(grupos).sort().forEach(nombreSeccion => {
                 const items = grupos[nombreSeccion];
+                const idLimpio = nombreSeccion.replace(/[^a-zA-Z0-9]/g, '-');
+                const estaAbierto = query !== '' ? true : (seccionesAbiertas[nombreSeccion] || false);
+
                 const divGrupo = document.createElement('div');
                 divGrupo.className = "bg-slate-900/60 border border-slate-800/80 rounded-2xl overflow-hidden shadow-lg";
 
                 divGrupo.innerHTML = `
-                    <div class="bg-slate-900/90 px-4 py-3 flex justify-between items-center font-bold text-xs text-sky-400 uppercase">
-                        <span>🔧 Tarea: ${nombreSeccion} (${items.length})</span>
-                    </div>
-                    <div class="p-3 space-y-2">
+                    <button onclick="toggleAcordeon('${nombreSeccion}')" class="w-full bg-slate-900/90 px-4 py-3.5 flex justify-between items-center text-left focus:outline-none hover:bg-slate-850 transition">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs">📂</span>
+                            <span class="font-bold text-xs text-sky-400 uppercase tracking-wider">${nombreSeccion}</span>
+                            <span class="bg-slate-950 text-slate-400 font-mono text-[10px] px-2 py-0.5 rounded-full border border-slate-800">${items.length}</span>
+                        </div>
+                        <span id="flecha-${idLimpio}" class="text-slate-400 font-mono text-xs">${estaAbierto ? '▲' : '▼'}</span>
+                    </button>
+                    <div id="bloque-${idLimpio}" class="p-3 space-y-2 bg-slate-950/20 ${estaAbierto ? '' : 'hidden'}">
                         ${items.map(item => {
                             const esFav = favoritos.some(f => f.pn === item.pn);
                             return `
@@ -513,7 +630,7 @@
                                         <button onclick="toggleFavorito('${item.pn}', '${item.articulo}', 'part')" class="${esFav ? 'text-amber-400' : 'text-slate-600'} text-base">★</button>
                                     </div>
                                     <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-800/50">
-                                        <span class="text-[10px] text-slate-400 font-bold">Consumible P/N</span>
+                                        <span class="text-[10px] text-slate-400 font-bold uppercase">Consumible P/N</span>
                                         <div class="flex items-center space-x-2">
                                             <code class="text-xs font-mono font-bold text-amber-400 bg-slate-950 px-2.5 py-1 rounded-xl border border-slate-800">${item.pn}</code>
                                             <button onclick="copiarAlPortapapeles('${item.pn}')" class="bg-sky-500/15 text-sky-400 px-2.5 py-1 rounded-xl text-[10px] font-bold border border-sky-500/30">Copiar</button>
@@ -526,6 +643,11 @@
                 `;
                 contenedor.appendChild(divGrupo);
             });
+        }
+
+        function toggleAcordeon(nombreSeccion) {
+            seccionesAbiertas[nombreSeccion] = !seccionesAbiertas[nombreSeccion];
+            filtrarYAgrupar();
         }
 
         function verificarPassword() {
@@ -552,6 +674,7 @@
 
         filtrarYAgrupar();
         renderizarHistorialPns();
+        filtrarTools();
     </script>
 </body>
 </html>
