@@ -6,6 +6,8 @@
     <title>AvioTech - Avionics Solutions</title>
     <!-- Tailwind CSS desde CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Tesseract.js para OCR de etiquetas por cámara -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/4.0.2/tesseract.min.js"></script>
     <style>
         body { background-color: #0b1329; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
@@ -23,7 +25,7 @@
         </span>
     </div>
 
-    <!-- NOTIFICACIÓN TOAST (Copiado de P/N) -->
+    <!-- NOTIFICACIÓN TOAST -->
     <div id="toast-notif" class="fixed top-4 right-4 z-50 bg-sky-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-xl transition-all duration-300 transform -translate-y-10 opacity-0 pointer-events-none flex items-center space-x-2 border border-sky-400">
         <span>📋</span>
         <span id="toast-msg">¡P/N copiado al portapapeles!</span>
@@ -35,12 +37,12 @@
         <p class="text-xs text-slate-400 font-medium">Avionics Maintenance & Documentation</p>
     </header>
 
-    <!-- NAVEGACIÓN INFERIOR ESTILO APP NATIVA (FIXED BOTTOM) -->
+    <!-- NAVEGACIÓN INFERIOR -->
     <nav class="fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 p-1.5 max-w-md mx-auto">
         <div class="flex text-[10px] font-bold tracking-wide">
             <button id="btn-lista" onclick="cambiarPestana('lista')" class="flex-1 py-2 rounded-lg text-center bg-sky-500 text-white shadow-lg transition-all flex flex-col items-center justify-center space-y-0.5">
                 <span class="text-base leading-none">🔍</span>
-                <span>Buscar</span>
+                <span>Search</span>
             </button>
             <button id="btn-favs" onclick="cambiarPestana('favs')" class="flex-1 py-2 rounded-lg text-center text-slate-400 transition-all flex flex-col items-center justify-center space-y-0.5">
                 <span class="text-base leading-none">⭐</span>
@@ -65,17 +67,37 @@
         </div>
     </nav>
 
-    <!-- PESTAÑA 1: BUSCAR ARTÍCULOS Y CONSUMIBLES -->
-    <div id="pestana-lista" class="space-y-4">
+    <!-- PESTAÑA 1: SEARCH (MEJORADA CON FILTROS RÁPIDOS E HISTORIAL) -->
+    <div id="pestana-lista" class="space-y-3">
         <div class="relative">
-            <input type="text" id="buscador" oninput="filtrarYAgrupar()" placeholder="Buscar artículo o Part Number..." 
+            <input type="text" id="buscador" oninput="manejarBusqueda()" onfocus="mostrarHistorial(true)" placeholder="Buscar artículo o Part Number..." 
                    class="w-full bg-slate-900 border border-slate-800 text-white placeholder-slate-500 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 shadow-inner">
+            
+            <!-- Desplegable Historial de Búsquedas -->
+            <div id="dropdown-historial" class="hidden absolute top-full left-0 right-0 mt-1 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl z-30 p-2 space-y-1">
+                <div class="flex justify-between items-center px-2 py-1 text-[10px] text-slate-400 font-bold uppercase border-b border-slate-800">
+                    <span>Búsquedas recientes</span>
+                    <button onclick="limpiarHistorial()" class="text-rose-400 hover:underline">Borrar</button>
+                </div>
+                <div id="lista-historial" class="space-y-1"></div>
+            </div>
         </div>
+
+        <!-- Filtros Rápidos (Píldoras ATA / Categorías) -->
+        <div class="flex overflow-x-auto space-x-2 pb-1 custom-scrollbar">
+            <button onclick="filtrarPorPildora('')" id="pill-all" class="px-3 py-1 bg-sky-500 text-white rounded-full text-xs font-bold whitespace-nowrap transition">Todo</button>
+            <button onclick="filtrarPorPildora('oring')" id="pill-oring" class="px-3 py-1 bg-slate-900 border border-slate-800 text-slate-300 rounded-full text-xs font-semibold whitespace-nowrap transition hover:bg-slate-800">O-Rings</button>
+            <button onclick="filtrarPorPildora('clamp')" id="pill-clamp" class="px-3 py-1 bg-slate-900 border border-slate-800 text-slate-300 rounded-full text-xs font-semibold whitespace-nowrap transition hover:bg-slate-800">Clamps</button>
+            <button onclick="filtrarPorPildora('bulb')" id="pill-bulb" class="px-3 py-1 bg-slate-900 border border-slate-800 text-slate-300 rounded-full text-xs font-semibold whitespace-nowrap transition hover:bg-slate-800">Bulbs</button>
+            <button onclick="filtrarPorPildora('electrical')" id="pill-electrical" class="px-3 py-1 bg-slate-900 border border-slate-800 text-slate-300 rounded-full text-xs font-semibold whitespace-nowrap transition hover:bg-slate-800">Electrical</button>
+            <button onclick="filtrarPorPildora('fastener')" id="pill-fastener" class="px-3 py-1 bg-slate-900 border border-slate-800 text-slate-300 rounded-full text-xs font-semibold whitespace-nowrap transition hover:bg-slate-800">Fasteners</button>
+        </div>
+
         <p class="text-xs text-slate-400 pl-1 font-medium"><span id="contador-items" class="text-sky-400 font-bold">0</span> piezas disponibles en total</p>
         <div id="contenedor-secciones" class="space-y-3"></div>
     </div>
 
-    <!-- PESTAÑA FAVORITOS (NUEVA) -->
+    <!-- PESTAÑA FAVORITOS -->
     <div id="pestana-favs" class="hidden space-y-4">
         <div class="flex justify-between items-center border-b border-slate-800 pb-2">
             <h2 class="text-sm font-bold text-amber-400 uppercase tracking-wide flex items-center space-x-1.5">
@@ -97,9 +119,8 @@
         <div id="contenedor-tools" class="space-y-3"></div>
     </div>
 
-    <!-- PESTAÑA 3: RAMPS CON CHECKLIST INTERACTIVA -->
+    <!-- PESTAÑA 3: RAMPS -->
     <div id="pestana-ramps" class="hidden space-y-6">
-        
         <div class="flex justify-between items-center border-b border-slate-800 pb-2">
             <span class="text-xs text-slate-400 font-medium">Marca las tareas realizadas:</span>
             <button onclick="resetearChecklist()" class="text-[11px] bg-rose-500/20 text-rose-400 border border-rose-500/30 px-2.5 py-1 rounded-lg hover:bg-rose-500/30 font-bold transition">
@@ -383,10 +404,8 @@
 
     </div>
 
-    <!-- PESTAÑA 4: DOCUMENTS (CARGA BAJO DEMANDA) -->
+    <!-- PESTAÑA 4: DOCUMENTS -->
     <div id="pestana-docs" class="hidden space-y-4">
-        
-        <!-- Menú Selector de Manuales Completo -->
         <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 space-y-2 shadow-md">
             <label class="block text-xs font-bold text-sky-400 uppercase tracking-wide">Seleccionar Documento Técnico (17 totales):</label>
             <select id="select-doc" onchange="cargarDocumentoSeleccionado(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:ring-2 focus:ring-sky-500 font-medium">
@@ -417,28 +436,17 @@
             </div>
         </div>
 
-        <!-- Visor Integrado Protegido (Vacío por defecto) -->
         <div class="relative w-full rounded-2xl overflow-hidden border border-slate-800 shadow-2xl bg-slate-950 h-[65vh]">
-            <!-- CAPA ESCUDO -->
             <div class="absolute top-0 left-0 w-full h-14 z-20 bg-transparent"></div>
-            
             <div id="doc-placeholder" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center text-slate-400 space-y-2 z-5 bg-slate-950">
                 <span class="text-3xl">📂</span>
                 <p class="text-xs font-medium">Selecciona un documento en el menú superior para desplegar el visor.</p>
             </div>
-
-            <iframe 
-                id="iframe-doc-viewer"
-                src="" 
-                class="w-full h-full border-0 relative z-10" 
-                allow="autoplay"
-                title="Visor de Documentación Técnica AvioTech">
-            </iframe>
+            <iframe id="iframe-doc-viewer" src="" class="w-full h-full border-0 relative z-10" allow="autoplay" title="Visor de Documentación Técnica AvioTech"></iframe>
         </div>
-
     </div>
 
-    <!-- PESTAÑA 5: AÑADIR (ADMINISTRACIÓN CON CONTRASEÑA) -->
+    <!-- PESTAÑA 5: AÑADIR (CON ESCÁNER OCR DE ETIQUETAS) -->
     <div id="pestana-admin" class="hidden space-y-4">
         <div id="bloqueo-auth" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center space-y-4 shadow-xl">
             <div class="text-4xl">🔒</div>
@@ -449,6 +457,22 @@
         </div>
 
         <div id="formulario-anadir" class="hidden space-y-4">
+            
+            <!-- BOTÓN ESCANEAR ETIQUETA POR CÁMARA (OCR) -->
+            <div class="bg-gradient-to-r from-sky-900/40 to-blue-900/40 border border-sky-500/40 rounded-2xl p-4 text-center space-y-2 shadow-lg">
+                <div class="flex items-center justify-center space-x-2 text-sky-400 font-bold text-xs">
+                    <span>📸</span>
+                    <span>Lectura Inteligente de Etiquetas</span>
+                </div>
+                <p class="text-[11px] text-slate-300">Haz una foto o sube una imagen de la etiqueta física para rellenar automáticamente el Part Number y Descripción.</p>
+                
+                <input type="file" id="input-foto-etiqueta" accept="image/*" capture="environment" onchange="procesarFotoEtiqueta(event)" class="hidden">
+                <button type="button" onclick="document.getElementById('input-foto-etiqueta').click()" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-md flex items-center justify-center space-x-2">
+                    <span>📷 Escanear Etiqueta (Cámara / Archivo)</span>
+                </button>
+                <div id="ocr-status" class="text-[11px] text-amber-400 font-medium hidden"></div>
+            </div>
+
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-2">
                     <h3 id="titulo-formulario" class="font-bold text-green-400 text-sm">✓ Añadir Nuevo Artículo</h3>
@@ -464,7 +488,7 @@
                 
                 <div>
                     <label class="block text-xs text-slate-400 mb-1">Part Number (P/N)</label>
-                    <input type="text" id="form-pn" placeholder="Ej. MS29513-010" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none">
+                    <input type="text" id="form-pn" placeholder="Ej. MS29513-010" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none font-mono text-amber-400">
                 </div>
                 
                 <div>
@@ -486,8 +510,7 @@
 
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-xl">
                 <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wide border-b border-slate-800 pb-1.5">🎛️ Inventario de Gestión</h3>
-                <div id="lista-gestion" class="max-h-64 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
-                </div>
+                <div id="lista-gestion" class="max-h-64 overflow-y-auto space-y-2 pr-1 custom-scrollbar"></div>
             </div>
         </div>
     </div>
@@ -502,6 +525,8 @@
         let seccionesCreadasAdhoc = JSON.parse(localStorage.getItem('svqh_secciones_adhoc')) || [];
         let estadoChecklist = JSON.parse(localStorage.getItem('svqh_checklist_ramps')) || {};
         let favoritos = JSON.parse(localStorage.getItem('svqh_favoritos')) || [];
+        let historialBusquedas = JSON.parse(localStorage.getItem('svqh_historial')) || [];
+        let filtroPillActual = '';
 
         const LISTA_HERRAMIENTAS = [
             { articulo: "QUICKSET", pn: "QUICKSET" },
@@ -534,72 +559,162 @@
         ];
 
         function cambiarPestana(target) {
-            const btnLista = document.getElementById('btn-lista');
-            const btnFavs = document.getElementById('btn-favs');
-            const btnTools = document.getElementById('btn-tools');
-            const btnRamps = document.getElementById('btn-ramps');
-            const btnDocs = document.getElementById('btn-docs');
-            const btnAdmin = document.getElementById('btn-admin');
+            const btns = ['btn-lista', 'btn-favs', 'btn-tools', 'btn-ramps', 'btn-docs', 'btn-admin'];
+            const ps = ['pestana-lista', 'pestana-favs', 'pestana-tools', 'pestana-ramps', 'pestana-docs', 'pestana-admin'];
             
-            const pLista = document.getElementById('pestana-lista');
-            const pFavs = document.getElementById('pestana-favs');
-            const pTools = document.getElementById('pestana-tools');
-            const pRamps = document.getElementById('pestana-ramps');
-            const pDocs = document.getElementById('pestana-docs');
-            const pAdmin = document.getElementById('pestana-admin');
+            btns.forEach(b => document.getElementById(b).className = "flex-1 py-2 rounded-lg text-center text-slate-400 transition-all flex flex-col items-center justify-center space-y-0.5");
+            ps.forEach(p => document.getElementById(p).classList.add('hidden'));
 
-            [btnLista, btnFavs, btnTools, btnRamps, btnDocs, btnAdmin].forEach(b => b.className = "flex-1 py-2 rounded-lg text-center text-slate-400 transition-all flex flex-col items-center justify-center space-y-0.5");
-            [pLista, pFavs, pTools, pRamps, pDocs, pAdmin].forEach(p => p.classList.add('hidden'));
+            const mapping = { lista: 0, favs: 1, tools: 2, ramps: 3, docs: 4, admin: 5 };
+            const idx = mapping[target];
+            
+            document.getElementById(btns[idx]).className = "flex-1 py-2 rounded-lg text-center bg-sky-500 text-white shadow-lg transition-all flex flex-col items-center justify-center space-y-0.5";
+            document.getElementById(ps[idx]).classList.remove('hidden');
+            cancelarEdicion();
 
-            if (target === 'lista') {
-                btnLista.className = "flex-1 py-2 rounded-lg text-center bg-sky-500 text-white shadow-lg transition-all flex flex-col items-center justify-center space-y-0.5";
-                pLista.classList.remove('hidden');
-                cancelarEdicion();
-                filtrarYAgrupar();
-            } else if (target === 'favs') {
-                btnFavs.className = "flex-1 py-2 rounded-lg text-center bg-sky-500 text-white shadow-lg transition-all flex flex-col items-center justify-center space-y-0.5";
-                pFavs.classList.remove('hidden');
-                cancelarEdicion();
-                renderizarFavoritos();
-            } else if (target === 'tools') {
-                btnTools.className = "flex-1 py-2 rounded-lg text-center bg-sky-500 text-white shadow-lg transition-all flex flex-col items-center justify-center space-y-0.5";
-                pTools.classList.remove('hidden');
-                cancelarEdicion();
-                filtrarTools();
-            } else if (target === 'ramps') {
-                btnRamps.className = "flex-1 py-2 rounded-lg text-center bg-sky-500 text-white shadow-lg transition-all flex flex-col items-center justify-center space-y-0.5";
-                pRamps.classList.remove('hidden');
-                cancelarEdicion();
-                cargarEstadoChecklist();
-            } else if (target === 'docs') {
-                btnDocs.className = "flex-1 py-2 rounded-lg text-center bg-sky-500 text-white shadow-lg transition-all flex flex-col items-center justify-center space-y-0.5";
-                pDocs.classList.remove('hidden');
-                cancelarEdicion();
-            } else {
-                btnAdmin.className = "flex-1 py-2 rounded-lg text-center bg-sky-500 text-white shadow-lg transition-all flex flex-col items-center justify-center space-y-0.5";
-                pAdmin.classList.remove('hidden');
+            if (target === 'lista') filtrarYAgrupar();
+            if (target === 'favs') renderizarFavoritos();
+            if (target === 'tools') filtrarTools();
+            if (target === 'ramps') cargarEstadoChecklist();
+            if (target === 'admin') {
                 evaluarAuthUI();
                 actualizarDesplegableSecciones();
                 renderizarListaGestion();
             }
+            ocultarHistorial();
+        }
+
+        // --- OCR / LECTURA DE ETIQUETAS ---
+        async function procesarFotoEtiqueta(event) {
+            const file = event.target.files[0];
+            if(!file) return;
+
+            const statusDiv = document.getElementById('ocr-status');
+            statusDiv.classList.remove('hidden');
+            statusDiv.innerText = "⏳ Analizando etiqueta con IA OCR...";
+
+            try {
+                const result = await Tesseract.recognize(file, 'eng+spa', {
+                    logger: m => {
+                        if(m.status === 'recognizing text') {
+                            statusDiv.innerText = `⏳ Leyendo etiqueta (${Math.round(m.progress * 100)}%)...`;
+                        }
+                    }
+                });
+
+                const text = result.data.text;
+                console.log("Texto OCR detectado:", text);
+
+                // Buscar posibles Part Numbers (ej. formatos con guiones, números largos, MS..., NAS..., AN...)
+                const lineas = text.split('\n').map(l => l.trim()).filter(l => l.length > 2);
+                let possiblePN = "";
+                let possibleDesc = "";
+
+                for (let linea of lineas) {
+                    // Buscar patrones aeronáuticos comunes o palabras clave P/N
+                    if (/P\/N|PN|PART NO|PART NUMBER/i.test(linea)) {
+                        let parts = linea.split(/[:\s]+/);
+                        let idx = parts.findIndex(p => /P\/N|PN|PART/i.test(p));
+                        if(idx !== -1 && parts[idx+1]) possiblePN = parts[idx+1];
+                    }
+                }
+
+                // Si no encontró por etiqueta P/N exacta, busca cualquier palabra alfanumérica con guion (ej MS29513-010)
+                if (!possiblePN) {
+                    for (let linea of lineas) {
+                        let match = linea.match(/[A-Z0-9]{2,}-\d+/i);
+                        if (match) {
+                            possiblePN = match[0];
+                            break;
+                        }
+                    }
+                }
+
+                // Tomar la primera línea limpia como posible descripción
+                if (lineas.length > 0) {
+                    possibleDesc = lineas.find(l => l.length > 4 && !l.includes(possiblePN)) || lineas[0];
+                }
+
+                if (possiblePN) document.getElementById('form-pn').value = possiblePN.toUpperCase();
+                if (possibleDesc) document.getElementById('form-articulo').value = possibleDesc.toUpperCase();
+
+                statusDiv.innerText = "¡Lectura completada con éxito! Revisa los campos.";
+                setTimeout(() => statusDiv.classList.add('hidden'), 4000);
+
+            } catch (err) {
+                console.error(err);
+                statusDiv.innerText = "❌ Error al leer la imagen. Inténtalo de nuevo.";
+            }
+        }
+
+        // --- HISTORIAL Y BÚSQUEDA ---
+        function manejarBusqueda() {
+            filtrarYAgrupar();
+            const val = document.getElementById('buscador').value.trim();
+            if (val.length > 2) {
+                if (!historialBusquedas.includes(val)) {
+                    historialBusquedas.unshift(val);
+                    if (historialBusquedas.length > 5) historialBusquedas.pop();
+                    localStorage.setItem('svqh_historial', JSON.stringify(historialBusquedas));
+                }
+            }
+        }
+
+        function mostrarHistorial(mostrar) {
+            const drop = document.getElementById('dropdown-historial');
+            const listaH = document.getElementById('lista-historial');
+            if (!mostrar || historialBusquedas.length === 0) {
+                drop.classList.add('hidden');
+                return;
+            }
+            listaH.innerHTML = historialBusquedas.map(h => 
+                `<button type="button" onclick="seleccionarHistorial('${h}')" class="w-full text-left px-2 py-1.5 text-xs text-slate-300 hover:bg-slate-800 rounded-lg truncate">🕒 ${h}</button>`
+            ).join('');
+            drop.classList.remove('hidden');
+        }
+
+        function seleccionarHistorial(val) {
+            document.getElementById('buscador').value = val;
+            filtrarYAgrupar();
+            document.getElementById('dropdown-historial').classList.add('hidden');
+        }
+
+        function ocultarHistorial() {
+            setTimeout(() => {
+                document.getElementById('dropdown-historial').classList.add('hidden');
+            }, 200);
+        }
+
+        function limpiarHistorial() {
+            historialBusquedas = [];
+            localStorage.removeItem('svqh_historial');
+            document.getElementById('dropdown-historial').classList.add('hidden');
+        }
+
+        function filtrarPorPildora(categoria) {
+            filtroPillActual = categoria;
+            ['all', 'oring', 'clamp', 'bulb', 'electrical', 'fastener'].forEach(p => {
+                const btn = document.getElementById(`pill-${p}`);
+                if(p === (categoria === '' ? 'all' : categoria)) {
+                    btn.className = "px-3 py-1 bg-sky-500 text-white rounded-full text-xs font-bold whitespace-nowrap transition";
+                } else {
+                    btn.className = "px-3 py-1 bg-slate-900 border border-slate-800 text-slate-300 rounded-full text-xs font-semibold whitespace-nowrap transition hover:bg-slate-800";
+                }
+            });
+            filtrarYAgrupar();
         }
 
         function copiarAlPortapapeles(texto) {
             navigator.clipboard.writeText(texto).then(() => {
                 mostrarToast(`P/N copiado: ${texto}`);
-            }).catch(() => {
-                mostrarToast("Error al copiar");
             });
         }
 
         function mostrarToast(mensaje) {
             const toast = document.getElementById('toast-notif');
-            const toastMsg = document.getElementById('toast-msg');
-            toastMsg.innerText = mensaje;
+            document.getElementById('toast-msg').innerText = mensaje;
             toast.classList.add('toast-active');
-            setTimeout(() => {
-                toast.classList.remove('toast-active');
-            }, 2500);
+            setTimeout(() => toast.classList.remove('toast-active'), 2500);
         }
 
         function toggleFavorito(pn, articulo, tipo) {
@@ -613,14 +728,9 @@
             }
             localStorage.setItem('svqh_favoritos', JSON.stringify(favoritos));
             
-            // Re-renderizar pestaña actual para actualizar la estrella visualmente
-            const pLista = document.getElementById('pestana-lista');
-            const pFavs = document.getElementById('pestana-favs');
-            const pTools = document.getElementById('pestana-tools');
-            
-            if(!pLista.classList.contains('hidden')) filtrarYAgrupar();
-            if(!pFavs.classList.contains('hidden')) renderizarFavoritos();
-            if(!pTools.classList.contains('hidden')) filtrarTools();
+            if(!document.getElementById('pestana-lista').classList.contains('hidden')) filtrarYAgrupar();
+            if(!document.getElementById('pestana-favs').classList.contains('hidden')) renderizarFavoritos();
+            if(!document.getElementById('pestana-tools').classList.contains('hidden')) filtrarTools();
         }
 
         function renderizarFavoritos() {
@@ -630,14 +740,13 @@
             contador.innerText = `${favoritos.length} items`;
 
             if (favoritos.length === 0) {
-                contenedor.innerHTML = `<div class="text-center text-xs text-slate-500 py-12">No tienes elementos guardados en favoritos.<br>Toca la estrella ⭐ de cualquier componente o herramienta.</div>`;
+                contenedor.innerHTML = `<div class="text-center text-xs text-slate-500 py-12">No tienes favoritos guardados.<br>Toca la estrella ⭐ de cualquier componente o herramienta.</div>`;
                 return;
             }
 
             favoritos.forEach(fav => {
                 const card = document.createElement('div');
                 card.className = "bg-slate-900 border border-slate-800 rounded-xl p-3.5 space-y-2 shadow-md relative";
-                
                 const pnEscapado = fav.pn.replace(/'/g, "\\'");
                 const artEscapado = fav.articulo.replace(/'/g, "\\'");
 
@@ -647,9 +756,7 @@
                             <span class="text-xs">${fav.tipo === 'tool' ? '🧰' : '📦'}</span>
                             <h4 class="font-bold text-white text-xs uppercase tracking-wide">${fav.articulo}</h4>
                         </div>
-                        <button onclick="toggleFavorito('${pnEscapado}', '${artEscapado}', '${fav.tipo}')" class="text-amber-400 text-base focus:outline-none">
-                            ★
-                        </button>
+                        <button onclick="toggleFavorito('${pnEscapado}', '${artEscapado}', '${fav.tipo}')" class="text-amber-400 text-base focus:outline-none">★</button>
                     </div>
                     <div class="flex items-center justify-between text-xs pt-1">
                         <span class="text-[11px] text-slate-400 font-medium">P/N:</span>
@@ -667,7 +774,6 @@
             if(!fileId) return;
             const iframe = document.getElementById('iframe-doc-viewer');
             const placeholder = document.getElementById('doc-placeholder');
-            
             if(iframe && placeholder) {
                 placeholder.classList.add('hidden');
                 iframe.src = `https://drive.google.com/file/d/${fileId}/preview`;
@@ -698,14 +804,12 @@
             const query = document.getElementById('buscador-tools').value.toLowerCase().trim();
             const contenedor = document.getElementById('contenedor-tools');
             const contador = document.getElementById('contador-tools');
-            
             contenedor.innerHTML = '';
 
             const filtrados = LISTA_HERRAMIENTAS.filter(item => 
                 item.articulo.toLowerCase().includes(query) || 
                 item.pn.toLowerCase().replace(/\s+/g, '').includes(query.replace(/\s+/g, ''))
             );
-
             contador.innerText = filtrados.length;
 
             if (filtrados.length === 0) {
@@ -716,7 +820,6 @@
             filtrados.forEach(tool => {
                 const card = document.createElement('div');
                 card.className = "bg-slate-900 border border-slate-800 rounded-xl p-3.5 space-y-1.5 shadow-md";
-                
                 const esFav = favoritos.some(f => f.pn === tool.pn);
                 const pnEscapado = tool.pn.replace(/'/g, "\\'");
                 const artEscapado = tool.articulo.replace(/'/g, "\\'");
@@ -764,15 +867,12 @@
                 `<option value="${sec}" class="bg-slate-950 text-white">${sec}</option>`
             ).join('');
 
-            if(seleccionarEsteValor) {
-                selectSeccion.value = limpiarTextoSeccion(seleccionarEsteValor);
-            }
+            if(seleccionarEsteValor) selectSeccion.value = limpiarTextoSeccion(seleccionarEsteValor);
         }
 
         function crearNuevoGrupo() {
             const nuevoGrupo = prompt("Introduce el nombre de la nueva sección o grupo:");
             if (!nuevoGrupo || nuevoGrupo.trim() === "") return;
-            
             let grupoSanitizado = limpiarTextoSeccion(nuevoGrupo);
             if (grupoSanitizado === "") return;
 
@@ -787,14 +887,19 @@
             const query = document.getElementById('buscador').value.toLowerCase().trim();
             const contenedor = document.getElementById('contenedor-secciones');
             const contadorGral = document.getElementById('contador-items');
-            
             contenedor.innerHTML = '';
 
             const filtrados = listaArticulos.filter(item => {
                 let secLimpia = limpiarTextoSeccion(item.seccion);
-                return item.articulo.toLowerCase().includes(query) || 
-                       item.pn.toLowerCase().replace(/\s+/g, '').includes(query.replace(/\s+/g, '')) ||
-                       secLimpia.toLowerCase().includes(query);
+                let cumpleTexto = item.articulo.toLowerCase().includes(query) || 
+                                  item.pn.toLowerCase().replace(/\s+/g, '').includes(query.replace(/\s+/g, '')) ||
+                                  secLimpia.toLowerCase().includes(query);
+                
+                let cumplePill = true;
+                if (filtroPillActual !== '') {
+                    cumplePill = item.articulo.toLowerCase().includes(filtroPillActual) || secLimpia.toLowerCase().includes(filtroPillActual);
+                }
+                return cumpleTexto && cumplePill;
             });
 
             contadorGral.innerText = filtrados.length;
@@ -813,7 +918,7 @@
 
             Object.keys(grupos).sort().forEach(nombreSeccion => {
                 const itemsDelGrupo = grupos[nombreSeccion];
-                const estaAbierto = query !== '' ? true : (seccionesAbiertas[nombreSeccion] || false);
+                const estaAbierto = query !== '' || filtroPillActual !== '' ? true : (seccionesAbiertas[nombreSeccion] || false);
                 const idLimpio = nombreSeccion.replace(/[^a-zA-Z0-9]/g, '-');
 
                 const divGrupo = document.createElement('div');
@@ -840,7 +945,6 @@
                 itemsDelGrupo.forEach(item => {
                     const card = document.createElement('div');
                     card.className = "bg-slate-800/80 border border-slate-700/50 rounded-lg p-3 flex flex-col space-y-1 shadow-sm";
-                    
                     const esFav = favoritos.some(f => f.pn === item.pn);
                     const pnEscapado = item.pn.replace(/'/g, "\\'");
                     const artEscapado = item.articulo.replace(/'/g, "\\'");
@@ -872,7 +976,6 @@
             const idLimpio = nombreSeccion.replace(/[^a-zA-Z0-9]/g, '-');
             const bloque = document.getElementById(`bloque-${idLimpio}`);
             const flecha = document.getElementById(`flecha-${idLimpio}`);
-            
             if (bloque.classList.contains('hidden')) {
                 bloque.classList.remove('hidden');
                 flecha.innerText = '▲';
@@ -892,7 +995,6 @@
             listaArticulos.forEach((item) => {
                 const fila = document.createElement('div');
                 fila.className = "flex items-center justify-between bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs";
-                
                 const pnEscapado = encodeURIComponent(item.pn);
                 let secLimpia = limpiarTextoSeccion(item.seccion);
 
@@ -918,16 +1020,13 @@
             document.getElementById('edit-original-pn').value = item.pn;
             document.getElementById('form-articulo').value = item.articulo;
             document.getElementById('form-pn').value = item.pn;
-            
-            let secLimpia = limpiarTextoSeccion(item.seccion);
-            actualizarDesplegableSecciones(secLimpia);
+            actualizarDesplegableSecciones(limpiarTextoSeccion(item.seccion));
 
             document.getElementById('titulo-formulario').innerText = "✏️ Modificar Artículo";
             document.getElementById('titulo-formulario').className = "font-bold text-sky-400 text-sm";
             document.getElementById('btn-guardar').innerText = "Actualizar Cambios";
             document.getElementById('btn-guardar').className = "flex-[2] bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 rounded-xl text-sm transition";
             document.getElementById('btn-cancelar-edit').classList.remove('hidden');
-            
             document.getElementById('formulario-anadir').scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -945,7 +1044,6 @@
         function eliminarArticulo(pnOriginalCoded) {
             const pnOriginal = decodeURIComponent(pnOriginalCoded);
             const index = listaArticulos.findIndex(i => i.pn === pnOriginal);
-            
             if(index !== -1) {
                 const item = listaArticulos[index];
                 if (confirm(`¿Seguro que deseas eliminar el artículo "${item.articulo}"?\nP/N: ${item.pn}`)) {
@@ -954,8 +1052,6 @@
                     renderizarListaGestion();
                     if(document.getElementById('edit-original-pn').value === pnOriginal) cancelarEdicion();
                 }
-            } else {
-                alert("Error al localizar el componente para eliminar.");
             }
         }
 
@@ -971,7 +1067,6 @@
             }
 
             const normalizar = (txt) => txt.toLowerCase().replace(/[\s_\-]/g, '');
-
             const existeDuplicado = listaArticulos.some((item) => {
                 if (pnOriginalEdicion !== "" && item.pn === pnOriginalEdicion) return false;
                 return normalizar(item.pn) === normalizar(pn);
@@ -995,10 +1090,8 @@
             }
 
             localStorage.setItem('svqh_items', JSON.stringify(listaArticulos));
-            
             document.getElementById('form-articulo').value = '';
             document.getElementById('form-pn').value = '';
-            
             seccionesAbiertas[sec] = true;
             cambiarPestana('lista');
         }
