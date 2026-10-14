@@ -80,7 +80,7 @@
         </div>
     </nav>
 
-    <!-- PESTAÑA 1: SEARCH -->
+    <!-- PESTAÑA 1: SEARCH (Desplegables / Acordeón) -->
     <div id="pestana-lista" class="space-y-3">
         
         <!-- Historial flotante de últimos P/Ns copiados -->
@@ -126,7 +126,7 @@
         <div id="contenedor-favs" class="space-y-3"></div>
     </div>
 
-    <!-- PESTAÑA 2: TOOLS -->
+    <!-- PESTAÑA 2: TOOLS (Completas) -->
     <div id="pestana-tools" class="hidden space-y-3">
         <div class="relative">
             <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-500">🔍</span>
@@ -140,7 +140,7 @@
         <div id="contenedor-tools" class="space-y-2.5"></div>
     </div>
 
-    <!-- PESTAÑA 3: RAMPS (NG & MAX Restaudas completas) -->
+    <!-- PESTAÑA 3: RAMPS (NG & MAX Completas) -->
     <div id="pestana-ramps" class="hidden space-y-6">
         <div class="flex justify-between items-center border-b border-slate-800 pb-2">
             <span class="text-xs text-slate-400 font-medium">Marca las tareas realizadas:</span>
@@ -149,32 +149,123 @@
             </button>
         </div>
 
+        <!-- Ramps NG -->
         <div class="space-y-4">
             <h2 class="text-sm font-black text-amber-400 tracking-wider border-b border-amber-500/20 pb-1.5">✈️ RAMPS NG</h2>
+            
             <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 1 CHECK – RA800</h3>
                 <div class="text-xs text-slate-300 space-y-2.5">
-                    <label class="flex items-start space-x-2.5 cursor-pointer">
-                        <input type="checkbox" id="chk-ng-r1-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500">
-                        <span><span class="font-semibold text-slate-400">PAGE 2/ ITEM 4.</span> 24-31-11-710-801 MAIN BATTERY DISCHARGE CHECK.</span>
-                    </label>
-                    <label class="flex items-start space-x-2.5 cursor-pointer">
-                        <input type="checkbox" id="chk-ng-r1-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500">
-                        <span><span class="font-semibold text-slate-400">PG10/ ITEM 22.</span> 25-RYR-19 CHECK ALL EMERGENCY LIGHTS.</span>
-                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r1-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PAGE 2/ ITEM 4.</span> 24-31-11-710-801 MAIN BATTERY DISCHARGE CHECK.</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r1-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG10/ ITEM 22.</span> 25-RYR-19 CHECK ALL EMERGENCY LIGHTS.</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r1-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG13/ ITEM 25.</span> 52-RYR-03 FLIGHT DECK DOOR SYSTEM OPERATIONAL CHECK.</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r1-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG13/ ITEM 26.</span> END OF RAMP1/3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span></label>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
+                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 2 CHECK – RA801</h3>
+                <div class="text-xs text-slate-300 space-y-2.5">
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r2-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 1.</span> OPERATIONAL CHECK OF CVR IAW BTC 23-040-00-01 Ref: AMM: 23-71-00-710</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r2-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG2, PG3/ ITEM 2.</span> 23-100-00-01 OPERATIONALLY CHECK THE ELT.</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r2-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG5/ ITEM 9.</span> 33-010-00-01 OPERATIONAL CHECK OF THE EMERGENCY LIGHTS (RAMP 1).</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r2-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG6/ ITEM 10.</span> 33-RYR-01 OPERATIONAL CHECK OF PSU/ CABIN WALL /LAVATORY NO SMOKING / FASTEN SEAT BELT SIGN LIGHTS.</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r2-5" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG6/ ITEM 11.</span> 33-RYR-02 OPERATIONAL CHECK OF THE EXTERIOR LIGHTS AND THE CARGO HOLD LIGHTS.</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r2-6" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG7/ ITEM 12.</span> 33-RYR-03 CHECK OF THE COCKPIT INSTRUMENT AND PANEL LIGHTS.</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r2-7" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG7/ ITEM 13.</span> 33-RYR-04 OPERATIONAL CHECK OF THE PASSENGER COMPARTMENT LIGHTS.</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r2-8" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG8/ ITEM 15.</span> .9 EO.13/057 CHECK SPARE BULBS IN THE SPARE BULB COMPARTMENT.</span></label>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
+                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP-3 CHECK - RA901</h3>
+                <div class="text-xs text-slate-300 space-y-2.5">
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r3-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 2.</span> 21-150-00-01 CLEAN OR REPLACE THE CABIN TEMPERATURE SENSOR FILTERS.</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r3-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG7/ ITEM 10.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span></label>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
+                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP-4 CHECK - RA902</h3>
+                <div class="text-xs text-slate-300 space-y-2.5">
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r4-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 3.</span> 27-162-00-01 OPERATIONAL CHECK THE FLAP SKEW AND ASYMMETRY SYSTEM AMM: 27-51-00-740</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r4-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG2/ ITEM 4.</span> 27-224-00-01 OPERATIONAL CHECK THE LEADING EDGE DEVICES UNCOMMANDED MOTION PROTECTION AMM: 27-81-00-710.</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r4-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG3/ ITEM 6.</span> 29-230-00-01 OPERATIONAL CHECK THE STANDBY RUDDER SYSTEM AMM: 29-21-00-700.</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-r4-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG4/ ITEM 8.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span></label>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
+                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">50FC CHECK – RA858</h3>
+                <div class="text-xs text-slate-300 space-y-2.5">
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-50fc-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 3.</span> SPCU AMM: 24-34-00-710</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-50fc-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 5.</span> E/E EQUIPMENT CLEANING AND WEATHER RADAR TX/RX INSPECTION</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-50fc-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG2/ ITEM 6.</span> COCKPIT CLEAN AMM: 31-62-11-100-801</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-50fc-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG2/ ITEM 7.</span> P5 GUARDS</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-50fc-5" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG3/ ITEM 9.</span> LANDING GEAR LIGHTS (MASTER DIM TEST)</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-50fc-6" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG4/ ITEM 12.</span> FMC CDU LEFT ENGINE (SHORT TIME FAULTS)</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-50fc-7" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG5/ ITEM 13.</span> FMC CDU RIGHT ENGINE (SHORT TIME FAULTS)</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-ng-50fc-8" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG6/ ITEM 14.</span> BITE CHECK PACK ZONE AMM 21-61-00-700-806-002</span></label>
                 </div>
             </div>
         </div>
 
+        <!-- Ramps MAX -->
         <div class="space-y-4 pt-4 border-t border-slate-800">
             <h2 class="text-sm font-black text-emerald-400 tracking-wider border-b border-emerald-500/20 pb-1.5">🚀 RAMPS MAX</h2>
+            
             <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 1 CHECK – RA800</h3>
                 <div class="text-xs text-slate-300 space-y-2.5">
-                    <label class="flex items-start space-x-2.5 cursor-pointer">
-                        <input type="checkbox" id="chk-max-r1-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500">
-                        <span><span class="font-semibold text-slate-400">PAGE 2/ ITEM 4.</span> 24-31-11-710-801 MAIN BATTERY DISCHARGE CHECK.</span>
-                    </label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r1-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PAGE 2/ ITEM 4.</span> 24-31-11-710-801 MAIN BATTERY DISCHARGE CHECK.</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r1-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG10/ ITEM 22.</span> 25-RYR-19 CHECK ALL EMERGENCY LIGHTS.</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r1-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG13/ ITEM 25.</span> 52-RYR-03 FLIGHT DECK DOOR SYSTEM OPERATIONAL CHECK.</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r1-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG13/ ITEM 26.</span> END OF RAMP1/3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span></label>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
+                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 2A/B CHECK – RA801</h3>
+                <div class="text-xs text-slate-300 space-y-2.5">
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r2-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">A/B- PG1/ ITEM 1.</span> OPERATIONAL CHECK OF CVR IAW BTC 23-040-00-01 Ref: AMM: 23-71-00-710</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r2-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">B- PG5/ ITEM 9.</span> 33-010-00-01 OPERATIONAL CHECK OF THE EMERGENCY LIGHTS (RAMP 1).</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r2-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">A/B- PG6/ ITEM 11.</span> 33-RYR-02 OPERATIONAL CHECK OF THE EXTERIOR LIGHTS AND THE CARGO HOLD LIGHTS.</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r2-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">A/B- PG7/ ITEM 12.</span> 33-RYR-03 CHECK OF THE COCKPIT INSTRUMENT AND PANEL LIGHTS.</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r2-5" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">A/B- PG8/ ITEM 15.</span> .9 EO.13/057 CHECK SPARE BULBS IN THE SPARE BULB COMPARTMENT.</span></label>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
+                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP-3 CHECK - RA901</h3>
+                <div class="text-xs text-slate-300 space-y-2.5">
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r3-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG3/ ITEM 3.</span> 27-162-00-01 OPERATIONAL CHECK THE FLAP SKEW AND ASYMMETRY SYSTEM AMM: 27-51-00-740</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r3-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG7/ ITEM 2.</span> INOP DECALS ON ALL RADIO</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r3-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG7/ ITEM 10.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span></label>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
+                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP-4 CHECK - RA902</h3>
+                <div class="text-xs text-slate-300 space-y-2.5">
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r4-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 1.</span> 21-150-00-01 CLEAN OR REPLACE THE CABIN TEMPERATURE SENSOR FILTERS.</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r4-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG2/ ITEM 4.</span> 27-224-00-01 OPERATIONAL CHECK THE LEADING EDGE DEVICES UNCOMMANDED MOTION PROTECTION AMM: 27-81-00-710.</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r4-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG3/ ITEM 6.</span> 29-230-00-01 OPERATIONAL CHECK THE STANDBY RUDDER SYSTEM AMM: 29-21-00-700.</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-r4-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG4/ ITEM 8.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span></label>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
+                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">50FC CHECK – RA858</h3>
+                <div class="text-xs text-slate-300 space-y-2.5">
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-50fc-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 3.</span> SPCU AMM: 24-34-00-710</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-50fc-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 5.</span> E/E EQUIPMENT CLEANING AND WEATHER RADAR TX/RX INSPECTION</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-50fc-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG2/ ITEM 6.</span> COCKPIT CLEAN AMM: 31-62-11-100-801</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-50fc-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG2/ ITEM 7.</span> P5 GUARDS</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-50fc-5" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG4/ ITEM 2.</span> 33-RYR-01 OPERATIONAL CHECK OF PSU/ CABIN WALL /LAVATORY NO SMOKING / FASTEN SEAT BELT SIGN LIGHTS.</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-50fc-6" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG4/ ITEM 3.</span> 33-RYR-04 OPERATIONAL CHECK OF THE PASSENGER COMPARTMENT LIGHTS.</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-50fc-7" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG3/ ITEM 9.</span> LANDING GEAR LIGHTS (MASTER DIM TEST)</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-50fc-8" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG4/ ITEM 12.</span> FMC CDU LEFT ENGINE (SHORT TIME FAULTS)</span></label>
+                    <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="chk-max-50fc-9" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG5/ ITEM 13.</span> FMC CDU RIGHT ENGINE (SHORT TIME FAULTS)</span></label>
                 </div>
             </div>
         </div>
@@ -325,7 +416,7 @@
         </div>
     </div>
 
-    <!-- Script Principal -->
+    <!-- Script Principal con la Base Completa del Excel -->
     <script>
         const articulosBaseOriginales = [
             { articulo: "O-RING 1", pn: "MS9385-07", seccion: "AIR PACK OVHT SENSOR" },
@@ -333,23 +424,114 @@
             { articulo: "MOLYKOTE4", pn: "M0LYKOTE44", seccion: "AIR PACK OVHT SENSOR" },
             { articulo: "KRYTOX P", pn: "GPL206", seccion: "AIR PACK OVHT SENSOR" },
             { articulo: "NEVER SEEZ COMPOUND", pn: "NSBT8N", seccion: "AIR PACK OVHT SENSOR" },
-            { articulo: "O-RING 1", pn: "MS9385-07", seccion: "O-RINGS" },
-            { articulo: "O-RING 2", pn: "S9028A905", seccion: "O-RINGS" },
-            { articulo: "MOLYKOTE 44", pn: "M0LYKOTE44", seccion: "LUBRICANTS & COMPOUNDS" },
-            { articulo: "KRYTOX P", pn: "GPL206", seccion: "LUBRICANTS & COMPOUNDS" },
-            { articulo: "NEVER SEEZ COMPOUND", pn: "NSBT8N", seccion: "LUBRICANTS & COMPOUNDS" },
-            { articulo: "COMPOUND DC4", pn: "DC4", seccion: "LUBRICANTS & COMPOUNDS" },
-            { articulo: "PACKING", pn: "AS3582-028", seccion: "O-RINGS" },
-            { articulo: "SEALANT", pn: "BMS5-95 / PS870B1-2", seccion: "SEALANTS" },
+            { articulo: "PACKING", pn: "AS3582-028", seccion: "ATC ANTENNAS" },
+            { articulo: "SEALANT", pn: "BMS5-95 / PS870B1-2", seccion: "ATC ANTENNAS" },
+            { articulo: "COMPOUND", pn: "DC4", seccion: "ATC ANTENNAS" },
             { articulo: "EMERGENCY LIGHT SIGNS SMALL LAMPS", pn: "3071BPEGPL", seccion: "CABIN LIGHTS" },
             { articulo: "EMERGENCY LIGHTS EXTERIOR LAMPS", pn: "767", seccion: "CABIN LIGHTS" },
             { articulo: "BELT AND NO SMOKE LIGHT", pn: "387", seccion: "CABIN LIGHTS" },
             { articulo: "READING LIGHT", pn: "9204", seccion: "CABIN LIGHTS" },
-            { articulo: "BATTERIES (EMERGENCY)", pn: "ADD71701-100", seccion: "EMERG BATTERIES" },
+            { articulo: "FUEL STATION LIGHT", pn: "GE1495", seccion: "CABIN LIGHTS" },
+            { articulo: "WORK LIGHT COVER", pn: "239052-13", seccion: "CABIN LIGHTS" },
+            { articulo: "FIRE TEST LIGHT COVER GREEN", pn: "682-1001-001", seccion: "CABIN LIGHTS" },
+            { articulo: "LENS COVER FOR GALLEY LIGHT", pn: "239004-19", seccion: "CABIN LIGHTS" },
+            { articulo: "LAMP BULB FOR EEC ALT SWITCH", pn: "MS24515-685AS15", seccion: "CABIN LIGHTS" },
+            { articulo: "ASSY LOWER EMERG SIGN", pn: "70-0366-11", seccion: "CABIN LIGHTS" },
+            { articulo: "GALLEY BULB", pn: "OLN115-18K", seccion: "CABIN LIGHTS" },
+            { articulo: "BASE WHITE EMERG SIGNS", pn: "207330", seccion: "CABIN LIGHTS" },
+            { articulo: "EMERG SIGNS LENS (EXIT)", pn: "207377-1001", seccion: "CABIN LIGHTS" },
+            { articulo: "FMC CDU SHIM", pn: "137300-78", seccion: "CDU" },
+            { articulo: "FMC CDU SCREW", pn: "117357-21", seccion: "CDU" },
+            { articulo: "BATTERIES", pn: "ADD71701-100", seccion: "EMERG BATTERIES" },
+            { articulo: "FUSE", pn: "B215-06", seccion: "EMERG BATTERIES" },
+            { articulo: "BATTERIES", pn: "P4-01-0021", seccion: "FLASHLIGHT" },
+            { articulo: "SHIELD", pn: "A1-18-1030", seccion: "FLASHLIGHT" },
+            { articulo: "MEGAPHONE SET SCREW KIT", pn: "9416", seccion: "MEGAPHONE" },
+            { articulo: "FLOORPATH COVER (BLUE)", pn: "5180453792", seccion: "FLOORPATH" },
+            { articulo: "FLOORPATH ENDCAP 1CM", pn: "417N5212-1CM", seccion: "FLOORPATH" },
+            { articulo: "FLOORPATH BULB", pn: "3071BPEGPL", seccion: "FLOORPATH" },
+            { articulo: "FLOORPATH LIGHT ASSY", pn: "81000-22608ATS", seccion: "FLOORPATH" },
+            { articulo: "FLOORPATH RECEPTACLE - PIN", pn: "60983-3", seccion: "FLOORPATH" },
+            { articulo: "FLOORPATH LIGHT", pn: "60888-4", seccion: "FLOORPATH" },
+            { articulo: "CRIMP TOOL PIN", pn: "10131-4", seccion: "FLOORPATH" },
+            { articulo: "COVER TRACK (BLACK)", pn: "ACIFL00121-02", seccion: "FLOORPATH" },
+            { articulo: "RED LENS", pn: "S417N509-6", seccion: "FLOORPATH" },
+            { articulo: "WHITE LENS", pn: "S417N509-2", seccion: "FLOORPATH" },
+            { articulo: "SOCKETS EMERG LIGHTS", pn: "60988-3", seccion: "FLOORPATH" },
+            { articulo: "SAFTGLO TAPE", pn: "POLYKEN108FR0-5", seccion: "FLOORPATH" },
             { articulo: "LOGO LIGHT", pn: "HLX64621", seccion: "LOGO LIGHTS" },
+            { articulo: "SCREWS LARGE", pn: "BACB30ZE4-8", seccion: "LOGO LIGHTS" },
+            { articulo: "SCREWS SMALL", pn: "BACB30XD3K8", seccion: "LOGO LIGHTS" },
+            { articulo: "SPRING A", pn: "81116-37601", seccion: "LOGO LIGHTS" },
+            { articulo: "SPRING B", pn: "81115-37601", seccion: "LOGO LIGHTS" },
+            { articulo: "SOCKET", pn: "81004-37602", seccion: "LOGO LIGHTS" },
+            { articulo: "RED SEALANT", pn: "PR1428B1-2", seccion: "LRRA" },
+            { articulo: "BLACK SEALANT", pn: "BMS5-95 / PS870B1-2", seccion: "LRRA" },
+            { articulo: "GASKET", pn: "AG723000-40", seccion: "LRRA" },
+            { articulo: "GREEN SEALANT", pn: "HT3326-5-50", seccion: "LRRA" },
             { articulo: "ANTENNA", pn: "S67-2002-28", seccion: "LRRA" },
+            { articulo: "MAIN & AUX BATTERY SCREWS", pn: "BACB30NM3K4", seccion: "MAIN & AUX BATTERIES" },
+            { articulo: "BATTERY", pn: "024147-000", seccion: "MAIN & AUX BATTERIES" },
+            { articulo: "CONNECTOR", pn: "BACC45FT12-12P", seccion: "MAIN & AUX BATTERIES" },
+            { articulo: "FUEL PANEL E&E SCREW", pn: "NAS514P1032-16", seccion: "PANELS SCREWS" },
+            { articulo: "E&E DOOR SWITCH PANEL SCREW", pn: "NAS514P832-12", seccion: "PANELS SCREWS" },
+            { articulo: "NUTPLATE FUEL PANEL E&E", pn: "BACN10ZR3CD", seccion: "PANELS SCREWS" },
+            { articulo: "RAMPS COCKPIT CAP (ROSCA)", pn: "15PA90-6W", seccion: "RAMPS" },
+            { articulo: "RAMPS COCKPIT CAP (FINO)", pn: "69-44578-2", seccion: "RAMPS" },
+            { articulo: "CABIN TEMP SENSOR FILTER (SMALL)", pn: "412A1605-41", seccion: "RAMPS" },
+            { articulo: "FLT COMP TEMP SENSOR FILTER (BIG)", pn: "213A6404-1", seccion: "RAMPS" },
+            { articulo: "INOP STICKER", pn: "INT1072", seccion: "RAMPS" },
+            { articulo: "GRILLE (FILTRO CABINA)", pn: "412N1122-3A", seccion: "RAMPS" },
+            { articulo: "BULB GALLEY", pn: "MSC115", seccion: "RAMPS" },
+            { articulo: "BEZEL", pn: "11-6557-7GATS", seccion: "RAMPS" },
+            { articulo: "COVER CALL LIGHT FOR CABIN CREW", pn: "25-1734-15", seccion: "RAMPS" },
+            { articulo: "SKEW SENSOR LACING TAPE", pn: "BMS13-54TY3CL1FC", seccion: "SKEW SENSOR" },
+            { articulo: "SKEW SENSOR TAPE", pn: "SCOTH70", seccion: "SKEW SENSOR" },
+            { articulo: "AV25", pn: "AV25", seccion: "SKEW SENSOR" },
+            { articulo: "D50", pn: "D5026NS", seccion: "SKEW SENSOR" },
+            { articulo: "NUT SCREWS HARNESS EGT", pn: "AS3486-10", seccion: "ENGINES" },
+            { articulo: "MOX TAPE", pn: "M0XNESS620B1", seccion: "ENGINES" },
+            { articulo: "TAPE HIGH TEMP ALUMINIUM FOIL", pn: "3M363", seccion: "ENGINES" },
+            { articulo: "TAPE GLASS CLOTH HIGH TEMP", pn: "3M361", seccion: "ENGINES" },
+            { articulo: "LOCKWIRE FOR HARNESS REPAIR", pn: "MS20995C15", seccion: "ENGINES" },
+            { articulo: "CLAMP BANDS CONNECTOR", pn: "600-052", seccion: "ENGINES" },
+            { articulo: "INSERT/EXTRACTOR YELLOW / WHITE", pn: "M81969-14-04", seccion: "INSERTS/EXTRACTORS" },
+            { articulo: "INSERT/EXTRACTOR BLUE / WHITE", pn: "M81969-14-03", seccion: "INSERTS/EXTRACTORS" },
+            { articulo: "INSERT/EXTRACTOR RED / WHITE", pn: "M81969-14-02", seccion: "INSERTS/EXTRACTORS" },
+            { articulo: "INSERT/EXTRACTOR RED / WHITE (VAR)", pn: "M81969-14-11", seccion: "INSERTS/EXTRACTORS" },
+            { articulo: "INSERT/EXTRACTOR GREEN / WHITE", pn: "M81969-14-01", seccion: "INSERTS/EXTRACTORS" },
+            { articulo: "INSERT/EXTRACTOR VERDE / ROJO", pn: "CTA1160", seccion: "INSERTS/EXTRACTORS" },
+            { articulo: "INSERT/EXTRACTOR GREEN / WHITE METAL", pn: "M81969-1-01", seccion: "INSERTS/EXTRACTORS" },
+            { articulo: "INSERT/EXTRACTOR RED / WHITE METAL", pn: "M81969-1-02", seccion: "INSERTS/EXTRACTORS" },
+            { articulo: "INSERT/EXTRACTOR BLUE / WHITE METAL", pn: "M81969-1-03", seccion: "INSERTS/EXTRACTORS" },
+            { articulo: "ELEVATOR PLUG", pn: "MS21913V6P", seccion: "OTHERS" },
+            { articulo: "LOCKWIRE FLIGHT DECK SWITCHES", pn: "MS20995CY15", seccion: "OTHERS" },
+            { articulo: "RODFILLER CLAMPS", pn: "69B47961-2", seccion: "OTHERS" },
+            { articulo: "ANTISTATIC BAGS", pn: "ESDBAG62X48", seccion: "OTHERS" },
+            { articulo: "STATIC DISCHARGER LARGE", pn: "740001", seccion: "OTHERS" },
+            { articulo: "STATIC DISCHARGER SHORT", pn: "740007", seccion: "OTHERS" },
+            { articulo: "SPLICE MOISTURE RED", pn: "D436-36", seccion: "SPLICES" },
+            { articulo: "SPLICE MOISTURE BLUE", pn: "D436-37", seccion: "SPLICES" },
+            { articulo: "SPLICE MOISTURE YELLOW", pn: "D436-38", seccion: "SPLICES" },
+            { articulo: "END CAP CRIMP TYPE (RED)", pn: "324485", seccion: "SPLICES" },
+            { articulo: "TERMINAL LUG LANDING LIGHT", pn: "323750", seccion: "SPLICES" },
+            { articulo: "TERMINAL SPADE TYPE", pn: "3-350816-2", seccion: "SPLICES" },
+            { articulo: "TEFLON TAPE", pn: "P421", seccion: "TAPES TO REPAIR HARNESS" },
+            { articulo: "HEATSHRINK 1/4 YELLOW", pn: "RNF100-1-4-4", seccion: "HEATSHRINKS" },
+            { articulo: "SMALL SCREW RACK CONNECTOR", pn: "BACS12HN06-6", seccion: "RACKS/ RECEPTABLES AND OTHER SCREWS" },
             { articulo: "STRAP - CABLE TIE (BACS38K6)", pn: "BACS38K6", seccion: "STRAP - CABLE TIE (Bridas)" },
-            { articulo: "STRAP - CABLE TIE (BACS38K4)", pn: "BACS38K4", seccion: "STRAP - CABLE TIE (Bridas)" }
+            { articulo: "STRAP - CABLE TIE (BACS38K3)", pn: "BACS38K3", seccion: "STRAP - CABLE TIE (Bridas)" },
+            { articulo: "STRAP - CABLE TIE (BACS38K2)", pn: "BACS38K2", seccion: "STRAP - CABLE TIE (Bridas)" },
+            { articulo: "STRAP - CABLE TIE (BACS38K7)", pn: "BACS38K7", seccion: "STRAP - CABLE TIE (Bridas)" },
+            { articulo: "STRAP - CABLE TIE (BACS38K10)", pn: "BACS38K10", seccion: "STRAP - CABLE TIE (Bridas)" },
+            { articulo: "STRAP - CABLE TIE (BACS38K1)", pn: "BACS38K1", seccion: "STRAP - CABLE TIE (Bridas)" },
+            { articulo: "STRAP - CABLE TIE (BACS38K4)", pn: "BACS38K4", seccion: "STRAP - CABLE TIE (Bridas)" },
+            { articulo: "STRAP - CABLE TIE (BACS38K9)", pn: "BACS38K9", seccion: "STRAP - CABLE TIE (Bridas)" },
+            { articulo: "STRAP - CABLE TIE (BACS38K5)", pn: "BACS38K5", seccion: "STRAP - CABLE TIE (Bridas)" },
+            { articulo: "MCP SCREW (BLACK)", pn: "BACS12CK3H7", seccion: "COCKPIT" },
+            { articulo: "MCP WASHER (BLACK)", pn: "NAS1149C0332B", seccion: "COCKPIT" },
+            { articulo: "CAP PSU CONNECTORS", pn: "M85049/138-47A", seccion: "CABIN PARTS" },
+            { articulo: "AIRSTAIRS LAMPS", pn: "1864", seccion: "AIRSTAIRS" }
         ];
 
         const LISTA_HERRAMIENTAS = [
@@ -374,17 +556,20 @@
             { articulo: "WTB FEEDTHROUGH CONNECTORS ADAPTER (HIRFS)", pn: "WTBADAPTER" },
             { articulo: "TOOL CONNECTORS FOR BACKSHELLS", pn: "CMS837" },
             { articulo: "KNIPEX CUTTING SAFTGLO", pn: "9435215" },
-            { articulo: "FIRE EXTINGUISHER BOTTLE SQUIB TESTER", pn: "F80229-69" }
+            { articulo: "FIRE EXTINGUISHER BOTTLE SQUIB TESTER", pn: "F80229-69" },
+            { articulo: "CRIMP TOOL FOR AIRSTAIRS LIGHTS", pn: "P/N: 9-1478240-0 // DIE SET: 58628-2" },
+            { articulo: "CRIMP TOOL FOR LANDING LIGHT LUG", pn: "59461" },
+            { articulo: "CLAMP BANDS CONNECTOR TOOL", pn: "DBS-1101" }
         ];
 
-        let listaArticulos = JSON.parse(localStorage.getItem('svqh_items_v5')) || articulosBaseOriginales;
-        localStorage.setItem('svqh_items_v5', JSON.stringify(listaArticulos));
+        let listaArticulos = JSON.parse(localStorage.getItem('svqh_items_v6')) || articulosBaseOriginales;
+        localStorage.setItem('svqh_items_v6', JSON.stringify(listaArticulos));
 
         let favoritos = JSON.parse(localStorage.getItem('svqh_favoritos')) || [];
         let historialPns = JSON.parse(localStorage.getItem('svqh_historial_pns')) || [];
         let feedbackList = JSON.parse(localStorage.getItem('svqh_feedback')) || [];
         let estadoChecklist = JSON.parse(localStorage.getItem('svqh_checklist_ramps')) || {};
-        let seccionesAbiertas = {}; // Estado del acordeón
+        let seccionesAbiertas = {}; // Acordeón cerrado por defecto
         let autenticado = false;
         const CLAVE_CORRECTA = "1234";
 
