@@ -521,12 +521,11 @@
     <!-- Cargar base de datos -->
     <script src="data.js"></script>
     <script>
-        // Definición completa base con AIR PACK OVHT SENSOR actualizado
+        // Base de datos corregida 100% fiel al Excel
         const articulosBaseOriginales = [
-            { articulo: "AIR PACK OVHT SENSOR", pn: "REFERENCE-AIR-PACK", seccion: "AIR PACK OVHT SENSOR" },
-            { articulo: "O-RING", pn: "1MS9385-07", seccion: "AIR PACK OVHT SENSOR" },
-            { articulo: "O-RING", pn: "S9028A905", seccion: "AIR PACK OVHT SENSOR" },
-            { articulo: "MOLYKOTE 44", pn: "M0LYKOTE44", seccion: "AIR PACK OVHT SENSOR" },
+            { articulo: "O-RING 1", pn: "MS9385-07", seccion: "AIR PACK OVHT SENSOR" },
+            { articulo: "O-RING 2", pn: "S9028A905", seccion: "AIR PACK OVHT SENSOR" },
+            { articulo: "MOLYKOTE4", pn: "M0LYKOTE44", seccion: "AIR PACK OVHT SENSOR" },
             { articulo: "KRYTOX P", pn: "GPL206", seccion: "AIR PACK OVHT SENSOR" },
             { articulo: "NEVER SEEZ COMPOUND", pn: "NSBT8N", seccion: "AIR PACK OVHT SENSOR" },
             { articulo: "O-RING 1", pn: "MS9385-07", seccion: "O-RINGS" },
@@ -644,26 +643,16 @@
             { articulo: "AIRSTAIRS LAMPS", pn: "1864", seccion: "AIRSTAIRS" }
         ];
 
-        // Sincronización automática de almacenamiento local asegurando que Air Pack OVHT SENSOR esté presente
-        let listaArticulos = JSON.parse(localStorage.getItem('svqh_items')) || [];
-        if (listaArticulos.length === 0) {
-            listaArticulos = articulosBaseOriginales;
-        } else {
-            // Asegurar que los elementos de AIR PACK OVHT SENSOR existen en la lista guardada
-            articulosBaseOriginales.forEach(itemBase => {
-                if (!listaArticulos.some(i => i.pn === itemBase.pn)) {
-                    listaArticulos.push(itemBase);
-                }
-            });
-        }
+        // Forzamos actualización de clave a svqh_items_v2 para limpiar la caché antigua
+        let listaArticulos = JSON.parse(localStorage.getItem('svqh_items_v2')) || articulosBaseOriginales;
         
-        // Filtrar herramientas duplicadas en consumibles
+        // Limpieza de posibles duplicados o herramientas no deseadas en consumibles
         listaArticulos = listaArticulos.filter(item => {
             let sec = (item.seccion || "").toLowerCase();
             let art = (item.articulo || "").toLowerCase();
             return !sec.includes('tool') && !art.includes('tool') && sec !== 'tools';
         });
-        localStorage.setItem('svqh_items', JSON.stringify(listaArticulos));
+        localStorage.setItem('svqh_items_v2', JSON.stringify(listaArticulos));
 
         let autenticado = false;
         const CLAVE_CORRECTA = "1234";
@@ -909,7 +898,6 @@
                 placeholder.classList.add('hidden');
                 iframe.src = `https://drive.google.com/file/d/${fileId}/preview`;
                 
-                // Configurar enlace de respaldo externo por si Google Drive bloquea el frame
                 btnEnlaceExterno.href = `https://drive.google.com/file/d/${fileId}/view?usp=sharing`;
                 enlaceContainer.classList.remove('hidden');
             }
@@ -1196,7 +1184,7 @@
                 const item = listaArticulos[index];
                 if (confirm(`¿Seguro que deseas eliminar el artículo "${item.articulo}"?\nP/N: ${item.pn}`)) {
                     listaArticulos.splice(index, 1);
-                    localStorage.setItem('svqh_items', JSON.stringify(listaArticulos));
+                    localStorage.setItem('svqh_items_v2', JSON.stringify(listaArticulos));
                     renderizarListaGestion();
                     if(document.getElementById('edit-original-pn').value === pnOriginal) cancelarEdicion();
                 }
@@ -1237,7 +1225,7 @@
                 cancelarEdicion();
             }
 
-            localStorage.setItem('svqh_items', JSON.stringify(listaArticulos));
+            localStorage.setItem('svqh_items_v2', JSON.stringify(listaArticulos));
             document.getElementById('form-articulo').value = '';
             document.getElementById('form-pn').value = '';
             seccionesAbiertas[sec] = true;
