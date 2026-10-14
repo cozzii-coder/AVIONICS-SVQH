@@ -9,9 +9,9 @@
     <!-- Tesseract.js para OCR de etiquetas por cámara -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/4.0.2/tesseract.min.js"></script>
     <style>
-        body { background-color: #0b1329; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
+        body { background-color: #080c19; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #1e293b; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: 9999px; }
         .toast-active { transform: translateY(0); opacity: 1; }
     </style>
@@ -20,119 +20,130 @@
 
     <!-- AVISO FIJO SOLO LETRAS EN ROJO -->
     <div class="fixed top-2 left-3 z-50 pointer-events-none">
-        <span class="text-xs font-black tracking-wider text-rose-500 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+        <span class="text-[10px] font-black tracking-widest text-rose-500/90 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] uppercase">
             ONLY FOR REFERENCE
         </span>
     </div>
 
     <!-- NOTIFICACIÓN TOAST -->
-    <div id="toast-notif" class="fixed top-4 right-4 z-50 bg-sky-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-xl transition-all duration-300 transform -translate-y-10 opacity-0 pointer-events-none flex items-center space-x-2 border border-sky-400">
+    <div id="toast-notif" class="fixed top-4 right-4 z-50 bg-sky-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-2xl transition-all duration-300 transform -translate-y-10 opacity-0 pointer-events-none flex items-center space-x-2 border border-sky-400">
         <span>📋</span>
         <span id="toast-msg">¡P/N copiado al portapapeles!</span>
     </div>
 
     <!-- Header Principal -->
-    <header class="text-center my-3">
+    <header class="text-center my-4">
         <h1 class="text-2xl font-black text-sky-400 tracking-wider">AvioTech</h1>
-        <p class="text-xs text-slate-400 font-medium">Avionics Maintenance & Documentation</p>
+        <p class="text-[11px] text-slate-400 font-medium tracking-wide">Avionics Maintenance & Documentation</p>
     </header>
 
-    <!-- NAVEGACIÓN INFERIOR (Search, Favs, Tools, Ramps, Docs, Añadir) -->
-    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 p-1.5 max-w-md mx-auto">
+    <!-- NAVEGACIÓN INFERIOR -->
+    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-slate-950/90 backdrop-blur-md border-t border-slate-800/80 p-1.5 max-w-md mx-auto">
         <div class="flex text-[10px] font-bold tracking-wide">
-            <button id="btn-lista" onclick="cambiarPestana('lista')" class="flex-1 py-2 rounded-lg text-center bg-sky-500 text-white shadow-lg transition-all flex flex-col items-center justify-center space-y-0.5">
+            <button id="btn-lista" onclick="cambiarPestana('lista')" class="flex-1 py-2 rounded-xl text-center bg-sky-500 text-white shadow-lg shadow-sky-500/20 transition-all flex flex-col items-center justify-center space-y-0.5">
                 <span class="text-base leading-none">🔍</span>
                 <span>Search</span>
             </button>
-            <button id="btn-favs" onclick="cambiarPestana('favs')" class="flex-1 py-2 rounded-lg text-center text-slate-400 transition-all flex flex-col items-center justify-center space-y-0.5">
+            <button id="btn-favs" onclick="cambiarPestana('favs')" class="flex-1 py-2 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-0.5">
                 <span class="text-base leading-none">⭐</span>
                 <span>Favs</span>
             </button>
-            <button id="btn-tools" onclick="cambiarPestana('tools')" class="flex-1 py-2 rounded-lg text-center text-slate-400 transition-all flex flex-col items-center justify-center space-y-0.5">
+            <button id="btn-tools" onclick="cambiarPestana('tools')" class="flex-1 py-2 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-0.5">
                 <span class="text-base leading-none">🧰</span>
                 <span>Tools</span>
             </button>
-            <button id="btn-ramps" onclick="cambiarPestana('ramps')" class="flex-1 py-2 rounded-lg text-center text-slate-400 transition-all flex flex-col items-center justify-center space-y-0.5">
+            <button id="btn-ramps" onclick="cambiarPestana('ramps')" class="flex-1 py-2 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-0.5">
                 <span class="text-base leading-none">📋</span>
                 <span>Ramps</span>
             </button>
-            <button id="btn-docs" onclick="cambiarPestana('docs')" class="flex-1 py-2 rounded-lg text-center text-slate-400 transition-all flex flex-col items-center justify-center space-y-0.5">
+            <button id="btn-docs" onclick="cambiarPestana('docs')" class="flex-1 py-2 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-0.5">
                 <span class="text-base leading-none">📄</span>
                 <span>Docs</span>
             </button>
-            <button id="btn-admin" onclick="cambiarPestana('admin')" class="flex-1 py-2 rounded-lg text-center text-slate-400 transition-all flex flex-col items-center justify-center space-y-0.5">
+            <button id="btn-admin" onclick="cambiarPestana('admin')" class="flex-1 py-2 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-0.5">
                 <span class="text-base leading-none">➕</span>
                 <span>Añadir</span>
             </button>
         </div>
     </nav>
 
-    <!-- PESTAÑA 1: SEARCH (SOLO CONSUMIBLES/PIEZAS) -->
-    <div id="pestana-lista" class="space-y-3">
+    <!-- PESTAÑA 1: SEARCH (DISEÑO MEJORADO Y LIMPIO) -->
+    <div id="pestana-lista" class="space-y-4">
+        <!-- Buscador con icono integrado -->
         <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-500">🔍</span>
             <input type="text" id="buscador" oninput="manejarBusqueda()" onfocus="mostrarHistorial(true)" placeholder="Buscar artículo o Part Number..." 
-                   class="w-full bg-slate-900 border border-slate-800 text-white placeholder-slate-500 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 shadow-inner">
+                   class="w-full bg-slate-900/90 border border-slate-800 text-white placeholder-slate-500 rounded-2xl pl-11 pr-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 shadow-inner transition">
             
             <!-- Desplegable Historial de Búsquedas -->
-            <div id="dropdown-historial" class="hidden absolute top-full left-0 right-0 mt-1 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl z-30 p-2 space-y-1">
-                <div class="flex justify-between items-center px-2 py-1 text-[10px] text-slate-400 font-bold uppercase border-b border-slate-800">
+            <div id="dropdown-historial" class="hidden absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl z-30 p-2 space-y-1 backdrop-blur-md">
+                <div class="flex justify-between items-center px-3 py-1.5 text-[10px] text-slate-400 font-bold uppercase tracking-wider border-b border-slate-800">
                     <span>Búsquedas recientes</span>
                     <button onclick="limpiarHistorial()" class="text-rose-400 hover:underline">Borrar</button>
                 </div>
-                <div id="lista-historial" class="space-y-1"></div>
+                <div id="lista-historial" class="space-y-1 pt-1"></div>
             </div>
         </div>
 
-        <!-- Filtros Rápidos (Píldoras) -->
+        <!-- Filtros Rápidos (Píldoras mejoradas) -->
         <div class="flex overflow-x-auto space-x-2 pb-1 custom-scrollbar">
-            <button onclick="filtrarPorPildora('')" id="pill-all" class="px-3 py-1 bg-sky-500 text-white rounded-full text-xs font-bold whitespace-nowrap transition">Todo</button>
-            <button onclick="filtrarPorPildora('oring')" id="pill-oring" class="px-3 py-1 bg-slate-900 border border-slate-800 text-slate-300 rounded-full text-xs font-semibold whitespace-nowrap transition hover:bg-slate-800">O-Rings</button>
-            <button onclick="filtrarPorPildora('clamp')" id="pill-clamp" class="px-3 py-1 bg-slate-900 border border-slate-800 text-slate-300 rounded-full text-xs font-semibold whitespace-nowrap transition hover:bg-slate-800">Clamps</button>
-            <button onclick="filtrarPorPildora('bulb')" id="pill-bulb" class="px-3 py-1 bg-slate-900 border border-slate-800 text-slate-300 rounded-full text-xs font-semibold whitespace-nowrap transition hover:bg-slate-800">Bulbs</button>
-            <button onclick="filtrarPorPildora('electrical')" id="pill-electrical" class="px-3 py-1 bg-slate-900 border border-slate-800 text-slate-300 rounded-full text-xs font-semibold whitespace-nowrap transition hover:bg-slate-800">Electrical</button>
-            <button onclick="filtrarPorPildora('fastener')" id="pill-fastener" class="px-3 py-1 bg-slate-900 border border-slate-800 text-slate-300 rounded-full text-xs font-semibold whitespace-nowrap transition hover:bg-slate-800">Fasteners</button>
+            <button onclick="filtrarPorPildora('')" id="pill-all" class="px-3.5 py-1.5 bg-sky-500 text-white rounded-xl text-[11px] font-bold whitespace-nowrap shadow-sm shadow-sky-500/20 transition">Todo</button>
+            <button onclick="filtrarPorPildora('oring')" id="pill-oring" class="px-3.5 py-1.5 bg-slate-900 border border-slate-800 text-slate-300 rounded-xl text-[11px] font-semibold whitespace-nowrap transition hover:bg-slate-800">O-Rings</button>
+            <button onclick="filtrarPorPildora('clamp')" id="pill-clamp" class="px-3.5 py-1.5 bg-slate-900 border border-slate-800 text-slate-300 rounded-xl text-[11px] font-semibold whitespace-nowrap transition hover:bg-slate-800">Clamps</button>
+            <button onclick="filtrarPorPildora('bulb')" id="pill-bulb" class="px-3.5 py-1.5 bg-slate-900 border border-slate-800 text-slate-300 rounded-xl text-[11px] font-semibold whitespace-nowrap transition hover:bg-slate-800">Bulbs</button>
+            <button onclick="filtrarPorPildora('electrical')" id="pill-electrical" class="px-3.5 py-1.5 bg-slate-900 border border-slate-800 text-slate-300 rounded-xl text-[11px] font-semibold whitespace-nowrap transition hover:bg-slate-800">Electrical</button>
+            <button onclick="filtrarPorPildora('fastener')" id="pill-fastener" class="px-3.5 py-1.5 bg-slate-900 border border-slate-800 text-slate-300 rounded-xl text-[11px] font-semibold whitespace-nowrap transition hover:bg-slate-800">Fasteners</button>
         </div>
 
-        <p class="text-xs text-slate-400 pl-1 font-medium"><span id="contador-items" class="text-sky-400 font-bold">0</span> piezas disponibles en total</p>
+        <div class="flex justify-between items-center px-1">
+            <span class="text-[11px] text-slate-400 font-medium">Resultados organizados</span>
+            <span class="text-[11px] text-slate-400 font-medium"><span id="contador-items" class="text-sky-400 font-bold">0</span> elementos</span>
+        </div>
+
+        <!-- Contenedor principal de secciones -->
         <div id="contenedor-secciones" class="space-y-3"></div>
     </div>
 
     <!-- PESTAÑA FAVORITOS -->
     <div id="pestana-favs" class="hidden space-y-4">
-        <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-            <h2 class="text-sm font-bold text-amber-400 uppercase tracking-wide flex items-center space-x-1.5">
+        <div class="flex justify-between items-center border-b border-slate-800/80 pb-2">
+            <h2 class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center space-x-1.5">
                 <span>⭐ Acceso Rápido / Favoritos</span>
             </h2>
-            <span id="contador-favs" class="text-xs font-mono bg-slate-900 px-2 py-0.5 rounded text-amber-400 border border-slate-800">0 items</span>
+            <span id="contador-favs" class="text-[11px] font-mono bg-slate-900 px-2 py-0.5 rounded-lg text-amber-400 border border-slate-800">0 items</span>
         </div>
         <p class="text-xs text-slate-400">Guarda consumibles o herramientas tocando la estrella ⭐ para encontrarlas rápidamente.</p>
         <div id="contenedor-favs" class="space-y-3"></div>
     </div>
 
-    <!-- PESTAÑA 2: TOOLS (SECCIÓN INDEPENDIENTE) -->
-    <div id="pestana-tools" class="hidden space-y-4">
+    <!-- PESTAÑA 2: TOOLS -->
+    <div id="pestana-tools" class="hidden space-y-3">
         <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-500">🔍</span>
             <input type="text" id="buscador-tools" oninput="filtrarTools()" placeholder="Buscar herramienta o equipo..." 
-                   class="w-full bg-slate-900 border border-slate-800 text-white placeholder-slate-500 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 shadow-inner">
+                   class="w-full bg-slate-900/90 border border-slate-800 text-white placeholder-slate-500 rounded-2xl pl-11 pr-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/50 shadow-inner">
         </div>
-        <p class="text-xs text-slate-400 pl-1 font-medium"><span id="contador-tools" class="text-sky-400 font-bold">0</span> herramientas registradas</p>
-        <div id="contenedor-tools" class="space-y-3"></div>
+        <div class="flex justify-between items-center px-1">
+            <span class="text-[11px] text-slate-400 font-medium">Equipos de apoyo</span>
+            <span class="text-[11px] text-slate-400 font-medium"><span id="contador-tools" class="text-sky-400 font-bold">0</span> herramientas</span>
+        </div>
+        <div id="contenedor-tools" class="space-y-2.5"></div>
     </div>
 
     <!-- PESTAÑA 3: RAMPS -->
     <div id="pestana-ramps" class="hidden space-y-6">
         <div class="flex justify-between items-center border-b border-slate-800 pb-2">
             <span class="text-xs text-slate-400 font-medium">Marca las tareas realizadas:</span>
-            <button onclick="resetearChecklist()" class="text-[11px] bg-rose-500/20 text-rose-400 border border-rose-500/30 px-2.5 py-1 rounded-lg hover:bg-rose-500/30 font-bold transition">
+            <button onclick="resetearChecklist()" class="text-[11px] bg-rose-500/15 text-rose-400 border border-rose-500/30 px-2.5 py-1 rounded-xl hover:bg-rose-500/25 font-bold transition">
                 🔄 Reset Checklist
             </button>
         </div>
 
         <!-- Ramps NG -->
         <div class="space-y-4">
-            <h2 class="text-lg font-black text-amber-400 tracking-wider border-b-2 border-amber-500/20 pb-1">✈️ RAMPS NG</h2>
+            <h2 class="text-sm font-black text-amber-400 tracking-wider border-b border-amber-500/20 pb-1.5">✈️ RAMPS NG</h2>
             
-            <div class="bg-slate-900 border border-slate-800/80 rounded-xl p-4 space-y-3 shadow-md">
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg backdrop-blur-sm">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 1 CHECK – RA800</h3>
                 <div class="text-xs text-slate-300 space-y-2.5 leading-relaxed">
                     <label class="flex items-start space-x-2.5 cursor-pointer">
@@ -154,7 +165,7 @@
                 </div>
             </div>
 
-            <div class="bg-slate-900 border border-slate-800/80 rounded-xl p-4 space-y-3 shadow-md">
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg backdrop-blur-sm">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 2 CHECK – RA801</h3>
                 <div class="text-xs text-slate-300 space-y-2.5 leading-relaxed">
                     <label class="flex items-start space-x-2.5 cursor-pointer">
@@ -192,7 +203,7 @@
                 </div>
             </div>
 
-            <div class="bg-slate-900 border border-slate-800/80 rounded-xl p-4 space-y-3 shadow-md">
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg backdrop-blur-sm">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP-3 CHECK - RA901</h3>
                 <div class="text-xs text-slate-300 space-y-2.5 leading-relaxed">
                     <label class="flex items-start space-x-2.5 cursor-pointer">
@@ -206,7 +217,7 @@
                 </div>
             </div>
 
-            <div class="bg-slate-900 border border-slate-800/80 rounded-xl p-4 space-y-3 shadow-md">
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg backdrop-blur-sm">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP-4 CHECK - RA902</h3>
                 <div class="text-xs text-slate-300 space-y-2.5 leading-relaxed">
                     <label class="flex items-start space-x-2.5 cursor-pointer">
@@ -228,7 +239,7 @@
                 </div>
             </div>
 
-            <div class="bg-slate-900 border border-slate-800/80 rounded-xl p-4 space-y-3 shadow-md">
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg backdrop-blur-sm">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">50FC CHECK – RA858</h3>
                 <div class="text-xs text-slate-300 space-y-2.5 leading-relaxed">
                     <label class="flex items-start space-x-2.5 cursor-pointer">
@@ -269,9 +280,9 @@
 
         <!-- Ramps MAX -->
         <div class="space-y-4 pt-4 border-t border-slate-800">
-            <h2 class="text-lg font-black text-emerald-400 tracking-wider border-b-2 border-emerald-500/20 pb-1">🚀 RAMPS MAX</h2>
+            <h2 class="text-sm font-black text-emerald-400 tracking-wider border-b border-emerald-500/20 pb-1.5">🚀 RAMPS MAX</h2>
             
-            <div class="bg-slate-900 border border-slate-800/80 rounded-xl p-4 space-y-3 shadow-md">
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg backdrop-blur-sm">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 1 CHECK – RA800</h3>
                 <div class="text-xs text-slate-300 space-y-2.5 leading-relaxed">
                     <label class="flex items-start space-x-2.5 cursor-pointer">
@@ -293,7 +304,7 @@
                 </div>
             </div>
 
-            <div class="bg-slate-900 border border-slate-800/80 rounded-xl p-4 space-y-3 shadow-md">
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg backdrop-blur-sm">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 2A/B CHECK – RA801</h3>
                 <div class="text-xs text-slate-300 space-y-2.5 leading-relaxed">
                     <label class="flex items-start space-x-2.5 cursor-pointer">
@@ -319,7 +330,7 @@
                 </div>
             </div>
 
-            <div class="bg-slate-900 border border-slate-800/80 rounded-xl p-4 space-y-3 shadow-md">
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg backdrop-blur-sm">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP-3 CHECK - RA901</h3>
                 <div class="text-xs text-slate-300 space-y-2.5 leading-relaxed">
                     <label class="flex items-start space-x-2.5 cursor-pointer">
@@ -337,7 +348,7 @@
                 </div>
             </div>
 
-            <div class="bg-slate-900 border border-slate-800/80 rounded-xl p-4 space-y-3 shadow-md">
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg backdrop-blur-sm">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP-4 CHECK - RA902</h3>
                 <div class="text-xs text-slate-300 space-y-2.5 leading-relaxed">
                     <label class="flex items-start space-x-2.5 cursor-pointer">
@@ -359,7 +370,7 @@
                 </div>
             </div>
 
-            <div class="bg-slate-900 border border-slate-800/80 rounded-xl p-4 space-y-3 shadow-md">
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg backdrop-blur-sm">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">50FC CHECK – RA858</h3>
                 <div class="text-xs text-slate-300 space-y-2.5 leading-relaxed">
                     <label class="flex items-start space-x-2.5 cursor-pointer">
@@ -406,7 +417,7 @@
 
     <!-- PESTAÑA 4: DOCUMENTS -->
     <div id="pestana-docs" class="hidden space-y-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 space-y-2 shadow-md">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 space-y-2 shadow-lg">
             <label class="block text-xs font-bold text-sky-400 uppercase tracking-wide">Seleccionar Documento Técnico (17 totales):</label>
             <select id="select-doc" onchange="cargarDocumentoSeleccionado(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:ring-2 focus:ring-sky-500 font-medium">
                 <option value="" disabled selected>-- Elige un documento para visualizar --</option>
@@ -446,7 +457,7 @@
         </div>
     </div>
 
-    <!-- PESTAÑA 5: AÑADIR (CON ESCÁNER OCR) -->
+    <!-- PESTAÑA 5: AÑADIR -->
     <div id="pestana-admin" class="hidden space-y-4">
         <div id="bloqueo-auth" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center space-y-4 shadow-xl">
             <div class="text-4xl">🔒</div>
@@ -458,13 +469,12 @@
 
         <div id="formulario-anadir" class="hidden space-y-4">
             
-            <!-- BOTÓN ESCANEAR ETIQUETA POR CÁMARA (OCR) -->
-            <div class="bg-gradient-to-r from-sky-900/40 to-blue-900/40 border border-sky-500/40 rounded-2xl p-4 text-center space-y-2 shadow-lg">
+            <div class="bg-gradient-to-r from-sky-950/60 to-blue-950/60 border border-sky-500/30 rounded-2xl p-4 text-center space-y-2 shadow-lg">
                 <div class="flex items-center justify-center space-x-2 text-sky-400 font-bold text-xs">
                     <span>📸</span>
                     <span>Lectura Inteligente de Etiquetas</span>
                 </div>
-                <p class="text-[11px] text-slate-300">Haz una foto o sube una imagen de la etiqueta física para rellenar automáticamente el Part Number y Descripción.</p>
+                <p class="text-[11px] text-slate-300">Haz una foto o sube una imagen de la etiqueta física para rellenar automáticamente.</p>
                 
                 <input type="file" id="input-foto-etiqueta" accept="image/*" capture="environment" onchange="procesarFotoEtiqueta(event)" class="hidden">
                 <button type="button" onclick="document.getElementById('input-foto-etiqueta').click()" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-md flex items-center justify-center space-x-2">
@@ -483,18 +493,18 @@
 
                 <div>
                     <label class="block text-xs text-slate-400 mb-1">Nombre del Artículo / Material</label>
-                    <input type="text" id="form-articulo" placeholder="Ej. O-RING 3" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none">
+                    <input type="text" id="form-articulo" placeholder="Ej. O-RING 3" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
                 </div>
                 
                 <div>
                     <label class="block text-xs text-slate-400 mb-1">Part Number (P/N)</label>
-                    <input type="text" id="form-pn" placeholder="Ej. MS29513-010" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none font-mono text-amber-400">
+                    <input type="text" id="form-pn" placeholder="Ej. MS29513-010" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none font-mono text-amber-400">
                 </div>
                 
                 <div>
                     <label class="block text-xs text-slate-400 mb-1">Sección o Categoría (Grupo)</label>
                     <div class="flex space-x-2">
-                        <select id="form-seccion" class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-sky-500">
+                        <select id="form-seccion" class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:ring-2 focus:ring-sky-500">
                         </select>
                         <button type="button" onclick="crearNuevoGrupo()" title="Añadir nueva sección" class="bg-slate-800 hover:bg-slate-700 text-white font-bold px-3.5 rounded-xl text-base transition">
                             ＋
@@ -503,8 +513,8 @@
                 </div>
                 
                 <div class="flex space-x-2 pt-2">
-                    <button id="btn-cancelar-edit" onclick="cancelarEdicion()" class="hidden flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-3 rounded-xl text-sm transition">Cancelar</button>
-                    <button id="btn-guardar" onclick="guardarNuevoArticulo()" class="flex-[2] bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl text-sm transition">Guardar Artículo</button>
+                    <button id="btn-cancelar-edit" onclick="cancelarEdicion()" class="hidden flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-3 rounded-xl text-xs transition">Cancelar</button>
+                    <button id="btn-guardar" onclick="guardarNuevoArticulo()" class="flex-[2] bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl text-xs transition">Guardar Artículo</button>
                 </div>
             </div>
 
@@ -520,7 +530,7 @@
     <script>
         let listaArticulos = JSON.parse(localStorage.getItem('svqh_items')) || ARTICULOS_INICIALES;
         let autenticado = false;
-        const CLAVE_CORRECTA = "1234"; // NUEVA CONTRASEÑA DE PRUEBAS
+        const CLAVE_CORRECTA = "1234";
         let seccionesAbiertas = {}; 
         let seccionesCreadasAdhoc = JSON.parse(localStorage.getItem('svqh_secciones_adhoc')) || [];
         let estadoChecklist = JSON.parse(localStorage.getItem('svqh_checklist_ramps')) || {};
@@ -562,13 +572,17 @@
             const btns = ['btn-lista', 'btn-favs', 'btn-tools', 'btn-ramps', 'btn-docs', 'btn-admin'];
             const ps = ['pestana-lista', 'pestana-favs', 'pestana-tools', 'pestana-ramps', 'pestana-docs', 'pestana-admin'];
             
-            btns.forEach(b => document.getElementById(b).className = "flex-1 py-2 rounded-lg text-center text-slate-400 transition-all flex flex-col items-center justify-center space-y-0.5");
+            btns.forEach(b => {
+                const el = document.getElementById(b);
+                el.className = "flex-1 py-2 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-0.5";
+            });
             ps.forEach(p => document.getElementById(p).classList.add('hidden'));
 
             const mapping = { lista: 0, favs: 1, tools: 2, ramps: 3, docs: 4, admin: 5 };
             const idx = mapping[target];
             
-            document.getElementById(btns[idx]).className = "flex-1 py-2 rounded-lg text-center bg-sky-500 text-white shadow-lg transition-all flex flex-col items-center justify-center space-y-0.5";
+            const activeBtn = document.getElementById(btns[idx]);
+            activeBtn.className = "flex-1 py-2 rounded-xl text-center bg-sky-500 text-white shadow-lg shadow-sky-500/20 transition-all flex flex-col items-center justify-center space-y-0.5";
             document.getElementById(ps[idx]).classList.remove('hidden');
             cancelarEdicion();
 
@@ -584,7 +598,6 @@
             ocultarHistorial();
         }
 
-        // --- OCR / LECTURA DE ETIQUETAS ---
         async function procesarFotoEtiqueta(event) {
             const file = event.target.files[0];
             if(!file) return;
@@ -632,16 +645,15 @@
                 if (possiblePN) document.getElementById('form-pn').value = possiblePN.toUpperCase();
                 if (possibleDesc) document.getElementById('form-articulo').value = possibleDesc.toUpperCase();
 
-                statusDiv.innerText = "¡Lectura completada con éxito! Revisa los campos.";
+                statusDiv.innerText = "¡Lectura completada con éxito!";
                 setTimeout(() => statusDiv.classList.add('hidden'), 4000);
 
             } catch (err) {
                 console.error(err);
-                statusDiv.innerText = "❌ Error al leer la imagen. Inténtalo de nuevo.";
+                statusDiv.innerText = "❌ Error al leer la imagen.";
             }
         }
 
-        // --- HISTORIAL Y BÚSQUEDA ---
         function manejarBusqueda() {
             filtrarYAgrupar();
             const val = document.getElementById('buscador').value.trim();
@@ -662,7 +674,7 @@
                 return;
             }
             listaH.innerHTML = historialBusquedas.map(h => 
-                `<button type="button" onclick="seleccionarHistorial('${h}')" class="w-full text-left px-2 py-1.5 text-xs text-slate-300 hover:bg-slate-800 rounded-lg truncate">🕒 ${h}</button>`
+                `<button type="button" onclick="seleccionarHistorial('${h}')" class="w-full text-left px-3 py-1.5 text-xs text-slate-300 hover:bg-slate-800 rounded-xl truncate transition">🕒 ${h}</button>`
             ).join('');
             drop.classList.remove('hidden');
         }
@@ -691,9 +703,9 @@
                 const btn = document.getElementById(`pill-${p}`);
                 if(btn) {
                     if(p === (categoria === '' ? 'all' : categoria)) {
-                        btn.className = "px-3 py-1 bg-sky-500 text-white rounded-full text-xs font-bold whitespace-nowrap transition";
+                        btn.className = "px-3.5 py-1.5 bg-sky-500 text-white rounded-xl text-[11px] font-bold whitespace-nowrap shadow-sm shadow-sky-500/20 transition";
                     } else {
-                        btn.className = "px-3 py-1 bg-slate-900 border border-slate-800 text-slate-300 rounded-full text-xs font-semibold whitespace-nowrap transition hover:bg-slate-800";
+                        btn.className = "px-3.5 py-1.5 bg-slate-900 border border-slate-800 text-slate-300 rounded-xl text-[11px] font-semibold whitespace-nowrap transition hover:bg-slate-800";
                     }
                 }
             });
@@ -742,23 +754,23 @@
 
             favoritos.forEach(fav => {
                 const card = document.createElement('div');
-                card.className = "bg-slate-900 border border-slate-800 rounded-xl p-3.5 space-y-2 shadow-md relative";
+                card.className = "bg-slate-900/90 border border-slate-800/80 rounded-2xl p-4 space-y-2.5 shadow-md relative";
                 const pnEscapado = fav.pn.replace(/'/g, "\\'");
                 const artEscapado = fav.articulo.replace(/'/g, "\\'");
 
                 card.innerHTML = `
                     <div class="flex justify-between items-start">
-                        <div class="flex items-center space-x-1.5 pr-6">
-                            <span class="text-xs">${fav.tipo === 'tool' ? '🧰' : '📦'}</span>
+                        <div class="flex items-center space-x-2 pr-6">
+                            <span class="text-xs bg-slate-800 p-1.5 rounded-xl">${fav.tipo === 'tool' ? '🧰' : '📦'}</span>
                             <h4 class="font-bold text-white text-xs uppercase tracking-wide">${fav.articulo}</h4>
                         </div>
-                        <button onclick="toggleFavorito('${pnEscapado}', '${artEscapado}', '${fav.tipo}')" class="text-amber-400 text-base focus:outline-none">★</button>
+                        <button onclick="toggleFavorito('${pnEscapado}', '${artEscapado}', '${fav.tipo}')" class="text-amber-400 text-lg focus:outline-none">★</button>
                     </div>
-                    <div class="flex items-center justify-between text-xs pt-1">
-                        <span class="text-[11px] text-slate-400 font-medium">P/N:</span>
+                    <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-800/60 mt-2">
+                        <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Part Number</span>
                         <div class="flex items-center space-x-2">
-                            <code class="text-[11px] font-mono font-bold text-amber-400 bg-slate-950 px-2 py-0.5 rounded border border-slate-800 select-all">${fav.pn}</code>
-                            <button onclick="copiarAlPortapapeles('${pnEscapado}')" class="bg-sky-500/20 text-sky-400 hover:bg-sky-500/30 px-2 py-0.5 rounded text-[10px] font-bold border border-sky-500/30">Copiar</button>
+                            <code class="text-xs font-mono font-bold text-amber-400 bg-slate-950 px-2.5 py-1 rounded-xl border border-slate-800 select-all">${fav.pn}</code>
+                            <button onclick="copiarAlPortapapeles('${pnEscapado}')" class="bg-sky-500/15 text-sky-400 hover:bg-sky-500/25 px-2.5 py-1 rounded-xl text-[10px] font-bold border border-sky-500/30 transition">Copiar</button>
                         </div>
                     </div>
                 `;
@@ -809,29 +821,32 @@
             contador.innerText = filtrados.length;
 
             if (filtrados.length === 0) {
-                contenedor.innerHTML = `<div class="text-center text-xs text-slate-500 py-8">No se encontraron herramientas.</div>`;
+                contenedor.innerHTML = `<div class="text-center text-xs text-slate-500 py-12">No se encontraron herramientas.</div>`;
                 return;
             }
 
             filtrados.forEach(tool => {
                 const card = document.createElement('div');
-                card.className = "bg-slate-900 border border-slate-800 rounded-xl p-3.5 space-y-1.5 shadow-md";
+                card.className = "bg-slate-900/90 border border-slate-800/80 rounded-2xl p-3.5 space-y-2 shadow-md";
                 const esFav = favoritos.some(f => f.pn === tool.pn);
                 const pnEscapado = tool.pn.replace(/'/g, "\\'");
                 const artEscapado = tool.articulo.replace(/'/g, "\\'");
 
                 card.innerHTML = `
                     <div class="flex justify-between items-start">
-                        <h4 class="font-bold text-white text-xs uppercase tracking-wide pr-2">${tool.articulo}</h4>
-                        <button onclick="toggleFavorito('${pnEscapado}', '${artEscapado}', 'tool')" class="${esFav ? 'text-amber-400' : 'text-slate-600 hover:text-slate-400'} text-base focus:outline-none">
+                        <div class="flex items-center space-x-2 pr-2">
+                            <span class="text-xs">🧰</span>
+                            <h4 class="font-bold text-white text-xs uppercase tracking-wide">${tool.articulo}</h4>
+                        </div>
+                        <button onclick="toggleFavorito('${pnEscapado}', '${artEscapado}', 'tool')" class="${esFav ? 'text-amber-400' : 'text-slate-600 hover:text-slate-400'} text-lg focus:outline-none transition">
                             ${esFav ? '★' : '☆'}
                         </button>
                     </div>
-                    <div class="flex items-center justify-between text-xs pt-1">
-                        <span class="text-[11px] text-slate-400 font-medium">P/N:</span>
+                    <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-800/50 mt-1">
+                        <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Part Number</span>
                         <div class="flex items-center space-x-2">
-                            <code class="text-[11px] font-mono font-bold text-amber-400 bg-slate-950 px-2 py-0.5 rounded border border-slate-800 select-all">${tool.pn}</code>
-                            <button onclick="copiarAlPortapapeles('${pnEscapado}')" class="bg-sky-500/20 text-sky-400 hover:bg-sky-500/30 px-2 py-0.5 rounded text-[10px] font-bold border border-sky-500/30">Copiar</button>
+                            <code class="text-xs font-mono font-bold text-amber-400 bg-slate-950 px-2.5 py-1 rounded-xl border border-slate-800 select-all">${tool.pn}</code>
+                            <button onclick="copiarAlPortapapeles('${pnEscapado}')" class="bg-sky-500/15 text-sky-400 hover:bg-sky-500/25 px-2.5 py-1 rounded-xl text-[10px] font-bold border border-sky-500/30 transition">Copiar</button>
                         </div>
                     </div>
                 `;
@@ -879,6 +894,7 @@
             actualizarDesplegableSecciones(grupoSanitizado);
         }
 
+        // --- RENDERIZADO VISIBLEMENTE MEJORADO PARA SEARCH ---
         function filtrarYAgrupar() {
             const query = document.getElementById('buscador').value.toLowerCase().trim();
             const contenedor = document.getElementById('contenedor-secciones');
@@ -901,7 +917,7 @@
             contadorGral.innerText = filtrados.length;
 
             if (filtrados.length === 0) {
-                contenedor.innerHTML = `<div class="text-center text-xs text-slate-500 py-8">No se encontraron resultados.</div>`;
+                contenedor.innerHTML = `<div class="text-center text-xs text-slate-500 py-12">No se encontraron resultados en la búsqueda.</div>`;
                 return;
             }
 
@@ -918,17 +934,18 @@
                 const idLimpio = nombreSeccion.replace(/[^a-zA-Z0-9]/g, '-');
 
                 const divGrupo = document.createElement('div');
-                divGrupo.className = "bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-md";
+                divGrupo.className = "bg-slate-900/60 border border-slate-800/80 rounded-2xl overflow-hidden shadow-lg backdrop-blur-sm";
 
                 const botonCabecera = document.createElement('button');
-                botonCabecera.className = "w-full flex justify-between items-center bg-slate-800/90 px-4 py-3 text-left font-bold text-xs text-sky-400 tracking-wider uppercase focus:outline-none transition-colors hover:bg-slate-800";
+                botonCabecera.className = "w-full flex justify-between items-center bg-slate-900/90 px-4 py-3.5 text-left focus:outline-none transition-colors hover:bg-slate-850";
                 botonCabecera.onclick = () => togglerSeccion(nombreSeccion);
                 botonCabecera.innerHTML = `
-                    <div class="flex items-center space-x-2">
-                        <span>📂 ${nombreSeccion}</span>
-                        <span class="bg-slate-950 text-slate-400 font-mono text-[10px] px-1.5 py-0.5 rounded-full">${itemsDelGrupo.length}</span>
+                    <div class="flex items-center space-x-2.5">
+                        <span class="text-sm">📂</span>
+                        <span class="font-bold text-xs text-sky-400 tracking-wider uppercase">${nombreSeccion}</span>
+                        <span class="bg-slate-950 text-slate-400 font-mono text-[10px] px-2 py-0.5 rounded-full border border-slate-800/80">${itemsDelGrupo.length}</span>
                     </div>
-                    <span id="flecha-${idLimpio}" class="text-slate-400 font-mono text-sm transition-transform duration-200 ${estaAbierto ? 'rotate-180' : ''}">
+                    <span id="flecha-${idLimpio}" class="text-slate-400 font-mono text-xs transition-transform duration-200 ${estaAbierto ? 'rotate-180' : ''}">
                         ${estaAbierto ? '▲' : '▼'}
                     </span>
                 `;
@@ -936,27 +953,27 @@
 
                 const contenedorTarjetas = document.createElement('div');
                 contenedorTarjetas.id = `bloque-${idLimpio}`;
-                contenedorTarjetas.className = `p-3 space-y-2.5 bg-slate-950/40 ${estaAbierto ? '' : 'hidden'}`;
+                contenedorTarjetas.className = `p-3 space-y-2.5 bg-slate-950/20 ${estaAbierto ? '' : 'hidden'}`;
 
                 itemsDelGrupo.forEach(item => {
                     const card = document.createElement('div');
-                    card.className = "bg-slate-800/80 border border-slate-700/50 rounded-lg p-3 flex flex-col space-y-1 shadow-sm";
+                    card.className = "bg-slate-900/90 border border-slate-800/70 rounded-xl p-3 flex flex-col space-y-2 shadow-sm hover:border-slate-700 transition";
                     const esFav = favoritos.some(f => f.pn === item.pn);
                     const pnEscapado = item.pn.replace(/'/g, "\\'");
                     const artEscapado = item.articulo.replace(/'/g, "\\'");
 
                     card.innerHTML = `
                         <div class="flex justify-between items-start">
-                            <h4 class="font-bold text-white text-xs tracking-wide uppercase">${item.articulo}</h4>
-                            <button onclick="toggleFavorito('${pnEscapado}', '${artEscapado}', 'part')" class="${esFav ? 'text-amber-400' : 'text-slate-600 hover:text-slate-400'} text-base focus:outline-none">
+                            <h4 class="font-bold text-white text-xs tracking-wide uppercase pr-2 leading-snug">${item.articulo}</h4>
+                            <button onclick="toggleFavorito('${pnEscapado}', '${artEscapado}', 'part')" class="${esFav ? 'text-amber-400' : 'text-slate-600 hover:text-slate-400'} text-base focus:outline-none transition">
                                 ${esFav ? '★' : '☆'}
                             </button>
                         </div>
-                        <div class="flex items-center justify-between text-xs pt-1">
-                            <span class="text-[11px] text-slate-400 font-medium">P/N:</span>
+                        <div class="flex items-center justify-between text-xs pt-1.5 border-t border-slate-800/50">
+                            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Part Number</span>
                             <div class="flex items-center space-x-2">
-                                <code class="text-[11px] font-mono font-bold text-amber-400 bg-slate-950 px-2 py-0.5 rounded border border-slate-800 select-all">${item.pn}</code>
-                                <button onclick="copiarAlPortapapeles('${pnEscapado}')" class="bg-sky-500/20 text-sky-400 hover:bg-sky-500/30 px-2 py-0.5 rounded text-[10px] font-bold border border-sky-500/30">Copiar</button>
+                                <code class="text-xs font-mono font-bold text-amber-400 bg-slate-950 px-2.5 py-1 rounded-xl border border-slate-800/80 select-all">${item.pn}</code>
+                                <button onclick="copiarAlPortapapeles('${pnEscapado}')" class="bg-sky-500/15 text-sky-400 hover:bg-sky-500/25 px-2.5 py-1 rounded-xl text-[10px] font-bold border border-sky-500/30 transition">Copiar</button>
                             </div>
                         </div>
                     `;
@@ -1000,8 +1017,8 @@
                         <div class="text-amber-400 font-mono text-[11px] truncate">${item.pn} <span class="text-[10px] text-slate-500 font-sans">(${secLimpia})</span></div>
                     </div>
                     <div class="flex space-x-1.5 flex-shrink-0">
-                        <button onclick="cargarParaEditar('${pnEscapado}')" class="bg-sky-600/20 hover:bg-sky-600/40 text-sky-400 p-1.5 rounded-lg font-bold transition">✏️</button>
-                        <button onclick="eliminarArticulo('${pnEscapado}')" class="bg-rose-600/20 hover:bg-rose-600/40 text-rose-400 p-1.5 rounded-lg font-bold transition">🗑️</button>
+                        <button onclick="cargarParaEditar('${pnEscapado}')" class="bg-sky-600/20 hover:bg-sky-600/40 text-sky-400 p-1.5 rounded-xl font-bold transition">✏️</button>
+                        <button onclick="eliminarArticulo('${pnEscapado}')" class="bg-rose-600/20 hover:bg-rose-600/40 text-rose-400 p-1.5 rounded-xl font-bold transition">🗑️</button>
                     </div>
                 `;
                 listaG.appendChild(fila);
@@ -1069,7 +1086,7 @@
             });
 
             if (existeDuplicado) {
-                alert(`⚠️ BLOQUEADO: Ya existe un artículo registrado con el Part Number: ${pn.toUpperCase()}.\nNo se permiten duplicados.`);
+                alert(`⚠️ BLOQUEADO: Ya existe un artículo registrado con el Part Number: ${pn.toUpperCase()}.`);
                 return;
             }
 
