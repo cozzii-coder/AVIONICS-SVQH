@@ -37,7 +37,7 @@
         <p class="text-xs text-slate-400 font-medium">Avionics Maintenance & Documentation</p>
     </header>
 
-    <!-- NAVEGACIÓN INFERIOR (4 Columnas: Search, Favs, Ramps, Docs, Admin) -->
+    <!-- NAVEGACIÓN INFERIOR (Search, Favs, Tools, Ramps, Docs, Añadir) -->
     <nav class="fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 p-1.5 max-w-md mx-auto">
         <div class="flex text-[10px] font-bold tracking-wide">
             <button id="btn-lista" onclick="cambiarPestana('lista')" class="flex-1 py-2 rounded-lg text-center bg-sky-500 text-white shadow-lg transition-all flex flex-col items-center justify-center space-y-0.5">
@@ -47,6 +47,10 @@
             <button id="btn-favs" onclick="cambiarPestana('favs')" class="flex-1 py-2 rounded-lg text-center text-slate-400 transition-all flex flex-col items-center justify-center space-y-0.5">
                 <span class="text-base leading-none">⭐</span>
                 <span>Favs</span>
+            </button>
+            <button id="btn-tools" onclick="cambiarPestana('tools')" class="flex-1 py-2 rounded-lg text-center text-slate-400 transition-all flex flex-col items-center justify-center space-y-0.5">
+                <span class="text-base leading-none">🧰</span>
+                <span>Tools</span>
             </button>
             <button id="btn-ramps" onclick="cambiarPestana('ramps')" class="flex-1 py-2 rounded-lg text-center text-slate-400 transition-all flex flex-col items-center justify-center space-y-0.5">
                 <span class="text-base leading-none">📋</span>
@@ -63,10 +67,10 @@
         </div>
     </nav>
 
-    <!-- PESTAÑA 1: SEARCH (INCLUYE PIEZAS Y TOOLS UNIFICADAS) -->
+    <!-- PESTAÑA 1: SEARCH (SOLO CONSUMIBLES/PIEZAS) -->
     <div id="pestana-lista" class="space-y-3">
         <div class="relative">
-            <input type="text" id="buscador" oninput="manejarBusqueda()" onfocus="mostrarHistorial(true)" placeholder="Buscar pieza, herramienta o P/N..." 
+            <input type="text" id="buscador" oninput="manejarBusqueda()" onfocus="mostrarHistorial(true)" placeholder="Buscar artículo o Part Number..." 
                    class="w-full bg-slate-900 border border-slate-800 text-white placeholder-slate-500 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 shadow-inner">
             
             <!-- Desplegable Historial de Búsquedas -->
@@ -82,14 +86,14 @@
         <!-- Filtros Rápidos (Píldoras) -->
         <div class="flex overflow-x-auto space-x-2 pb-1 custom-scrollbar">
             <button onclick="filtrarPorPildora('')" id="pill-all" class="px-3 py-1 bg-sky-500 text-white rounded-full text-xs font-bold whitespace-nowrap transition">Todo</button>
-            <button onclick="filtrarPorPildora('tool')" id="pill-tool" class="px-3 py-1 bg-slate-900 border border-slate-800 text-slate-300 rounded-full text-xs font-semibold whitespace-nowrap transition hover:bg-slate-800">🧰 Tools</button>
             <button onclick="filtrarPorPildora('oring')" id="pill-oring" class="px-3 py-1 bg-slate-900 border border-slate-800 text-slate-300 rounded-full text-xs font-semibold whitespace-nowrap transition hover:bg-slate-800">O-Rings</button>
             <button onclick="filtrarPorPildora('clamp')" id="pill-clamp" class="px-3 py-1 bg-slate-900 border border-slate-800 text-slate-300 rounded-full text-xs font-semibold whitespace-nowrap transition hover:bg-slate-800">Clamps</button>
             <button onclick="filtrarPorPildora('bulb')" id="pill-bulb" class="px-3 py-1 bg-slate-900 border border-slate-800 text-slate-300 rounded-full text-xs font-semibold whitespace-nowrap transition hover:bg-slate-800">Bulbs</button>
             <button onclick="filtrarPorPildora('electrical')" id="pill-electrical" class="px-3 py-1 bg-slate-900 border border-slate-800 text-slate-300 rounded-full text-xs font-semibold whitespace-nowrap transition hover:bg-slate-800">Electrical</button>
+            <button onclick="filtrarPorPildora('fastener')" id="pill-fastener" class="px-3 py-1 bg-slate-900 border border-slate-800 text-slate-300 rounded-full text-xs font-semibold whitespace-nowrap transition hover:bg-slate-800">Fasteners</button>
         </div>
 
-        <p class="text-xs text-slate-400 pl-1 font-medium"><span id="contador-items" class="text-sky-400 font-bold">0</span> elementos encontrados</p>
+        <p class="text-xs text-slate-400 pl-1 font-medium"><span id="contador-items" class="text-sky-400 font-bold">0</span> piezas disponibles en total</p>
         <div id="contenedor-secciones" class="space-y-3"></div>
     </div>
 
@@ -103,6 +107,16 @@
         </div>
         <p class="text-xs text-slate-400">Guarda consumibles o herramientas tocando la estrella ⭐ para encontrarlas rápidamente.</p>
         <div id="contenedor-favs" class="space-y-3"></div>
+    </div>
+
+    <!-- PESTAÑA 2: TOOLS (SECCIÓN INDEPENDIENTE) -->
+    <div id="pestana-tools" class="hidden space-y-4">
+        <div class="relative">
+            <input type="text" id="buscador-tools" oninput="filtrarTools()" placeholder="Buscar herramienta o equipo..." 
+                   class="w-full bg-slate-900 border border-slate-800 text-white placeholder-slate-500 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 shadow-inner">
+        </div>
+        <p class="text-xs text-slate-400 pl-1 font-medium"><span id="contador-tools" class="text-sky-400 font-bold">0</span> herramientas registradas</p>
+        <div id="contenedor-tools" class="space-y-3"></div>
     </div>
 
     <!-- PESTAÑA 3: RAMPS -->
@@ -437,7 +451,7 @@
         <div id="bloqueo-auth" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center space-y-4 shadow-xl">
             <div class="text-4xl">🔒</div>
             <h3 class="text-base font-bold text-white tracking-wide">Acceso Protegido</h3>
-            <p class="text-xs text-slate-400">Contraseña de AvioTech para la gestión de componentes.</p>
+            <p class="text-xs text-slate-400">Contraseña temporal de pruebas: <span class="font-mono text-sky-400 font-bold">1234</span></p>
             <input type="password" id="input-password" placeholder="Contraseña" class="w-full bg-slate-950 border border-slate-800 text-center rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
             <button onclick="verificarPassword()" class="w-full bg-sky-500 hover:bg-sky-600 font-bold py-2.5 rounded-xl text-sm transition shadow-md">Acceder</button>
         </div>
@@ -468,8 +482,8 @@
                 <input type="hidden" id="edit-original-pn" value="">
 
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">Nombre del Artículo / Material / Herramienta</label>
-                    <input type="text" id="form-articulo" placeholder="Ej. O-RING 3 o FLUKE117" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none">
+                    <label class="block text-xs text-slate-400 mb-1">Nombre del Artículo / Material</label>
+                    <input type="text" id="form-articulo" placeholder="Ej. O-RING 3" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none">
                 </div>
                 
                 <div>
@@ -506,7 +520,7 @@
     <script>
         let listaArticulos = JSON.parse(localStorage.getItem('svqh_items')) || ARTICULOS_INICIALES;
         let autenticado = false;
-        const CLAVE_CORRECTA = "AvioTech1993"; 
+        const CLAVE_CORRECTA = "1234"; // NUEVA CONTRASEÑA DE PRUEBAS
         let seccionesAbiertas = {}; 
         let seccionesCreadasAdhoc = JSON.parse(localStorage.getItem('svqh_secciones_adhoc')) || [];
         let estadoChecklist = JSON.parse(localStorage.getItem('svqh_checklist_ramps')) || {};
@@ -514,52 +528,44 @@
         let historialBusquedas = JSON.parse(localStorage.getItem('svqh_historial')) || [];
         let filtroPillActual = '';
 
-        // LISTA DE TOOLS INTEGRADA EN EL BUSCADOR GENERAL COMO SECCIÓN "TOOLS"
-        const LISTA_TOOLS_INICIALES = [
-            { articulo: "QUICKSET", pn: "QUICKSET", seccion: "Tools" },
-            { articulo: "FLUKE117", pn: "FLUKE117", seccion: "Tools" },
-            { articulo: "STAB TRIM CUTOUT TESTER", pn: "C27007-46", seccion: "Tools" },
-            { articulo: "ELT ADT406AP 50 OHM DUMMY LOAD KIT", pn: "112-3148", seccion: "Tools" },
-            { articulo: "PROBE OVHT AND TESTER", pn: "BH17336A // BH16440-40", seccion: "Tools" },
-            { articulo: "TEMPCAL TESTER", pn: "H394-230", seccion: "Tools" },
-            { articulo: "BONDING METER", pn: "M1", seccion: "Tools" },
-            { articulo: "HAND HELD MULTIPURPOSE I/FACE HHMPI", pn: "FDS400-301", seccion: "Tools" },
-            { articulo: "FIREX TEST CARGO", pn: "C26006-1", seccion: "Tools" },
-            { articulo: "TEST SET / PITOT STATIC", pn: "MPS45", seccion: "Tools" },
-            { articulo: "GROUND FAULT PROTECTION SYS TEST SET", pn: "F72917-19", seccion: "Tools" },
-            { articulo: "PDL LAPTOP WITH TECHSAT PDL MKII", pn: "TECHSATPDLLAPT0P", seccion: "Tools" },
-            { articulo: "FLUKE324 (CLAMP)", pn: "FLUKE324", seccion: "Tools" },
-            { articulo: "CAJA RADIOALTIMETRO", pn: "C34005-16", seccion: "Tools" },
-            { articulo: "RADIO ALTIMETER TEST SET", pn: "DRA707", seccion: "Tools" },
-            { articulo: "TRAMMEL BAR", pn: "F80055-1", seccion: "Tools" },
-            { articulo: "RUDDER PCU TEST SET", pn: "C29002-17", seccion: "Tools" },
-            { articulo: "HIRFS", pn: "906-10247-3 OR XLR-9703-01", seccion: "Tools" },
-            { articulo: "WTB FEEDTHROUGH CONNECTORS ADAPTER (HIRFS)", pn: "WTBADAPTER", seccion: "Tools" },
-            { articulo: "TOOL CONNECTORS FOR BACKSHELLS", pn: "CMS837", seccion: "Tools" },
-            { articulo: "KNIPEX CUTTING SAFTGLO", pn: "9435215", seccion: "Tools" },
-            { articulo: "FIRE EXTINGUISHER BOTTLE SQUIB TESTER", pn: "F80229-69", seccion: "Tools" },
-            { articulo: "WIRE JUMPER KIT MID-CABIN B737MAX", pn: "RYR-EXITS-DDG-JUMPER-KIT", seccion: "Tools" },
-            { articulo: "CRIMP TOOL FOR AIRSTAIRS LIGHTS", pn: "P/N: 9-1478240-0 // DIE SET: 58628-2", seccion: "Tools" },
-            { articulo: "CRIMP TOOL FOR LANDING LIGHT LUG", pn: "59461", seccion: "Tools" },
-            { articulo: "CLAMP BANDS CONNECTOR TOOL", pn: "DBS-1101", seccion: "Tools" },
-            { articulo: "END CAP CRIMP TOOL", pn: "IN MODKIT", seccion: "Tools" }
+        const LISTA_HERRAMIENTAS = [
+            { articulo: "QUICKSET", pn: "QUICKSET" },
+            { articulo: "FLUKE117", pn: "FLUKE117" },
+            { articulo: "STAB TRIM CUTOUT TESTER", pn: "C27007-46" },
+            { articulo: "ELT ADT406AP 50 OHM DUMMY LOAD KIT", pn: "112-3148" },
+            { articulo: "PROBE OVHT AND TESTER", pn: "BH17336A // BH16440-40" },
+            { articulo: "TEMPCAL TESTER", pn: "H394-230" },
+            { articulo: "BONDING METER", pn: "M1" },
+            { articulo: "HAND HELD MULTIPURPOSE I/FACE HHMPI", pn: "FDS400-301" },
+            { articulo: "FIREX TEST CARGO", pn: "C26006-1" },
+            { articulo: "TEST SET / PITOT STATIC", pn: "MPS45" },
+            { articulo: "GROUND FAULT PROTECTION SYS TEST SET", pn: "F72917-19" },
+            { articulo: "PDL LAPTOP WITH TECHSAT PDL MKII", pn: "TECHSATPDLLAPT0P" },
+            { articulo: "FLUKE324 (CLAMP)", pn: "FLUKE324" },
+            { articulo: "CAJA RADIOALTIMETRO", pn: "C34005-16" },
+            { articulo: "RADIO ALTIMETER TEST SET", pn: "DRA707" },
+            { articulo: "TRAMMEL BAR", pn: "F80055-1" },
+            { articulo: "RUDDER PCU TEST SET", pn: "C29002-17" },
+            { articulo: "HIRFS", pn: "906-10247-3 OR XLR-9703-01" },
+            { articulo: "WTB FEEDTHROUGH CONNECTORS ADAPTER (HIRFS)", pn: "WTBADAPTER" },
+            { articulo: "TOOL CONNECTORS FOR BACKSHELLS", pn: "CMS837" },
+            { articulo: "KNIPEX CUTTING SAFTGLO", pn: "9435215" },
+            { articulo: "FIRE EXTINGUISHER BOTTLE SQUIB TESTER", pn: "F80229-69" },
+            { articulo: "WIRE JUMPER KIT MID-CABIN B737MAX", pn: "RYR-EXITS-DDG-JUMPER-KIT" },
+            { articulo: "CRIMP TOOL FOR AIRSTAIRS LIGHTS", pn: "P/N: 9-1478240-0 // DIE SET: 58628-2" },
+            { articulo: "CRIMP TOOL FOR LANDING LIGHT LUG", pn: "59461" },
+            { articulo: "CLAMP BANDS CONNECTOR TOOL", pn: "DBS-1101" },
+            { articulo: "END CAP CRIMP TOOL", pn: "IN MODKIT" }
         ];
 
-        // Asegurar que las tools estén presentes en la lista unificada
-        LISTA_TOOLS_INICIALES.forEach(tool => {
-            if(!listaArticulos.some(item => item.pn === tool.pn)) {
-                listaArticulos.push(tool);
-            }
-        });
-
         function cambiarPestana(target) {
-            const btns = ['btn-lista', 'btn-favs', 'btn-ramps', 'btn-docs', 'btn-admin'];
-            const ps = ['pestana-lista', 'pestana-favs', 'pestana-ramps', 'pestana-docs', 'pestana-admin'];
+            const btns = ['btn-lista', 'btn-favs', 'btn-tools', 'btn-ramps', 'btn-docs', 'btn-admin'];
+            const ps = ['pestana-lista', 'pestana-favs', 'pestana-tools', 'pestana-ramps', 'pestana-docs', 'pestana-admin'];
             
             btns.forEach(b => document.getElementById(b).className = "flex-1 py-2 rounded-lg text-center text-slate-400 transition-all flex flex-col items-center justify-center space-y-0.5");
             ps.forEach(p => document.getElementById(p).classList.add('hidden'));
 
-            const mapping = { lista: 0, favs: 1, ramps: 2, docs: 3, admin: 4 };
+            const mapping = { lista: 0, favs: 1, tools: 2, ramps: 3, docs: 4, admin: 5 };
             const idx = mapping[target];
             
             document.getElementById(btns[idx]).className = "flex-1 py-2 rounded-lg text-center bg-sky-500 text-white shadow-lg transition-all flex flex-col items-center justify-center space-y-0.5";
@@ -568,6 +574,7 @@
 
             if (target === 'lista') filtrarYAgrupar();
             if (target === 'favs') renderizarFavoritos();
+            if (target === 'tools') filtrarTools();
             if (target === 'ramps') cargarEstadoChecklist();
             if (target === 'admin') {
                 evaluarAuthUI();
@@ -680,7 +687,7 @@
 
         function filtrarPorPildora(categoria) {
             filtroPillActual = categoria;
-            ['all', 'tool', 'oring', 'clamp', 'bulb', 'electrical'].forEach(p => {
+            ['all', 'oring', 'clamp', 'bulb', 'electrical', 'fastener'].forEach(p => {
                 const btn = document.getElementById(`pill-${p}`);
                 if(btn) {
                     if(p === (categoria === '' ? 'all' : categoria)) {
@@ -719,6 +726,7 @@
             
             if(!document.getElementById('pestana-lista').classList.contains('hidden')) filtrarYAgrupar();
             if(!document.getElementById('pestana-favs').classList.contains('hidden')) renderizarFavoritos();
+            if(!document.getElementById('pestana-tools').classList.contains('hidden')) filtrarTools();
         }
 
         function renderizarFavoritos() {
@@ -788,6 +796,49 @@
             }
         }
 
+        function filtrarTools() {
+            const query = document.getElementById('buscador-tools').value.toLowerCase().trim();
+            const contenedor = document.getElementById('contenedor-tools');
+            const contador = document.getElementById('contador-tools');
+            contenedor.innerHTML = '';
+
+            const filtrados = LISTA_HERRAMIENTAS.filter(item => 
+                item.articulo.toLowerCase().includes(query) || 
+                item.pn.toLowerCase().replace(/\s+/g, '').includes(query.replace(/\s+/g, ''))
+            );
+            contador.innerText = filtrados.length;
+
+            if (filtrados.length === 0) {
+                contenedor.innerHTML = `<div class="text-center text-xs text-slate-500 py-8">No se encontraron herramientas.</div>`;
+                return;
+            }
+
+            filtrados.forEach(tool => {
+                const card = document.createElement('div');
+                card.className = "bg-slate-900 border border-slate-800 rounded-xl p-3.5 space-y-1.5 shadow-md";
+                const esFav = favoritos.some(f => f.pn === tool.pn);
+                const pnEscapado = tool.pn.replace(/'/g, "\\'");
+                const artEscapado = tool.articulo.replace(/'/g, "\\'");
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-bold text-white text-xs uppercase tracking-wide pr-2">${tool.articulo}</h4>
+                        <button onclick="toggleFavorito('${pnEscapado}', '${artEscapado}', 'tool')" class="${esFav ? 'text-amber-400' : 'text-slate-600 hover:text-slate-400'} text-base focus:outline-none">
+                            ${esFav ? '★' : '☆'}
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between text-xs pt-1">
+                        <span class="text-[11px] text-slate-400 font-medium">P/N:</span>
+                        <div class="flex items-center space-x-2">
+                            <code class="text-[11px] font-mono font-bold text-amber-400 bg-slate-950 px-2 py-0.5 rounded border border-slate-800 select-all">${tool.pn}</code>
+                            <button onclick="copiarAlPortapapeles('${pnEscapado}')" class="bg-sky-500/20 text-sky-400 hover:bg-sky-500/30 px-2 py-0.5 rounded text-[10px] font-bold border border-sky-500/30">Copiar</button>
+                        </div>
+                    </div>
+                `;
+                contenedor.appendChild(card);
+            });
+        }
+
         function limpiarTextoSeccion(texto) {
             if(!texto) return "";
             return texto.replace(/consumibles\s*/gi, '').replace(/[\(\)]/g, '').trim();
@@ -841,9 +892,7 @@
                                   secLimpia.toLowerCase().includes(query);
                 
                 let cumplePill = true;
-                if (filtroPillActual === 'tool') {
-                    cumplePill = secLimpia.toLowerCase() === 'tools';
-                } else if (filtroPillActual !== '') {
+                if (filtroPillActual !== '') {
                     cumplePill = item.articulo.toLowerCase().includes(filtroPillActual) || secLimpia.toLowerCase().includes(filtroPillActual);
                 }
                 return cumpleTexto && cumplePill;
@@ -858,7 +907,7 @@
 
             const grupos = {};
             filtrados.forEach(item => {
-                let nombreLimpio = limpiarTextoSeccion(item.seccion) || "General";
+                let nombreLimpio = limpiarTextoSeccion(item.seccion);
                 if (!grupos[nombreLimpio]) grupos[nombreLimpio] = [];
                 grupos[nombreLimpio].push(item);
             });
@@ -876,7 +925,7 @@
                 botonCabecera.onclick = () => togglerSeccion(nombreSeccion);
                 botonCabecera.innerHTML = `
                     <div class="flex items-center space-x-2">
-                        <span>${nombreSeccion === 'Tools' ? '🧰' : '📂'} ${nombreSeccion}</span>
+                        <span>📂 ${nombreSeccion}</span>
                         <span class="bg-slate-950 text-slate-400 font-mono text-[10px] px-1.5 py-0.5 rounded-full">${itemsDelGrupo.length}</span>
                     </div>
                     <span id="flecha-${idLimpio}" class="text-slate-400 font-mono text-sm transition-transform duration-200 ${estaAbierto ? 'rotate-180' : ''}">
@@ -895,12 +944,11 @@
                     const esFav = favoritos.some(f => f.pn === item.pn);
                     const pnEscapado = item.pn.replace(/'/g, "\\'");
                     const artEscapado = item.articulo.replace(/'/g, "\\'");
-                    const tipoFav = nombreSeccion === 'Tools' ? 'tool' : 'part';
 
                     card.innerHTML = `
                         <div class="flex justify-between items-start">
                             <h4 class="font-bold text-white text-xs tracking-wide uppercase">${item.articulo}</h4>
-                            <button onclick="toggleFavorito('${pnEscapado}', '${artEscapado}', '${tipoFav}')" class="${esFav ? 'text-amber-400' : 'text-slate-600 hover:text-slate-400'} text-base focus:outline-none">
+                            <button onclick="toggleFavorito('${pnEscapado}', '${artEscapado}', 'part')" class="${esFav ? 'text-amber-400' : 'text-slate-600 hover:text-slate-400'} text-base focus:outline-none">
                                 ${esFav ? '★' : '☆'}
                             </button>
                         </div>
