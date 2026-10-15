@@ -19,7 +19,7 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: 9999px; }
         .toast-active { transform: translateY(0); opacity: 1; }
         .secure-container { position: relative; }
-        .secure-overlay { position: absolute; top: 0; right: 0; width: 160px; height: 60px; z-index: 20; background: transparent; }
+        .secure-overlay { position: absolute; top: 0; left: 0; right: 0; height: 50px; z-index: 20; background: transparent; }
 
         /* Bloquear impresión de pantalla por seguridad */
         @media print {
@@ -27,12 +27,12 @@
         }
     </style>
 </head>
-<body class="p-3 max-w-md mx-auto pb-32 pt-10" oncontextmenu="return false;">
+<body class="p-3 max-w-md mx-auto pb-32 pt-20" oncontextmenu="return false;">
 
-    <!-- AVISO FIJO SUPERIOR -->
-    <div class="fixed top-3 left-4 right-4 z-50 pointer-events-none flex justify-between items-center">
+    <!-- AVISO FIJO SUPERIOR (Bajado para mayor accesibilidad táctil) -->
+    <div class="fixed top-14 left-4 right-4 z-50 pointer-events-none flex justify-between items-center">
         <span class="text-[10px] font-black tracking-widest text-rose-500/95 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] uppercase pointer-events-auto">
-            ONLY FOR REFERENCE - SECURE VIEW
+            ONLY FOR REFERENCE
         </span>
         <button onclick="alternarModoSol()" id="btn-modo-sol" class="pointer-events-auto bg-slate-900/90 border border-slate-700 text-amber-400 text-xs px-3 py-1.5 rounded-full shadow-lg backdrop-blur-md transition">
             ☀️ Sol
@@ -40,7 +40,7 @@
     </div>
 
     <!-- NOTIFICACIÓN TOAST -->
-    <div id="toast-notif" class="fixed top-14 right-4 z-50 bg-sky-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-2xl transition-all duration-300 transform -translate-y-10 opacity-0 pointer-events-none flex items-center space-x-2 border border-sky-400">
+    <div id="toast-notif" class="fixed top-24 right-4 z-50 bg-sky-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-2xl transition-all duration-300 transform -translate-y-10 opacity-0 pointer-events-none flex items-center space-x-2 border border-sky-400">
         <span>📋</span>
         <span id="toast-msg">¡P/N copiado al portapapeles!</span>
     </div>
@@ -263,7 +263,7 @@
             </select>
         </div>
         <div class="relative w-full rounded-2xl overflow-hidden border border-slate-800 shadow-2xl bg-slate-950 h-[60vh] secure-container">
-            <!-- Capa invisible superior para tapar posibles botones flotantes de Google Drive -->
+            <!-- Capa invisible superior para bloquear descarga/impresión desde los botones flotantes de Google Drive -->
             <div class="secure-overlay" title="Protección de documento"></div>
             <div id="doc-placeholder" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center text-slate-400 space-y-2 z-5 bg-slate-950">
                 <span class="text-3xl">📂</span>
@@ -298,7 +298,7 @@
         <div id="bloqueo-auth" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center space-y-4 shadow-xl">
             <div class="text-4xl">🔒</div>
             <h3 class="text-base font-bold text-white">Panel de Administración</h3>
-            <input type="password" id="input-password" placeholder="Contraseña (1234)" class="w-full bg-slate-950 border border-slate-800 text-center rounded-xl px-4 py-2.5 text-sm text-white">
+            <input type="password" id="input-password" placeholder="Password" class="w-full bg-slate-950 border border-slate-800 text-center rounded-xl px-4 py-2.5 text-sm text-white">
             <button onclick="verificarPassword()" class="w-full bg-sky-500 font-bold py-2.5 rounded-xl text-sm">Acceder</button>
         </div>
 
@@ -502,14 +502,24 @@
           { "articulo": "WIRE JUMPER KIT MID-CABIN B737MAX", "pn": "RYR-EXITS-DDG-JUMPER-KIT" }
         ];
 
-        // Documentos actualizados desde la carpeta de Google Drive proporcionada
+        // Documentos ordenados estrictamente según lo solicitado y protegidos
         const DOCUMENTOS_INICIALES = [
-          { id: "1adDKrCHrUkUIaukFjtEb-Y_cAQbaVV0L", nombre: "1. 737NG COMPONENT LOCATOR GUIDE" },
-          { id: "10lMqgWVcna_bWoToLCjfEgM_BFlvNPqB", nombre: "2. 737NG Flight Deck Panels" },
-          { id: "17Z8lUXNcySm2L8DImPs9xw8qnus6i0aK", nombre: "3. Flight Deck & CB Panels" },
-          { id: "1ATcDP2bmVb-FyoMRpGKirJN-4sylB5BB", nombre: "4. AOG PARTS LIST" },
-          { id: "1YGZ0bcZLz9s97gmVz4Um-hFacdmU-ZV5", nombre: "5. APU SCMM_49" },
-          { id: "1uOID8H4gmVmeWIEOfcf3MqhTZam9bXjT", nombre: "6. BSI LIGHTING SYSTEM" }
+          { id: "1LGKOrWHK4XtMfJx0blT1F68qGqQtQ-WB", nombre: "Buscar un conector.pdf" },
+          { id: "1SfKknSDXAUEzawX_0hoeBc2b-7JVM74e", nombre: "Buscar un splice.pdf" },
+          { id: "136Sy63TSLSPhAWHXx1a5G0Bg5NJq_AFQ", nombre: "Buscar un cable.pdf" },
+          { id: "1FL2GrFNo6Nayxkg80e4tW1XFqgzDldlO", nombre: "TAGS & TOOLS.pdf" },
+          { id: "1yncOpHr8G60YE1aRBH0LbeEiAnb0Mf01", nombre: "Tie straps picture.jpg" },
+          { id: "1Kk6nv4PKqwEijjieckj081bB9Tv4x09c", nombre: "SPARE BULB.jpeg" },
+          { id: "1qn4OZjnpeNwWW4NtTpGrv4kvcJeZiLD3", nombre: "WRN PTT CPT.jpeg" },
+          { id: "1nfwnqDNmkyoSoosPNvxx_YCHedUvBC5Y", nombre: "WRN PTT FO.jpeg" },
+          { id: "1mYzFByujXZWq0JvgF6ILP0B8D2Ap45pj", nombre: "Rellenar Tech log.jpeg" },
+          { id: "1d0vSLLoPVselONZSwlKyAuXFiW3cwJvS", nombre: "Clamp" },
+          { id: "1uOID8H4gmVmeWIEOfcf3MqhTZam9bXjT", nombre: "BSI LIGHTING SYSTEM.pdf" },
+          { id: "17Z8lUXNcySm2L8DImPs9xw8qnus6i0aK", nombre: "Flight Deck & CB Panels.pdf" },
+          { id: "10lMqgWVcna_bWoToLCjfEgM_BFlvNPqB", nombre: "737NG Flight Deck Panels.pdf" },
+          { id: "1ATcDP2bmVb-FyoMRpGKirJN-4sylB5BB", nombre: "AOG PARTS LIST.pdf" },
+          { id: "1YGZ0bcZLz9s97gmVz4Um-hFacdmU-ZV5", nombre: "APU SCMM_49.pdf" },
+          { id: "1adDKrCHrUkUIaukFjtEb-Y_cAQbaVV0L", nombre: "737NG COMPONENT LOCATOR GUIDE.pdf" }
         ];
 
         let listaArticulos = JSON.parse(localStorage.getItem('svqh_items_v11')) || ARTICULOS_INICIALES;
@@ -850,7 +860,7 @@
 
         function verificarPassword() { 
             const passInput = document.getElementById('input-password');
-            if (passInput && passInput.value === "1234") { 
+            if (passInput && passInput.value === "@vioTech1993") { 
                 autenticado = true; 
                 evaluarAuthUI(); 
                 renderizarFeedbackAdmin(); 
@@ -877,7 +887,7 @@
             const placeholder = document.getElementById('doc-placeholder');
             const iframe = document.getElementById('iframe-doc-viewer');
             if (placeholder) placeholder.classList.add('hidden'); 
-            if (iframe) iframe.src = `https://drive.google.com/file/d/${id}/preview`; 
+            if (iframe) iframe.src = `https://drive.google.com/file/d/${id}/preview?rm=minimal`; 
         }
 
         // Inicialización inmediata al cargar la página
