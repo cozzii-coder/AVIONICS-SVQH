@@ -46,14 +46,11 @@
         <p class="text-[11px] text-slate-400 font-medium tracking-wide">Avionics Maintenance & Documentation</p>
     </header>
 
-    <!-- NAVEGACIÓN INFERIOR FLOTANTE DESPLAZABLE -->
+    <!-- NAVEGACIÓN INFERIOR FLOTANTE (7 Pestañas optimizadas) -->
     <nav class="fixed bottom-3 left-3 right-3 z-40 bg-slate-950/95 backdrop-blur-md border border-slate-800/80 p-2 max-w-md mx-auto rounded-2xl shadow-2xl overflow-x-auto custom-scrollbar">
         <div class="flex space-x-2 min-w-max text-[11px] font-bold tracking-wide">
             <button id="btn-lista" onclick="cambiarPestana('lista')" class="px-4 py-2.5 rounded-xl text-center bg-sky-500 text-white shadow-lg transition-all flex flex-col items-center justify-center space-y-1">
                 <span class="text-sm leading-none">🔍</span><span>Search</span>
-            </button>
-            <button id="btn-favs" onclick="cambiarPestana('favs')" class="px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1">
-                <span class="text-sm leading-none">⭐</span><span>Favs</span>
             </button>
             <button id="btn-tools" onclick="cambiarPestana('tools')" class="px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1">
                 <span class="text-sm leading-none">🧰</span><span>Tools</span>
@@ -92,16 +89,6 @@
             <span class="text-[11px] text-slate-400 font-medium"><span id="contador-items" class="text-sky-400 font-bold">0</span> consumibles</span>
         </div>
         <div id="contenedor-secciones" class="space-y-2.5"></div>
-    </div>
-
-    <!-- PESTAÑA FAVORITOS -->
-    <div id="pestana-favs" class="hidden space-y-4">
-        <div class="flex justify-between items-center border-b border-slate-800/80 pb-2">
-            <h2 class="text-xs font-bold text-amber-400 uppercase tracking-wider">⭐ Acceso Rápido / Favoritos</h2>
-            <span id="contador-favs" class="text-[11px] font-mono bg-slate-900 px-2 py-0.5 rounded-lg text-amber-400 border border-slate-800">0 items</span>
-        </div>
-        <p class="text-xs text-slate-400">Guarda consumibles o herramientas tocando la estrella ⭐.</p>
-        <div id="contenedor-favs" class="space-y-3"></div>
     </div>
 
     <!-- PESTAÑA 2: TOOLS -->
@@ -362,7 +349,7 @@
         </div>
     </div>
 
-    <!-- Script Principal Unificado -->
+    <!-- Script Principal Unificado sin Favoritos -->
     <script>
         const ARTICULOS_INICIALES = [
           { "articulo": "O-RING 1", "pn": "MS9385-07", "seccion": "AIR PACK OVHT SENSOR", "nota": "" },
@@ -516,7 +503,6 @@
 
         let listaArticulos = JSON.parse(localStorage.getItem('svqh_items_v11')) || ARTICULOS_INICIALES;
         let listaHerramientas = JSON.parse(localStorage.getItem('svqh_tools_v11')) || HERRAMIENTAS_INICIALES;
-        let favoritos = JSON.parse(localStorage.getItem('svqh_favoritos')) || [];
         let historialPns = JSON.parse(localStorage.getItem('svqh_historial_pns')) || [];
         let feedbackList = JSON.parse(localStorage.getItem('svqh_feedback')) || [];
         let seccionesAbiertas = {};
@@ -524,19 +510,18 @@
         let adminTipoFiltro = 'consumible';
 
         function cambiarPestana(target) {
-            const btns = ['btn-lista', 'btn-favs', 'btn-tools', 'btn-ramps', 'btn-calc', 'btn-docs', 'btn-feedback', 'btn-admin'];
-            const ps = ['pestana-lista', 'pestana-favs', 'pestana-tools', 'pestana-ramps', 'pestana-calc', 'pestana-docs', 'pestana-feedback', 'pestana-admin'];
+            const btns = ['btn-lista', 'btn-tools', 'btn-ramps', 'btn-calc', 'btn-docs', 'btn-feedback', 'btn-admin'];
+            const ps = ['pestana-lista', 'pestana-tools', 'pestana-ramps', 'pestana-calc', 'pestana-docs', 'pestana-feedback', 'pestana-admin'];
             btns.forEach(b => document.getElementById(b).className = "px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1");
             ps.forEach(p => document.getElementById(p).classList.add('hidden'));
 
-            const mapping = { lista: 0, favs: 1, tools: 2, ramps: 3, calc: 4, docs: 5, feedback: 6, admin: 7 };
+            const mapping = { lista: 0, tools: 1, ramps: 2, calc: 3, docs: 4, feedback: 5, admin: 6 };
             const idx = mapping[target];
             document.getElementById(btns[idx]).className = "px-4 py-2.5 rounded-xl text-center bg-sky-500 text-white shadow-lg transition-all flex flex-col items-center justify-center space-y-1";
             document.getElementById(ps[idx]).classList.remove('hidden');
 
             if (target === 'lista') { filtrarYAgrupar(); renderizarHistorialPns(); }
             if (target === 'tools') filtrarTools();
-            if (target === 'favs') renderizarFavoritos();
             if (target === 'ramps') cargarEstadoChecks();
             if (target === 'admin') { evaluarAuthUI(); renderizarFeedbackAdmin(); renderizarAdminGestion(); }
         }
@@ -588,39 +573,6 @@
             barra.classList.remove('hidden');
             contenedor.innerHTML = historialPns.map(pn => `
                 <button onclick="copiarAlPortapapeles('${pn}')" class="bg-slate-950 border border-slate-800 text-amber-400 font-mono text-[10px] px-2.5 py-1 rounded-xl">📋 ${pn}</button>
-            `).join('');
-        }
-
-        function toggleFavorito(articuloPn) {
-            const index = favoritos.indexOf(articuloPn);
-            if (index > -1) { favoritos.splice(index, 1); } else { favoritos.push(articuloPn); }
-            localStorage.setItem('svqh_favoritos', JSON.stringify(favoritos));
-            filtrarYAgrupar();
-            renderizarFavoritos();
-        }
-
-        function renderizarFavoritos() {
-            const contenedor = document.getElementById('contenedor-favs');
-            const contador = document.getElementById('contador-favs');
-            if (!contenedor) return;
-            const favsItems = listaArticulos.filter(i => favoritos.includes(i.pn));
-            if (contador) contador.innerText = `${favsItems.length} items`;
-            if (favsItems.length === 0) {
-                contenedor.innerHTML = `<div class="text-center text-xs text-slate-500 py-12">No hay favoritos guardados.</div>`;
-                return;
-            }
-            contenedor.innerHTML = favsItems.map(i => `
-                <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex justify-between items-center text-xs">
-                    <div>
-                        <span class="font-bold text-white uppercase block">${i.articulo}</span>
-                        <span class="text-[10px] text-sky-400">${i.seccion}</span>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <code class="text-amber-400 font-mono">${i.pn}</code>
-                        <button onclick="copiarAlPortapapeles('${i.pn}')" class="bg-sky-500/15 text-sky-400 px-2.5 py-1 rounded-xl font-bold">Copiar</button>
-                        <button onclick="toggleFavorito('${i.pn}')" class="text-amber-400 text-sm">⭐</button>
-                    </div>
-                </div>
             `).join('');
         }
 
@@ -711,7 +663,6 @@
                     </button>
                     <div class="p-3 space-y-2 ${estaAbierto ? '' : 'hidden'}">
                         ${items.map(i => {
-                            const esFav = favoritos.includes(i.pn);
                             const notaBadge = i.nota ? `<span class="bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[9px] px-1.5 py-0.5 rounded font-bold">${i.nota}</span>` : '';
                             return `
                                 <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex justify-between items-center text-xs">
@@ -721,7 +672,6 @@
                                     <div class="flex items-center space-x-2">
                                         <code class="text-amber-400 font-mono">${i.pn}</code>
                                         <button onclick="copiarAlPortapapeles('${i.pn}')" class="bg-sky-500/15 text-sky-400 px-2.5 py-1 rounded-xl font-bold">Copiar</button>
-                                        <button onclick="toggleFavorito('${i.pn}')" class="text-sm">${esFav ? '⭐' : '☆'}</button>
                                     </div>
                                 </div>
                             `;
