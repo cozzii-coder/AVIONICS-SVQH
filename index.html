@@ -22,20 +22,20 @@
         .secure-overlay { position: absolute; top: 0; right: 0; width: 140px; height: 60px; z-index: 20; background: transparent; }
     </style>
 </head>
-<body class="p-3 max-w-md mx-auto pb-28 pt-8" oncontextmenu="return false;">
+<body class="p-3 max-w-md mx-auto pb-32 pt-10" oncontextmenu="return false;">
 
-    <!-- AVISO FIJO SOLO LETRAS EN ROJO Y BOTÓN MODO SOL -->
-    <div class="fixed top-2 left-3 right-3 z-50 pointer-events-none flex justify-between items-center">
+    <!-- AVISO FIJO SUPERIOR (Separado del borde para evitar cámaras y esquinas) -->
+    <div class="fixed top-3 left-4 right-4 z-50 pointer-events-none flex justify-between items-center">
         <span class="text-[10px] font-black tracking-widest text-rose-500/95 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] uppercase pointer-events-auto">
             ONLY FOR REFERENCE
         </span>
-        <button onclick="alternarModoSol()" id="btn-modo-sol" class="pointer-events-auto bg-slate-900/80 border border-slate-700 text-amber-400 text-xs px-2.5 py-1 rounded-full shadow-lg backdrop-blur-md transition">
+        <button onclick="alternarModoSol()" id="btn-modo-sol" class="pointer-events-auto bg-slate-900/90 border border-slate-700 text-amber-400 text-xs px-3 py-1.5 rounded-full shadow-lg backdrop-blur-md transition">
             ☀️ Sol
         </button>
     </div>
 
     <!-- NOTIFICACIÓN TOAST -->
-    <div id="toast-notif" class="fixed top-12 right-4 z-50 bg-sky-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-2xl transition-all duration-300 transform -translate-y-10 opacity-0 pointer-events-none flex items-center space-x-2 border border-sky-400">
+    <div id="toast-notif" class="fixed top-14 right-4 z-50 bg-sky-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-2xl transition-all duration-300 transform -translate-y-10 opacity-0 pointer-events-none flex items-center space-x-2 border border-sky-400">
         <span>📋</span>
         <span id="toast-msg">¡P/N copiado al portapapeles!</span>
     </div>
@@ -46,31 +46,31 @@
         <p class="text-[11px] text-slate-400 font-medium tracking-wide">Avionics Maintenance & Documentation</p>
     </header>
 
-    <!-- NAVEGACIÓN INFERIOR (8 Pestañas) -->
-    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-md border-t border-slate-800/80 p-1 max-w-md mx-auto">
+    <!-- NAVEGACIÓN INFERIOR FLOTANTE (Separada del borde inferior y con esquinas redondeadas para fácil toque) -->
+    <nav class="fixed bottom-3 left-3 right-3 z-40 bg-slate-950/95 backdrop-blur-md border border-slate-800/80 p-1.5 max-w-md mx-auto rounded-2xl shadow-2xl">
         <div class="flex text-[8px] font-bold tracking-wide">
-            <button id="btn-lista" onclick="cambiarPestana('lista')" class="flex-1 py-2 rounded-xl text-center bg-sky-500 text-white shadow-lg transition-all flex flex-col items-center justify-center space-y-0.5">
+            <button id="btn-lista" onclick="cambiarPestana('lista')" class="flex-1 py-2.5 rounded-xl text-center bg-sky-500 text-white shadow-lg transition-all flex flex-col items-center justify-center space-y-0.5">
                 <span class="text-xs leading-none">🔍</span><span>Search</span>
             </button>
-            <button id="btn-favs" onclick="cambiarPestana('favs')" class="flex-1 py-2 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-0.5">
+            <button id="btn-favs" onclick="cambiarPestana('favs')" class="flex-1 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-0.5">
                 <span class="text-xs leading-none">⭐</span><span>Favs</span>
             </button>
-            <button id="btn-tools" onclick="cambiarPestana('tools')" class="flex-1 py-2 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-0.5">
+            <button id="btn-tools" onclick="cambiarPestana('tools')" class="flex-1 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-0.5">
                 <span class="text-xs leading-none">🧰</span><span>Tools</span>
             </button>
-            <button id="btn-ramps" onclick="cambiarPestana('ramps')" class="flex-1 py-2 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-0.5">
+            <button id="btn-ramps" onclick="cambiarPestana('ramps')" class="flex-1 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-0.5">
                 <span class="text-xs leading-none">📋</span><span>Ramps</span>
             </button>
-            <button id="btn-calc" onclick="cambiarPestana('calc')" class="flex-1 py-2 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-0.5">
+            <button id="btn-calc" onclick="cambiarPestana('calc')" class="flex-1 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-0.5">
                 <span class="text-xs leading-none">🧮</span><span>Calc</span>
             </button>
-            <button id="btn-docs" onclick="cambiarPestana('docs')" class="flex-1 py-2 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-0.5">
+            <button id="btn-docs" onclick="cambiarPestana('docs')" class="flex-1 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-0.5">
                 <span class="text-xs leading-none">📄</span><span>Docs</span>
             </button>
-            <button id="btn-feedback" onclick="cambiarPestana('feedback')" class="flex-1 py-2 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-0.5">
+            <button id="btn-feedback" onclick="cambiarPestana('feedback')" class="flex-1 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-0.5">
                 <span class="text-xs leading-none">💬</span><span>Buzón</span>
             </button>
-            <button id="btn-admin" onclick="cambiarPestana('admin')" class="flex-1 py-2 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-0.5">
+            <button id="btn-admin" onclick="cambiarPestana('admin')" class="flex-1 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-0.5">
                 <span class="text-xs leading-none">➕</span><span>Admin</span>
             </button>
         </div>
@@ -118,7 +118,7 @@
         <div id="contenedor-tools" class="space-y-2.5"></div>
     </div>
 
-    <!-- PESTAÑA 3: RAMPS (NG Y MAX COMPLETOS CON 4 RAMPS + 50FC) -->
+    <!-- PESTAÑA 3: RAMPS -->
     <div id="pestana-ramps" class="hidden space-y-6">
         <div class="flex justify-between items-center border-b border-slate-800 pb-2">
             <span class="text-xs text-slate-400 font-medium">Checklists completas (Guardado automático):</span>
@@ -131,7 +131,7 @@
             <button onclick="cambiarFlotaRamp('max')" id="tab-flota-max" class="flex-1 py-2 text-xs font-bold rounded-lg text-slate-400 transition">🚀 RAMPS MAX</button>
         </div>
 
-        <!-- RAMPS NG (4 Ramps + 50FC) -->
+        <!-- RAMPS NG -->
         <div id="seccion-ramps-ng" class="space-y-4">
             <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
                 <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 1 CHECK – RA800</h3>
@@ -186,7 +186,7 @@
             </div>
         </div>
 
-        <!-- RAMPS MAX (4 Ramps + 50FC) -->
+        <!-- RAMPS MAX -->
         <div id="seccion-ramps-max" class="hidden space-y-4">
             <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
                 <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wide">RAMP 1 CHECK – RA800</h3>
@@ -241,7 +241,7 @@
         </div>
     </div>
 
-    <!-- PESTAÑA 4: CALCULATOR (In-Lb, Ft-Lb, Nm) -->
+    <!-- PESTAÑA 4: CALCULATOR -->
     <div id="pestana-calc" class="hidden space-y-4">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-4 shadow-xl">
             <h3 class="font-bold text-amber-400 text-xs uppercase tracking-wide">🔧 Conversión de Torque (In-Lb / Ft-Lb / Nm)</h3>
@@ -285,7 +285,7 @@
         </div>
     </div>
 
-    <!-- PESTAÑA 6: BUZÓN (CON OPCIÓN "OTHER") -->
+    <!-- PESTAÑA 6: BUZÓN -->
     <div id="pestana-feedback" class="hidden space-y-4">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
             <div class="border-b border-slate-800 pb-2">
@@ -305,12 +305,12 @@
         </div>
     </div>
 
-    <!-- PESTAÑA 7: ADMIN (CRUD, CÁMARA Y BORRADO DE MENSAJES) -->
+    <!-- PESTAÑA 7: ADMIN -->
     <div id="pestana-admin" class="hidden space-y-4">
         <div id="bloqueo-auth" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center space-y-4 shadow-xl">
             <div class="text-4xl">🔒</div>
             <h3 class="text-base font-bold text-white">Panel de Administración</h3>
-            <input type="password" id="input-password" placeholder="Password" class="w-full bg-slate-950 border border-slate-800 text-center rounded-xl px-4 py-2.5 text-sm text-white">
+            <input type="password" id="input-password" placeholder="Contraseña (1234)" class="w-full bg-slate-950 border border-slate-800 text-center rounded-xl px-4 py-2.5 text-sm text-white">
             <button onclick="verificarPassword()" class="w-full bg-sky-500 font-bold py-2.5 rounded-xl text-sm">Acceder</button>
         </div>
 
@@ -352,7 +352,7 @@
                 <div id="lista-gestion-admin" class="space-y-2 max-h-60 overflow-y-auto pr-1 text-xs"></div>
             </div>
 
-            <!-- BUZÓN RECIBIDO CON BOTÓN DE BORRADO -->
+            <!-- BUZÓN RECIBIDO -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
                 <h3 class="font-bold text-amber-400 text-xs">📥 Buzón Recibido</h3>
                 <div id="lista-feedback-admin" class="space-y-2 text-xs max-h-60 overflow-y-auto pr-1"></div>
@@ -379,12 +379,12 @@
         function cambiarPestana(target) {
             const btns = ['btn-lista', 'btn-favs', 'btn-tools', 'btn-ramps', 'btn-calc', 'btn-docs', 'btn-feedback', 'btn-admin'];
             const ps = ['pestana-lista', 'pestana-favs', 'pestana-tools', 'pestana-ramps', 'pestana-calc', 'pestana-docs', 'pestana-feedback', 'pestana-admin'];
-            btns.forEach(b => document.getElementById(b).className = "flex-1 py-2 rounded-xl text-center text-slate-400");
+            btns.forEach(b => document.getElementById(b).className = "flex-1 py-2.5 rounded-xl text-center text-slate-400");
             ps.forEach(p => document.getElementById(p).classList.add('hidden'));
 
             const mapping = { lista: 0, favs: 1, tools: 2, ramps: 3, calc: 4, docs: 5, feedback: 6, admin: 7 };
             const idx = mapping[target];
-            document.getElementById(btns[idx]).className = "flex-1 py-2 rounded-xl text-center bg-sky-500 text-white shadow-lg";
+            document.getElementById(btns[idx]).className = "flex-1 py-2.5 rounded-xl text-center bg-sky-500 text-white shadow-lg";
             document.getElementById(ps[idx]).classList.remove('hidden');
 
             if (target === 'lista') { filtrarYAgrupar(); renderizarHistorialPns(); }
@@ -496,7 +496,7 @@
                     <div class="flex justify-between text-[10px] text-slate-400"><span>${fb.fecha}</span><span class="text-amber-400 font-bold">${fb.tipo}</span></div>
                     <div class="font-bold text-white">${fb.elemento}</div>
                     <div class="text-slate-300 text-[11px]">${fb.mensaje}</div>
-                    <button onclick="eliminarFeedback(${index})" class="absolute top-2 right-2 bg-rose-500/20 text-rose-400 p-1 rounded-lg text-[10px]" title="Eliminar mensaje">🗑️</button>
+                    <button onclick="eliminarFeedback(${index})" class="absolute top-2 right-2 bg-rose-500/20 text-rose-400 p-1.5 rounded-lg text-[10px]" title="Eliminar mensaje">🗑️</button>
                 </div>
             `).join('');
         }
@@ -715,7 +715,7 @@
         }
 
         function verificarPassword() { 
-            if (document.getElementById('input-password').value === "@vioTech1993") { 
+            if (document.getElementById('input-password').value === "1234") { 
                 autenticado = true; 
                 evaluarAuthUI(); 
                 renderizarFeedbackAdmin(); 
