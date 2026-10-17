@@ -673,7 +673,7 @@
  }
  }
 
- // OCR INTELIGENTE ADAPTADO A ETIQUETAS DE AVIACIÓN (RYR Y ESTÁNDAR)
+
 // OCR INTELIGENTE ADAPTADO A ETIQUETAS DE AVIACIÓN (RYR Y ESTÁNDAR)
  function procesarFotoCamara(event) {
  const archivo = event.target.files[0];
@@ -751,12 +751,7 @@
  });
  }
 
- function limpiarFoto() {
- const preview = document.getElementById('preview-foto');
- const img = document.getElementById('img-capturada');
- if (preview) preview.classList.add('hidden');
- if (img) img.src = '';
- } 
+function limpiarFoto() {
  const preview = document.getElementById('preview-foto');
  const img = document.getElementById('img-capturada');
  if (preview) preview.classList.add('hidden');
