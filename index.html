@@ -16,7 +16,6 @@
  .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
  .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
  .custom-scrollbar::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: 9999px; }
- .toast-active { transform: translateY(0); opacity: 1; }
  .secure-container { position: relative; }
  .secure-overlay { position: absolute; top: 0; left: 0; right: 0; height: 50px; z-index: 20; background: transparent; }
 
@@ -32,12 +31,6 @@
  <span class="text-[10px] font-black tracking-widest text-rose-500/95 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] uppercase pointer-events-auto">
  ONLY FOR REFERENCE
  </span>
- </div>
-
- <!-- NOTIFICACIÓN TOAST -->
- <div id="toast-notif" class="fixed top-20 right-4 z-50 bg-sky-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-2xl transition-all duration-300 transform -translate-y-10 opacity-0 pointer-events-none flex items-center space-x-2 border border-sky-400">
- <span>📋</span>
- <span id="toast-msg">¡P/N copiado al portapapeles!</span>
  </div>
 
  <!-- Header Principal -->
@@ -75,10 +68,6 @@
 
  <!-- PESTAÑA 1: SEARCH -->
  <div id="pestana-lista" class="space-y-3">
- <div id="barra-ultimos-pns" class="hidden bg-slate-900/90 border border-slate-800 rounded-2xl p-2.5 space-y-1.5 shadow-md">
- <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider px-1"><span>⚡ Últimos P/Ns copiados</span></div>
- <div id="contenedor-chips-pns" class="flex flex-wrap gap-1.5"></div>
- </div>
  <div class="relative">
  <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-500">🔍</span>
  <input type="text" id="buscador" oninput="filtrarYAgrupar()" placeholder="Buscar elemento, consumible o P/N..." 
@@ -297,7 +286,7 @@
  </div>
 
  <div id="panel-admin-contenido" class="hidden space-y-4">
- <!-- CÁMARA CON OCR AUTOMÁTICO -->
+ <!-- CÁMARA CON OCR INTELIGENTE -->
  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
  <h3 class="font-bold text-sky-400 text-xs">📷 Capturar Etiqueta (Autocompletar con OCR)</h3>
  <input type="file" accept="image/*" capture="environment" onchange="procesarFotoCamara(event)" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-sky-500 file:text-white hover:file:bg-sky-600">
@@ -311,7 +300,7 @@
  <!-- FORMULARIO CREAR / EDITAR -->
  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
  <h3 id="admin-form-title" class="font-bold text-amber-400 text-xs">➕ Añadir Nuevo Consumible o Herramienta</h3>
- <input type="hidden" id="admin-edit-id" value="">
+ <input type="hidden" id="admin-edit-index" value="">
  <div class="space-y-2">
  <select id="admin-tipo-reg" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
  <option value="consumible">📦 Consumible / Material (Search)</option>
@@ -319,7 +308,13 @@
  </select>
  <input type="text" id="admin-articulo" placeholder="Nombre / Descripción (ej. RING)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
  <input type="text" id="admin-pn" placeholder="Part Number (ej. MS28778-6)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
- <input type="text" id="admin-seccion" placeholder="Sección (solo consumibles)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+ 
+ <!-- SECCIÓN CON DATALIST DE CARPETAS DE SEARCH -->
+ <div>
+ <input type="text" id="admin-seccion" list="lista-secciones-datalist" placeholder="Selecciona o escribe la sección/carpeta..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+ <datalist id="lista-secciones-datalist"></datalist>
+ </div>
+
  <input type="text" id="admin-nota" placeholder="Tool / Nota requerida (opcional)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
  <button onclick="guardarRegistroAdmin()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition">Guardar en la Nube</button>
  </div>
@@ -534,7 +529,6 @@
  let listaArticulos = [];
  let listaHerramientas = [];
  let listaDocumentos = [];
- let historialPns = JSON.parse(localStorage.getItem('svqh_historial_pns')) || [];
  let feedbackList = JSON.parse(localStorage.getItem('svqh_feedback')) || [];
  let seccionesAbiertas = {};
  let autenticado = false;
@@ -580,10 +574,18 @@
  filtrarYAgrupar();
  filtrarTools();
  renderizarSelectorDocumentos();
+ actualizarDatalistSecciones();
  if (autenticado) {
  renderizarAdminGestion();
  renderizarDocsAdmin();
  }
+ }
+
+ function actualizarDatalistSecciones() {
+ const datalist = document.getElementById('lista-secciones-datalist');
+ if (!datalist) return;
+ const seccionesUnicas = [...new Set(listaArticulos.map(item => item.seccion))].sort();
+ datalist.innerHTML = seccionesUnicas.map(sec => `<option value="${sec}">`).join('');
  }
 
  function cambiarPestana(target) {
@@ -597,11 +599,11 @@
  document.getElementById(btns[idx]).className = "px-4 py-2.5 rounded-xl text-center bg-sky-500 text-white shadow-lg transition-all flex flex-col items-center justify-center space-y-1";
  document.getElementById(ps[idx]).classList.remove('hidden');
 
- if (target === 'lista') { filtrarYAgrupar(); renderizarHistorialPns(); }
+ if (target === 'lista') filtrarYAgrupar();
  if (target === 'tools') filtrarTools();
  if (target === 'ramps') cargarEstadoChecks();
  if (target === 'docs') renderizarSelectorDocumentos();
- if (target === 'admin') { evaluarAuthUI(); renderizarFeedbackAdmin(); renderizarAdminGestion(); renderizarDocsAdmin(); }
+ if (target === 'admin') { evaluarAuthUI(); renderizarFeedbackAdmin(); renderizarAdminGestion(); renderizarDocsAdmin(); actualizarDatalistSecciones(); }
  }
 
  function renderizarSelectorDocumentos() {
@@ -628,26 +630,6 @@
  secMax.classList.remove('hidden');
  secNg.classList.add('hidden');
  }
- }
-
- function registrarPNCopiado(pn) {
- if (!historialPns.includes(pn)) {
- historialPns.unshift(pn);
- if (historialPns.length > 4) historialPns.pop();
- localStorage.setItem('svqh_historial_pns', JSON.stringify(historialPns));
- }
- renderizarHistorialPns();
- }
-
- function renderizarHistorialPns() {
- const barra = document.getElementById('barra-ultimos-pns');
- const contenedor = document.getElementById('contenedor-chips-pns');
- if (!barra || !contenedor) return;
- if (historialPns.length === 0) { barra.classList.add('hidden'); return; }
- barra.classList.remove('hidden');
- contenedor.innerHTML = historialPns.map(pn => `
- <button onclick="copiarAlPortapapeles('${pn}')" class="bg-slate-950 border border-slate-800 text-amber-400 font-mono text-[10px] px-2.5 py-1 rounded-xl">📋 ${pn}</button>
- `).join('');
  }
 
  function enviarFeedback() {
@@ -684,16 +666,6 @@
  }
  }
 
- function copiarAlPortapapeles(texto) {
- navigator.clipboard.writeText(texto).then(() => {
- registrarPNCopiado(texto);
- const toast = document.getElementById('toast-notif');
- document.getElementById('toast-msg').innerText = `Copiado: ${texto}`;
- toast.classList.add('toast-active');
- setTimeout(() => toast.classList.remove('toast-active'), 2000);
- });
- }
-
  function filtrarTools() {
  const buscadorEl = document.getElementById('buscador-tools');
  const contenedor = document.getElementById('contenedor-tools');
@@ -710,7 +682,7 @@
  filtrados.forEach(tool => {
  const div = document.createElement('div');
  div.className = "bg-slate-900 border border-slate-800 rounded-xl p-3 flex justify-between items-center text-xs";
- div.innerHTML = `<span class="font-bold text-white uppercase">${tool.articulo}</span><div class="flex items-center space-x-2"><code class="text-amber-400 font-mono">${tool.pn}</code><button onclick="copiarAlPortapapeles('${tool.pn}')" class="bg-sky-500/15 text-sky-400 px-2.5 py-1 rounded-xl font-bold">Copiar</button></div>`;
+ div.innerHTML = `<span class="font-bold text-white uppercase">${tool.articulo}</span><code class="text-amber-400 font-mono">${tool.pn}</code>`;
  contenedor.appendChild(div);
  });
  }
@@ -746,10 +718,7 @@
  <div class="space-y-1">
  <span class="font-bold text-white uppercase block">${i.articulo}</span>${notaBadge}
  </div>
- <div class="flex items-center space-x-2">
  <code class="text-amber-400 font-mono">${i.pn}</code>
- <button onclick="copiarAlPortapapeles('${i.pn}')" class="bg-sky-500/15 text-sky-400 px-2.5 py-1 rounded-xl font-bold">Copiar</button>
- </div>
  </div>
  `;
  }).join('')}
@@ -800,7 +769,7 @@
  }
  }
 
- // OCR AUTOMÁTICO INTELIGENTE PARA ETIQUETAS
+ // OCR INTELIGENTE MEJORADO
  function procesarFotoCamara(event) {
  const archivo = event.target.files[0];
  if (!archivo) return;
@@ -821,43 +790,37 @@
 
  Tesseract.recognize(archivo, 'eng', { logger: m => console.log(m) }).then(({ data: { text } }) => {
  if (statusEl) statusEl.classList.add('hidden');
- console.log("Texto OCR detectado:\n", text);
- 
- const lineas = text.split('\n');
+ console.log("Texto OCR:\n", text);
+
+ const lineas = text.split('\n').map(l => l.trim()).filter(l => l.length > 1);
  let descDetectada = "";
  let pnDetectado = "";
 
- lineas.forEach(linea => {
- const l = linea.trim();
- const lUpper = l.toUpperCase();
-
- // Detección flexible de descripción (ej: "Desc: RING" o "Description:")
- if (lUpper.startsWith("DESC") || lUpper.startsWith("DESCRIPTION") || lUpper.startsWith("DES:")) {
- const partes = l.split(/[:|]/);
- if (partes.length > 1) {
- descDetectada = partes.slice(1).join(' ').trim();
- } else {
- const palabras = l.split(/\s+/);
- if (palabras.length > 1) descDetectada = palabras.slice(1).join(' ').trim();
+ // Heurística inteligente para buscar descripciones y P/Ns
+ for (let linea of lineas) {
+ const lUpper = linea.toUpperCase();
+ if ((lUpper.includes("PART") || lUpper.includes("P/N") || lUpper.includes("PN") || lUpper.startsWith("P:")) && !pnDetectado) {
+ const partes = linea.split(/[:|]/);
+ pnDetectado = partes.length > 1 ? partes[1].trim() : linea.replace(/^(PART|P\/N|PN|P:)\s*/i, '').trim();
+ } else if ((lUpper.includes("DESC") || lUpper.includes("DESCRIPTION") || lUpper.startsWith("D:")) && !descDetectada) {
+ const partes = linea.split(/[:|]/);
+ descDetectada = partes.length > 1 ? partes[1].trim() : linea.replace(/^(DESC|DESCRIPTION|D:)\s*/i, '').trim();
  }
  }
 
- // Detección flexible de Part Number (ej: "Part: MS28778-6" o "P/N:")
- if (lUpper.startsWith("PART") || lUpper.startsWith("P/N") || lUpper.startsWith("PN") || lUpper.startsWith("P:")) {
- const partes = l.split(/[:|]/);
- if (partes.length > 1) {
- pnDetectado = partes[1].trim();
- } else {
- const palabras = l.split(/\s+/);
- if (palabras.length > 1) pnDetectado = palabras[1].trim();
+ // Si no encontró etiquetas específicas, toma líneas lógicas
+ if (!descDetectada && lineas.length > 0) {
+ descDetectada = lineas[0];
  }
+ if (!pnDetectado && lineas.length > 1) {
+ const candidato = lineas.find(l => /[0-9-]/.test(l) && l !== descDetectada);
+ pnDetectado = candidato || lineas[1];
  }
- });
 
  if (descDetectada) document.getElementById('admin-articulo').value = descDetectada;
  if (pnDetectado) document.getElementById('admin-pn').value = pnDetectado;
 
- alert("¡Etiqueta escaneada! Se han autocompletado la descripción y el Part Number. Comprueba y selecciona si es Consumible o Herramienta.");
+ alert(`¡OCR completado!\n- Descripción: ${descDetectada || 'No detectada'}\n- Part Number: ${pnDetectado || 'No detectado'}\nRevisa los campos y guárdalos.`);
  }).catch(err => {
  if (statusEl) statusEl.classList.add('hidden');
  console.error(err);
@@ -888,7 +851,7 @@
  if (adminTipoFiltro === 'tool') {
  data.sort((a, b) => a.articulo.localeCompare(b.articulo));
  }
- contenedor.innerHTML = data.map((item) => `
+ contenedor.innerHTML = data.map((item, index) => `
  <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center">
  <div>
  <span class="font-bold text-white block uppercase">${item.articulo}</span>
@@ -897,8 +860,8 @@
  ${item.nota ? `<span class="text-[9px] text-rose-400 block">${item.nota}</span>` : ''}
  </div>
  <div class="flex space-x-1">
- <button onclick="editarRegistroAdmin('${adminTipoFiltro}', '${item.id || item.pn}')" class="bg-amber-500/20 text-amber-400 px-2 py-1 rounded-lg">✏️</button>
- <button onclick="eliminarRegistroAdmin('${adminTipoFiltro}', '${item.id || item.pn}')" class="bg-rose-500/20 text-rose-400 px-2 py-1 rounded-lg">🗑️</button>
+ <button onclick="editarRegistroAdmin('${adminTipoFiltro}', ${index})" class="bg-amber-500/20 text-amber-400 px-2 py-1 rounded-lg">✏️</button>
+ <button onclick="eliminarRegistroAdmin('${adminTipoFiltro}', ${index})" class="bg-rose-500/20 text-rose-400 px-2 py-1 rounded-lg">🗑️</button>
  </div>
  </div>
  `).join('');
@@ -910,20 +873,32 @@
  const pn = document.getElementById('admin-pn').value.trim();
  const seccion = document.getElementById('admin-seccion').value.trim() || 'GENERAL';
  const nota = document.getElementById('admin-nota').value.trim();
- const editId = document.getElementById('admin-edit-id').value;
+ const editIndex = document.getElementById('admin-edit-index').value;
 
  if (!articulo || !pn) { alert("Rellena el nombre y el Part Number"); return; }
 
  const tabla = tipo === 'consumible' ? 'consumibles' : 'herramientas';
  const nuevoItem = tipo === 'consumible' ? { articulo, pn, seccion, nota } : { articulo, pn };
+ const dataActual = tipo === 'consumible' ? listaArticulos : listaHerramientas;
 
- if (!editId) {
+ if (editIndex === "") {
  let { error } = await _supabase.from(tabla).insert([nuevoItem]);
  if (error) { alert("Error al guardar en Supabase: " + error.message); return; }
  } else {
- let { error } = await _supabase.from(tabla).update(nuevoItem).eq('id', editId);
+ const itemOriginal = dataActual[parseInt(editIndex)];
+ const idFiltro = itemOriginal.id;
+ 
+ let query = _supabase.from(tabla).update(nuevoItem);
+ if (idFiltro) {
+ query = query.eq('id', idFiltro);
+ } else {
+ query = query.eq('pn', itemOriginal.pn);
+ }
+ 
+ let { error } = await query;
  if (error) { alert("Error al actualizar: " + error.message); return; }
- document.getElementById('admin-edit-id').value = '';
+
+ document.getElementById('admin-edit-index').value = '';
  document.getElementById('admin-form-title').innerText = "➕ Añadir Nuevo Consumible o Herramienta";
  }
 
@@ -936,9 +911,9 @@
  alert("¡Guardado y sincronizado en la nube con éxito!");
  }
 
- function editarRegistroAdmin(tipo, id) {
+ function editarRegistroAdmin(tipo, index) {
  const data = tipo === 'consumible' ? listaArticulos : listaHerramientas;
- const item = data.find(i => String(i.id) === String(id) || String(i.pn) === String(id));
+ const item = data[index];
  if (!item) return;
 
  document.getElementById('admin-tipo-reg').value = tipo;
@@ -946,18 +921,23 @@
  document.getElementById('admin-pn').value = item.pn;
  document.getElementById('admin-seccion').value = item.seccion || '';
  document.getElementById('admin-nota').value = item.nota || '';
- document.getElementById('admin-edit-id').value = item.id || '';
+ document.getElementById('admin-edit-index').value = index;
  document.getElementById('admin-form-title').innerText = "✏️ Editando Registro";
+ cambiarPestana('admin');
  }
 
- async function eliminarRegistroAdmin(tipo, id) {
+ async function eliminarRegistroAdmin(tipo, index) {
  if (confirm("¿Seguro que deseas eliminar este registro de la nube?")) {
+ const data = tipo === 'consumible' ? listaArticulos : listaHerramientas;
+ const item = data[index];
+ if (!item) return;
+
  const tabla = tipo === 'consumible' ? 'consumibles' : 'herramientas';
  let query = _supabase.from(tabla).delete();
- if (id && !isNaN(id)) {
- query = query.eq('id', id);
+ if (item.id) {
+ query = query.eq('id', item.id);
  } else {
- query = query.eq('pn', id);
+ query = query.eq('pn', item.pn);
  }
  let { error } = await query;
  if (error) { alert("Error al eliminar: " + error.message); return; }
@@ -1006,6 +986,7 @@
  renderizarFeedbackAdmin(); 
  renderizarAdminGestion();
  renderizarDocsAdmin();
+ actualizarDatalistSecciones();
  } else { 
  alert("Contraseña incorrecta"); 
  } 
@@ -1033,7 +1014,6 @@
 
  window.onload = function() {
  cargarDatosNube();
- renderizarHistorialPns();
  cargarEstadoChecks();
  };
  </script>
