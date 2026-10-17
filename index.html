@@ -243,7 +243,7 @@
  </div>
  </div>
 
- <!-- PESTAÑA 5: DOCUMENTS -->
+<!-- PESTAÑA 5: DOCUMENTS -->
  <div id="pestana-docs" class="hidden space-y-4">
  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 space-y-2 shadow-lg">
  <label class="block text-xs font-bold text-sky-400 uppercase tracking-wide">Seleccionar Documento Técnico:</label>
@@ -257,7 +257,8 @@
  <span class="text-3xl">📂</span>
  <p class="text-xs font-medium">Selecciona un documento para visualizar.</p>
  </div>
- <iframe id="iframe-doc-viewer" src="" class="w-full h-full border-0 relative z-10" title="Visor de Documentación"></iframe>
+ <!-- AÑADIDO: sandbox para bloquear apertura de pestañas externas y descargas -->
+ <iframe id="iframe-doc-viewer" src="" sandbox="allow-scripts allow-same-origin" class="w-full h-full border-0 relative z-10" title="Visor de Documentación"></iframe>
  </div>
  </div>
 
