@@ -1,1051 +1,1050 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AvioTech - Avionics Solutions</title>
-  <!-- Tailwind CSS desde CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <!-- Tesseract.js para OCR de etiquetas con cámara -->
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-  <!-- Supabase JS SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    :root { --bg-main: #080c19; --text-main: #f8fafc; }
-    body { background-color: var(--bg-main); color: var(--text-main); font-family: system-ui, -apple-system, sans-serif; user-select: none; -webkit-user-select: none; }
-    .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: 9999px; }
-    .secure-container { position: relative; }
-    .secure-overlay { position: absolute; top: 0; left: 0; right: 0; height: 50px; z-index: 20; background: transparent; }
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>AvioTech - Avionics Solutions</title>
+ <!-- Tailwind CSS desde CDN -->
+ <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+ <!-- Tesseract.js para OCR de etiquetas con cámara -->
+ <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+ <!-- Supabase JS SDK -->
+ <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+ <style>
+ :root { --bg-main: #080c19; --text-main: #f8fafc; }
+ body { background-color: var(--bg-main); color: var(--text-main); font-family: system-ui, -apple-system, sans-serif; user-select: none; -webkit-user-select: none; }
+ .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+ .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+ .custom-scrollbar::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: 9999px; }
+ .secure-container { position: relative; }
+ .secure-overlay { position: absolute; top: 0; left: 0; right: 0; height: 50px; z-index: 20; background: transparent; }
 
-    @media print {
-      body { display: none !important; }
-    }
-  </style>
+ @media print {
+ body { display: none !important; }
+ }
+ </style>
 </head>
 <body class="p-3 max-w-md mx-auto pb-32 pt-16" oncontextmenu="return false;">
 
-  <!-- AVISO FIJO SUPERIOR -->
-  <div class="fixed top-3 left-4 right-4 z-50 pointer-events-none flex justify-between items-center">
-    <span class="text-[10px] font-black tracking-widest text-rose-500/95 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] uppercase pointer-events-auto">
-      ONLY FOR REFERENCE
-    </span>
-  </div>
-
-  <!-- Header Principal -->
-  <header class="text-center my-3">
-    <h1 class="text-2xl font-black text-sky-400 tracking-wider">AvioTech</h1>
-    <p class="text-[11px] text-slate-400 font-medium tracking-wide">Avionics Maintenance & Documentation</p>
-  </header>
-
-  <!-- NAVEGACIÓN INFERIOR FLOTANTE -->
-  <nav class="fixed bottom-3 left-3 right-3 z-40 bg-slate-950/95 backdrop-blur-md border border-slate-800/80 p-2 max-w-md mx-auto rounded-2xl shadow-2xl overflow-x-auto custom-scrollbar">
-    <div class="flex space-x-2 min-w-max text-[11px] font-bold tracking-wide">
-      <button id="btn-lista" onclick="cambiarPestana('lista')" class="px-4 py-2.5 rounded-xl text-center bg-sky-500 text-white shadow-lg transition-all flex flex-col items-center justify-center space-y-1">
-        <span class="text-sm leading-none">🔍</span><span>Search</span>
-      </button>
-      <button id="btn-tools" onclick="cambiarPestana('tools')" class="px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1">
-        <span class="text-sm leading-none">🧰</span><span>Tools</span>
-      </button>
-      <button id="btn-ramps" onclick="cambiarPestana('ramps')" class="px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1">
-        <span class="text-sm leading-none">📋</span><span>Ramps</span>
-      </button>
-      <button id="btn-calc" onclick="cambiarPestana('calc')" class="px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1">
-        <span class="text-sm leading-none">🧮</span><span>Calc</span>
-      </button>
-      <button id="btn-docs" onclick="cambiarPestana('docs')" class="px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1">
-        <span class="text-sm leading-none">📄</span><span>Docs</span>
-      </button>
-      <button id="btn-feedback" onclick="cambiarPestana('feedback')" class="px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1">
-        <span class="text-sm leading-none">💬</span><span>Buzón</span>
-      </button>
-      <button id="btn-admin" onclick="cambiarPestana('admin')" class="px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1">
-        <span class="text-sm leading-none">➕</span><span>Admin</span>
-      </button>
-    </div>
-  </nav>
-
-  <!-- PESTAÑA 1: SEARCH -->
-  <div id="pestana-lista" class="space-y-3">
-    <div class="relative">
-      <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-500">🔍</span>
-      <input type="text" id="buscador" oninput="filtrarYAgrupar()" placeholder="Buscar elemento, consumible o P/N..." 
-        class="w-full bg-slate-900/90 border border-slate-800 text-white placeholder-slate-500 rounded-2xl pl-11 pr-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/50 shadow-inner">
-    </div>
-    <div class="flex justify-between items-center px-1">
-      <span class="text-[11px] text-slate-400 font-medium">Elementos agrupados</span>
-      <span class="text-[11px] text-slate-400 font-medium"><span id="contador-items" class="text-sky-400 font-bold">0</span> consumibles</span>
-    </div>
-    <div id="contenedor-secciones" class="space-y-2.5"></div>
-  </div>
-
-  <!-- PESTAÑA 2: TOOLS (ORDENADAS A-Z) -->
-  <div id="pestana-tools" class="hidden space-y-3">
-    <div class="relative">
-      <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-500">🔍</span>
-      <input type="text" id="buscador-tools" oninput="filtrarTools()" placeholder="Buscar herramienta o equipo..." 
-        class="w-full bg-slate-900/90 border border-slate-800 text-white placeholder-slate-500 rounded-2xl pl-11 pr-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/50 shadow-inner">
-    </div>
-    <div class="flex justify-between items-center px-1">
-      <span class="text-[11px] text-slate-400 font-medium">Equipos de apoyo y útiles (A-Z)</span>
-      <span class="text-[11px] text-slate-400 font-medium"><span id="contador-tools" class="text-sky-400 font-bold">0</span> herramientas</span>
-    </div>
-    <div id="contenedor-tools" class="space-y-2.5"></div>
-  </div>
-
-  <!-- PESTAÑA 3: RAMPS (INALTERABLE) -->
-  <div id="pestana-ramps" class="hidden space-y-6">
-    <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-      <span class="text-xs text-slate-400 font-medium">Checklists completas (Guardado automático):</span>
-      <button onclick="resetearChecklist()" class="text-[11px] bg-rose-500/15 text-rose-400 border border-rose-500/30 px-2.5 py-1 rounded-xl hover:bg-rose-500/25 font-bold transition">
-        🔄 Reset Checklist
-      </button>
-    </div>
-    <div class="flex space-x-2 bg-slate-900 p-1 rounded-xl border border-slate-800">
-      <button onclick="cambiarFlotaRamp('ng')" id="tab-flota-ng" class="flex-1 py-2 text-xs font-bold rounded-lg bg-sky-500 text-white transition">✈️ RAMPS NG</button>
-      <button onclick="cambiarFlotaRamp('max')" id="tab-flota-max" class="flex-1 py-2 text-xs font-bold rounded-lg text-slate-400 transition">🚀 RAMPS MAX</button>
-    </div>
-
-    <!-- RAMPS NG -->
-    <div id="seccion-ramps-ng" class="space-y-4">
-      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
-        <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 1 CHECK – RA800</h3>
-        <div class="text-xs text-slate-300 space-y-2.5">
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r1-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PAGE 2/ ITEM 4.</span> 24-31-11-710-801 MAIN BATTERY DISCHARGE CHECK.</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r1-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG10/ ITEM 22.</span> 25-RYR-19 CHECK ALL EMERGENCY LIGHTS.</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r1-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG13/ ITEM 25.</span> 52-RYR-03 FLIGHT DECK DOOR SYSTEM OPERATIONAL CHECK.</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r1-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG13/ ITEM 26.</span> END OF RAMP1/3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span></label>
-        </div>
-      </div>
-      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
-        <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 2 CHECK – RA801</h3>
-        <div class="text-xs text-slate-300 space-y-2.5">
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r2-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 1.</span> OPERATIONAL CHECK OF CVR IAW BTC 23-040-00-01 Ref: AMM: 23-71-00-710</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r2-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG2, PG3/ ITEM 2.</span> 23-100-00-01 OPERATIONALLY CHECK THE ELT.</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r2-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG5/ ITEM 9.</span> 33-010-00-01 OPERATIONAL CHECK OF THE EMERGENCY LIGHTS (RAMP 1).</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r2-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG6/ ITEM 10.</span> 33-RYR-01 OPERATIONAL CHECK OF PSU/ CABIN WALL /LAVATORY NO SMOKING / FASTEN SEAT BELT SIGN LIGHTS.</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r2-5" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG6/ ITEM 11.</span> 33-RYR-02 OPERATIONAL CHECK OF THE EXTERIOR LIGHTS AND CARGO HOLD LIGHTS.</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r2-6" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG7/ ITEM 12.</span> 33-RYR-03 CHECK OF THE COCKPIT INSTRUMENT AND PANEL LIGHTS.</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r2-7" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG7/ ITEM 13.</span> 33-RYR-04 OPERATIONAL CHECK OF THE PASSENGER COMPARTMENT LIGHTS.</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r2-8" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG8/ ITEM 15.</span> 9 EO.13/057 CHECK SPARE BULBS IN THE SPARE BULB COMPARTMENT.</span></label>
-        </div>
-      </div>
-      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
-        <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 3 CHECK – RA901</h3>
-        <div class="text-xs text-slate-300 space-y-2.5">
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r3-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 2.</span> 21-150-00-01 CLEAN OR REPLACE THE CABIN TEMPERATURE SENSOR FILTERS.</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r3-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG7/ ITEM 10.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span></label>
-        </div>
-      </div>
-      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
-        <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 4 CHECK – RA902</h3>
-        <div class="text-xs text-slate-300 space-y-2.5">
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r4-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 3.</span> 27-162-00-01 OPERATIONAL CHECK THE FLAP SKEW AND ASYMMETRY SYSTEM AMM: 27-51-00-740</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r4-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG2/ ITEM 4.</span> 27-224-00-01 OPERATIONAL CHECK THE LEADING EDGE DEVICES UNCOMMANDED MOTION PROTECTION AMM: 27-81-00-710.</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r4-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG3/ ITEM 6.</span> 29-230-00-01 OPERATIONAL CHECK THE STANDBY RUDDER SYSTEM AMM: 29-21-00-700.</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r4-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG4/ ITEM 8.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span></label>
-        </div>
-      </div>
-      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
-        <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">50FC CHECK – RA858</h3>
-        <div class="text-xs text-slate-300 space-y-2.5">
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-fc50-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 3.</span> SPCU AMM: 24-34-00-710</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-fc50-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 5.</span> E/E EQUIPMENT CLEANING AND WEATHER RADAR TX/RX INSPECTION</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-fc50-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG2/ ITEM 6.</span> COCKPIT CLEAN AMM: 31-62-11-100-801</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-fc50-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG2/ ITEM 7.</span> P5 GUARDS</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-fc50-5" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG3/ ITEM 9.</span> LANDING GEAR LIGHTS (MASTER DIM TEST)</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-fc50-6" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG4/ ITEM 12.</span> FMC CDU LEFT ENGINE (SHORT TIME FAULTS)</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-fc50-7" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG5/ ITEM 13.</span> FMC CDU RIGHT ENGINE (SHORT TIME FAULTS)</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-fc50-8" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG6/ ITEM 14.</span> BITE CHECK PACK ZONE AMM 21-61-00-700-806-002</span></label>
-        </div>
-      </div>
-    </div>
-
-    <!-- RAMPS MAX -->
-    <div id="seccion-ramps-max" class="hidden space-y-4">
-      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
-        <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wide">RAMP 1 CHECK – RA800</h3>
-        <div class="text-xs text-slate-300 space-y-2.5">
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r1-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PAGE 2/ ITEM 4.</span> 24-31-11-710-801 MAIN BATTERY DISCHARGE CHECK.</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r1-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG10/ ITEM 22.</span> 25-RYR-19 CHECK ALL EMERGENCY LIGHTS.</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r1-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG13/ ITEM 25.</span> 52-RYR-03 FLIGHT DECK DOOR SYSTEM OPERATIONAL CHECK.</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r1-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG13/ ITEM 26.</span> END OF RAMP1/3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span></label>
-        </div>
-      </div>
-      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
-        <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wide">RAMP 2A/B CHECK – RA801</h3>
-        <div class="text-xs text-slate-300 space-y-2.5">
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r2-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">A/B - PG1/ ITEM 1.</span> OPERATIONAL CHECK OF CVR IAW BTC 23-040-00-01 Ref: AMM: 23-71-00-710</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r2-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">B - PG5/ ITEM 9.</span> 33-010-00-01 OPERATIONAL CHECK OF THE EMERGENCY LIGHTS (RAMP 1).</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r2-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">A/B - PG6/ ITEM 11.</span> 33-RYR-02 OPERATIONAL CHECK OF EXTERIOR & CARGO HOLD LIGHTS.</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r2-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">A/B - PG7/ ITEM 12.</span> 33-RYR-03 CHECK OF COCKPIT INSTRUMENT & PANEL LIGHTS.</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r2-5" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">A/B - PG8/ ITEM 15.</span> 9 EO.13/057 CHECK SPARE BULBS IN COMPARTMENT.</span></label>
-        </div>
-      </div>
-      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
-        <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wide">RAMP 3 CHECK – RA901</h3>
-        <div class="text-xs text-slate-300 space-y-2.5">
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r3-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG3/ ITEM 3.</span> 27-162-00-01 OPERATIONAL CHECK FLAP SKEW & ASYMMETRY AMM: 27-51-00-740</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r3-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG7/ ITEM 2.</span> INOP DECALS ON ALL RADIO</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r3-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG7/ ITEM 10.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span></label>
-        </div>
-      </div>
-      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
-        <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wide">RAMP 4 CHECK – RA902</h3>
-        <div class="text-xs text-slate-300 space-y-2.5">
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r4-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 1.</span> 21-150-00-01 CLEAN OR REPLACE CABIN TEMP SENSOR FILTERS.</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r4-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG2/ ITEM 4.</span> 27-224-00-01 LEADING EDGE DEVICES UNCOMMANDED MOTION AMM: 27-81-00-710.</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r4-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG3/ ITEM 6.</span> 29-230-00-01 STANDBY RUDDER SYSTEM AMM: 29-21-00-700.</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r4-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG4/ ITEM 8.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span></label>
-        </div>
-      </div>
-      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
-        <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wide">50FC CHECK – RA858</h3>
-        <div class="text-xs text-slate-300 space-y-2.5">
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-fc50-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 3.</span> SPCU AMM: 24-34-00-710</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-fc50-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 5.</span> E/E EQUIPMENT CLEANING & WEATHER RADAR INSPECTION</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-fc50-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG2/ ITEM 6.</span> COCKPIT CLEAN AMM: 31-62-11-100-801</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-fc50-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG2/ ITEM 7.</span> P5 GUARDS</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-fc50-5" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG4/ ITEM 2.</span> 33-RYR-01 PSU / WALL / LAVATORY NO SMOKING SIGN LIGHTS</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-fc50-6" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG4/ ITEM 3.</span> 33-RYR-04 PASSENGER COMPARTMENT LIGHTS</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-fc50-7" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG3/ ITEM 9.</span> LANDING GEAR LIGHTS (MASTER DIM TEST)</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-fc50-8" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG4/ ITEM 12.</span> FMC CDU LEFT ENGINE (SHORT TIME FAULTS)</span></label>
-          <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-fc50-9" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG5/ ITEM 13.</span> FMC CDU RIGHT ENGINE (SHORT TIME FAULTS)</span></label>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- PESTAÑA 4: CALCULATOR -->
-  <div id="pestana-calc" class="hidden space-y-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-4 shadow-xl">
-      <h3 class="font-bold text-amber-400 text-xs uppercase tracking-wide">🔧 Conversión de Torque (In-Lb / Ft-Lb / Nm)</h3>
-      <div class="space-y-3">
-        <div>
-          <label class="block text-[11px] text-slate-400 mb-1">Libras-Pulgada (In-Lb)</label>
-          <input type="number" id="calc-inlb" oninput="convertirTorque('inlb')" placeholder="Ej. 50" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
-        </div>
-        <div>
-          <label class="block text-[11px] text-slate-400 mb-1">Libras-Pie (Ft-Lb)</label>
-          <input type="number" id="calc-ftlb" oninput="convertirTorque('ftlb')" placeholder="Ej. 10" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
-        </div>
-        <div>
-          <label class="block text-[11px] text-slate-400 mb-1">Newton-metro (Nm)</label>
-          <input type="number" id="calc-nm" oninput="convertirTorque('nm')" placeholder="Ej. 5.65" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- PESTAÑA 5: DOCUMENTS -->
-  <div id="pestana-docs" class="hidden space-y-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 space-y-2 shadow-lg">
-      <label class="block text-xs font-bold text-sky-400 uppercase tracking-wide">Seleccionar Documento Técnico:</label>
-      <select id="select-doc" onchange="cargarDocumentoSeleccionado(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none">
-        <option value="" disabled selected>-- Elige un documento --</option>
-      </select>
-    </div>
-    <div class="relative w-full rounded-2xl overflow-hidden border border-slate-800 shadow-2xl bg-slate-950 h-[60vh] secure-container">
-      <div class="secure-overlay" title="Protección de documento"></div>
-      <div id="doc-placeholder" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center text-slate-400 space-y-2 z-5 bg-slate-950">
-        <span class="text-3xl">📂</span>
-        <p class="text-xs font-medium">Selecciona un documento para visualizar.</p>
-      </div>
-      <iframe id="iframe-doc-viewer" src="" class="w-full h-full border-0 relative z-10" title="Visor de Documentación"></iframe>
-    </div>
-  </div>
-
-  <!-- PESTAÑA 6: BUZÓN -->
-  <div id="pestana-feedback" class="hidden space-y-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
-      <div class="border-b border-slate-800 pb-2">
-        <h3 class="font-bold text-amber-400 text-sm">💬 Buzón de Sugerencias y Erratas</h3>
-        <p class="text-[11px] text-slate-400 mt-1">Comunica erratas, faltas o comentarios al administrador.</p>
-      </div>
-      <div class="space-y-3">
-        <select id="feed-tipo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
-          <option value="Errata P/N">⚠️ Errata en Part Number</option>
-          <option value="Falta Artículo">📦 Falta un artículo</option>
-          <option value="Other">💬 Other / Opinión</option>
-        </select>
-        <input type="text" id="feed-elemento" placeholder="Elemento afectado o asunto" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
-        <textarea id="feed-mensaje" rows="3" placeholder="Descripción..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white"></textarea>
-        <button onclick="enviarFeedback()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition">Enviar</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- PESTAÑA 7: ADMIN -->
-  <div id="pestana-admin" class="hidden space-y-4">
-    <div id="bloqueo-auth" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center space-y-4 shadow-xl">
-      <div class="text-4xl">🔒</div>
-      <h3 class="text-base font-bold text-white">Panel de Administración</h3>
-      <input type="password" id="input-password" placeholder="Password" class="w-full bg-slate-950 border border-slate-800 text-center rounded-xl px-4 py-2.5 text-sm text-white">
-      <button onclick="verificarPassword()" class="w-full bg-sky-500 font-bold py-2.5 rounded-xl text-sm">Acceder</button>
-    </div>
-
-    <div id="panel-admin-contenido" class="hidden space-y-4">
-      <!-- CÁMARA CON OCR INTELIGENTE -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
-        <h3 class="font-bold text-sky-400 text-xs">📷 Capturar Etiqueta (Autocompletar con OCR)</h3>
-        <input type="file" accept="image/*" capture="environment" onchange="procesarFotoCamara(event)" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-sky-500 file:text-white hover:file:bg-sky-600">
-        <div id="ocr-status" class="text-[11px] text-amber-400 font-medium hidden">⏳ Escaneando texto de la etiqueta...</div>
-        <div id="preview-foto" class="hidden mt-2">
-          <img id="img-capturada" class="w-full h-32 object-cover rounded-xl border border-slate-800" alt="Vista previa">
-          <button onclick="limpiarFoto()" class="mt-2 text-[10px] text-rose-400 underline">Quitar foto</button>
-        </div>
-      </div>
-
-      <!-- FORMULARIO CREAR / EDITAR -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
-        <h3 id="admin-form-title" class="font-bold text-amber-400 text-xs">➕ Añadir Nuevo Consumible o Herramienta</h3>
-        <input type="hidden" id="admin-edit-index" value="">
-        <div class="space-y-2">
-          <select id="admin-tipo-reg" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
-            <option value="consumible">📦 Consumible / Material (Search)</option>
-            <option value="tool">🧰 Herramienta / Equipo (Tools)</option>
-          </select>
-          <input type="text" id="admin-articulo" placeholder="Nombre / Descripción (ej. RING)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
-          <input type="text" id="admin-pn" placeholder="Part Number (ej. MS28778-6)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
-          
-          <!-- SECCIÓN CON DATALIST DE CARPETAS DE SEARCH -->
-          <div>
-            <input type="text" id="admin-seccion" list="lista-secciones-datalist" placeholder="Selecciona o escribe la sección/carpeta..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
-            <datalist id="lista-secciones-datalist"></datalist>
-          </div>
-
-          <input type="text" id="admin-nota" placeholder="Tool / Nota requerida o consejo (opcional)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
-          <button onclick="guardarRegistroAdmin()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition">Guardar en la Nube</button>
-        </div>
-      </div>
-
-      <!-- GESTIÓN DE REGISTROS (CLIC PARA EDITAR) -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
-        <h3 class="font-bold text-amber-400 text-xs">📋 Gestionar Registros en la Nube (Pulsa para editar)</h3>
-        <div class="flex space-x-2">
-          <button onclick="filtrarAdminList('consumible')" id="btn-admin-cons" class="flex-1 py-1 text-[10px] rounded-lg bg-sky-500 text-white font-bold">Consumibles</button>
-          <button onclick="filtrarAdminList('tool')" id="btn-admin-tls" class="flex-1 py-1 text-[10px] rounded-lg bg-slate-950 text-slate-400 font-bold">Herramientas</button>
-        </div>
-        <div id="lista-gestion-admin" class="space-y-2 max-h-60 overflow-y-auto pr-1 text-xs"></div>
-      </div>
-
-      <!-- GESTIÓN DE DOCUMENTOS -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
-        <h3 class="font-bold text-sky-400 text-xs">📄 Gestionar Documentos de Google Drive</h3>
-        <div class="space-y-2">
-          <input type="text" id="admin-doc-nombre" placeholder="Nombre del documento" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
-          <input type="text" id="admin-doc-id" placeholder="ID de Google Drive" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
-          <button onclick="agregarDocumentoAdmin()" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-2 rounded-xl text-xs transition">Añadir Documento</button>
-        </div>
-        <div id="lista-docs-admin" class="space-y-2 max-h-40 overflow-y-auto pr-1 text-xs mt-2"></div>
-      </div>
-
-      <!-- BUZÓN RECIBIDO -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
-        <h3 class="font-bold text-amber-400 text-xs">📥 Buzón Recibido (Nube)</h3>
-        <div id="lista-feedback-admin" class="space-y-2 text-xs max-h-60 overflow-y-auto pr-1"></div>
-      </div>
-
-      <button onclick="cerrarSesion()" class="text-xs text-rose-400 underline block text-center w-full pt-2">Cerrar Sesión</button>
-    </div>
-  </div>
-
-  <!-- Script Principal -->
-  <script>
-    const SUPABASE_URL = 'https://vlrloizxrvklkzdvgkii.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_veJeqUFfhqIVoCk0JLma6A_fN9llMru';
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    const ARTICULOS_INICIALES = [
-      { "articulo": "O-RING 1", "pn": "MS9385-07", "seccion": "AIR PACK OVHT SENSOR", "nota": "" },
-      { "articulo": "O-RING 2", "pn": "S9028A905", "seccion": "AIR PACK OVHT SENSOR", "nota": "" },
-      { "articulo": "MOLYKOTE4", "pn": "M0LYKOTE44", "seccion": "AIR PACK OVHT SENSOR", "nota": "" },
-      { "articulo": "KRYTOX P", "pn": "GPL206", "seccion": "AIR PACK OVHT SENSOR", "nota": "" },
-      { "articulo": "NEVER SEEZ COMPOUND", "pn": "NSBT8N", "seccion": "AIR PACK OVHT SENSOR", "nota": "" },
-      { "articulo": "PACKING", "pn": "AS3582-028", "seccion": "ATC ANTENNAS", "nota": "" },
-      { "articulo": "SEALANT", "pn": "BMS5-95 / PS870B1-2", "seccion": "ATC ANTENNAS", "nota": "" },
-      { "articulo": "COMPOUND", "pn": "DC4", "seccion": "ATC ANTENNAS", "nota": "" },
-      { "articulo": "EMERGENCY LIGHT SIGNS SMALL LAMPS", "pn": "3071BPEGPL", "seccion": "CABIN LIGHTS", "nota": "" },
-      { "articulo": "EMERGENCY LIGHTS EXTERIOR LAMPS", "pn": "767", "seccion": "CABIN LIGHTS", "nota": "" },
-      { "articulo": "BELT AND NO SMOKE LIGHT", "pn": "387", "seccion": "CABIN LIGHTS", "nota": "" },
-      { "articulo": "READING LIGHT", "pn": "9204", "seccion": "CABIN LIGHTS", "nota": "" },
-      { "articulo": "FUEL STATION LIGHT", "pn": "GE1495", "seccion": "CABIN LIGHTS", "nota": "" },
-      { "articulo": "WORK LIGHT COVER", "pn": "239052-13", "seccion": "CABIN LIGHTS", "nota": "" },
-      { "articulo": "FIRE TEST LIGHT COVER GREEN", "pn": "682-1001-001", "seccion": "CABIN LIGHTS", "nota": "" },
-      { "articulo": "LENS COVER FOR GALLEY LIGHT", "pn": "239004-19", "seccion": "CABIN LIGHTS", "nota": "" },
-      { "articulo": "LAMP BULB FOR EEC ALT SWITCH", "pn": "MS24515-685AS15", "seccion": "CABIN LIGHTS", "nota": "" },
-      { "articulo": "ASSY LOWER EMERG SIGN", "pn": "70-0366-11", "seccion": "CABIN LIGHTS", "nota": "" },
-      { "articulo": "GALLEY BULB", "pn": "OLN115-18K", "seccion": "CABIN LIGHTS", "nota": "" },
-      { "articulo": "BASE WHITE EMERG SIGNS", "pn": "207330", "seccion": "CABIN LIGHTS", "nota": "" },
-      { "articulo": "EMERG SIGNS LENS (EXIT)", "pn": "207377-1001", "seccion": "CABIN LIGHTS", "nota": "" },
-      { "articulo": "FMC CDU SHIM", "pn": "137300-78", "seccion": "CDU", "nota": "" },
-      { "articulo": "FMC CDU SCREW", "pn": "117357-21", "seccion": "CDU", "nota": "" },
-      { "articulo": "EMERG BATTERIES", "pn": "ADD71701-100", "seccion": "EMERG BATTERIES", "nota": "" },
-      { "articulo": "FUSE", "pn": "B215-06", "seccion": "EMERG BATTERIES", "nota": "" },
-      { "articulo": "FLASHLIGHT BATTERIES", "pn": "P4-01-0021", "seccion": "FLASHLIGHT", "nota": "" },
-      { "articulo": "FLASHLIGHT SHIELD", "pn": "A1-18-1030", "seccion": "FLASHLIGHT", "nota": "" },
-      { "articulo": "MEGAPHONE SET SCREW KIT", "pn": "9416", "seccion": "MEGAPHONE", "nota": "" },
-      { "articulo": "COVER (BLUE)", "pn": "5180453792", "seccion": "FLOORPATH", "nota": "" },
-      { "articulo": "ENDCAP 1CM", "pn": "417N5212-1CM", "seccion": "FLOORPATH", "nota": "" },
-      { "articulo": "BULB (EMERGENCY LIGHT)", "pn": "3071BPEGPL", "seccion": "FLOORPATH", "nota": "" },
-      { "articulo": "EMERG FLOORPATH LIGHT ASSY", "pn": "81000-22608ATS", "seccion": "FLOORPATH", "nota": "" },
-      { "articulo": "FLOORPATH RECEPTACLE - PIN", "pn": "60983-3", "seccion": "FLOORPATH", "nota": "" },
-      { "articulo": "FLOORPATH LIGHT", "pn": "60888-4", "seccion": "FLOORPATH", "nota": "" },
-      { "articulo": "CRIMP TOOL PIN", "pn": "10131-4", "seccion": "FLOORPATH", "nota": "" },
-      { "articulo": "COVER TRACK (BLACK)", "pn": "ACIFL00121-02", "seccion": "FLOORPATH", "nota": "" },
-      { "articulo": "RED LENS", "pn": "S417N509-6", "seccion": "FLOORPATH", "nota": "" },
-      { "articulo": "WHITE LENS", "pn": "S417N509-2", "seccion": "FLOORPATH", "nota": "" },
-      { "articulo": "SOCKETS EMERG LIGHTS", "pn": "60988-3", "seccion": "FLOORPATH", "nota": "" },
-      { "articulo": "SAFTGLO TAPE", "pn": "POLYKEN108FR0-5", "seccion": "FLOORPATH", "nota": "" },
-      { "articulo": "LOGO LIGHT BULB", "pn": "HLX64621", "seccion": "LOGO LIGHTS", "nota": "" },
-      { "articulo": "SCREWS LARGE", "pn": "BACB30ZE4-8", "seccion": "LOGO LIGHTS", "nota": "" },
-      { "articulo": "SCREWS SMALL", "pn": "BACB30XD3K8", "seccion": "LOGO LIGHTS", "nota": "" },
-      { "articulo": "SPRING A", "pn": "81116-37601", "seccion": "LOGO LIGHTS", "nota": "" },
-      { "articulo": "SPRING B", "pn": "81115-37601", "seccion": "LOGO LIGHTS", "nota": "" },
-      { "articulo": "SOCKET", "pn": "81004-37602", "seccion": "LOGO LIGHTS", "nota": "" },
-      { "articulo": "RED SEALANT", "pn": "PR1428B1-2", "seccion": "LRRA", "nota": "" },
-      { "articulo": "BLACK SEALANT", "pn": "BMS5-95 / PS870B1-2", "seccion": "LRRA", "nota": "" },
-      { "articulo": "GASKET", "pn": "AG723000-40", "seccion": "LRRA", "nota": "" },
-      { "articulo": "GREEN SEALANT", "pn": "HT3326-5-50", "seccion": "LRRA", "nota": "" },
-      { "articulo": "ANTENNA", "pn": "S67-2002-28", "seccion": "LRRA", "nota": "" },
-      { "articulo": "SCREWS", "pn": "BACB30NM3K4", "seccion": "MAIN & AUX BATTERIES", "nota": "" },
-      { "articulo": "BATTERY", "pn": "024147-000", "seccion": "MAIN & AUX BATTERIES", "nota": "" },
-      { "articulo": "CONNECTOR", "pn": "BACC45FT12-12P", "seccion": "MAIN & AUX BATTERIES", "nota": "" },
-      { "articulo": "FUEL PANEL E&E", "pn": "NAS514P1032-16", "seccion": "PANELS SCREWS", "nota": "" },
-      { "articulo": "E&E DOOR SWITCH PANEL", "pn": "NAS514P832-12", "seccion": "PANELS SCREWS", "nota": "" },
-      { "articulo": "NUTPLATE FUEL PANEL E&E", "pn": "BACN10ZR3CD", "seccion": "PANELS SCREWS", "nota": "" },
-      { "articulo": "Cockpit cap (rosca)", "pn": "15PA90-6W", "seccion": "RAMPS", "nota": "Ver Switch tips" },
-      { "articulo": "COCKPit cap (fino)", "pn": "69-44578-2", "seccion": "RAMPS", "nota": "Ver Switch tips" },
-      { "articulo": "Cabin Temp sensor filter (small)", "pn": "412A1605-41", "seccion": "RAMPS", "nota": "" },
-      { "articulo": "Flt comp temp sensor filter (big)", "pn": "213A6404-1", "seccion": "RAMPS", "nota": "" },
-      { "articulo": "INOP STICKER", "pn": "INT1072", "seccion": "RAMPS", "nota": "" },
-      { "articulo": "GRILLE (FILTRO CABINA)", "pn": "412N1122-3A", "seccion": "RAMPS", "nota": "" },
-      { "articulo": "BULB GALLEY", "pn": "MSC115", "seccion": "RAMPS", "nota": "" },
-      { "articulo": "BEZEL", "pn": "11-6557-7GATS", "seccion": "RAMPS", "nota": "" },
-      { "articulo": "COVER CALL LIGHT FOR CABIN CREW", "pn": "25-1734-15", "seccion": "RAMPS", "nota": "" },
-      { "articulo": "LACING TAPE", "pn": "BMS13-54TY3CL1FC", "seccion": "SKEW SENSOR", "nota": "" },
-      { "articulo": "TAPE", "pn": "SCOTH70", "seccion": "SKEW SENSOR", "nota": "" },
-      { "articulo": "AV25", "pn": "AV25", "seccion": "SKEW SENSOR", "nota": "" },
-      { "articulo": "D50", "pn": "D5026NS", "seccion": "SKEW SENSOR", "nota": "" },
-      { "articulo": "NUT SCREWS HARNESS EGT", "pn": "AS3486-10", "seccion": "ENGINES", "nota": "" },
-      { "articulo": "MOX TAPE", "pn": "M0XNESS620B1", "seccion": "ENGINES", "nota": "" },
-      { "articulo": "TAPE HIGH TEMP ALUMINIUM FOIL", "pn": "3M363", "seccion": "ENGINES", "nota": "" },
-      { "articulo": "TAPE GLASS CLOTH HIGH TEMP", "pn": "3M361", "seccion": "ENGINES", "nota": "" },
-      { "articulo": "LOCKWIRE FOR HARNESS REPAIR", "pn": "MS20995C15", "seccion": "ENGINES", "nota": "" },
-      { "articulo": "CLAMP BANDS CONNECTOR", "pn": "600-052", "seccion": "ENGINES", "nota": "TOOL: DBS-1101" },
-      { "articulo": "YELLOW / WHITE", "pn": "M81969-14-04", "seccion": "INSERTS/EXTRACTORS", "nota": "" },
-      { "articulo": "BLUE / WHITE", "pn": "M81969-14-03", "seccion": "INSERTS/EXTRACTORS", "nota": "" },
-      { "articulo": "RED / WHITE", "pn": "M81969-14-02", "seccion": "INSERTS/EXTRACTORS", "nota": "" },
-      { "articulo": "RED / WHITE (VARIANT)", "pn": "M81969-14-11", "seccion": "INSERTS/EXTRACTORS", "nota": "" },
-      { "articulo": "GREEN / WHITE", "pn": "M81969-14-01", "seccion": "INSERTS/EXTRACTORS", "nota": "" },
-      { "articulo": "VERDE / ROJO", "pn": "CTA1160", "seccion": "INSERTS/EXTRACTORS", "nota": "" },
-      { "articulo": "GREEN / WHITE METAL", "pn": "M81969-1-01", "seccion": "INSERTS/EXTRACTORS", "nota": "" },
-      { "articulo": "RED / WHITE METAL", "pn": "M81969-1-02", "seccion": "INSERTS/EXTRACTORS", "nota": "" },
-      { "articulo": "BLUE / WHITE METAL", "pn": "M81969-1-03", "seccion": "INSERTS/EXTRACTORS", "nota": "" },
-      { "articulo": "ELEVATOR PLUG FOR LEAK TEST", "pn": "MS21913V6P", "seccion": "OTHERS", "nota": "" },
-      { "articulo": "LOCKWIRE FLIGHT DECK SWITCHES", "pn": "MS20995CY15", "seccion": "OTHERS", "nota": "" },
-      { "articulo": "RODFILLER CLAMPS", "pn": "69B47961-2", "seccion": "OTHERS", "nota": "" },
-      { "articulo": "ANTISTATIC BAGS", "pn": "ESDBAG62X48", "seccion": "OTHERS", "nota": "" },
-      { "articulo": "STATIC DISCHARGER LARGE", "pn": "740001", "seccion": "OTHERS", "nota": "" },
-      { "articulo": "STATIC DISCHARGER SHORT", "pn": "740007", "seccion": "OTHERS", "nota": "" },
-      { "articulo": "SPLICE MOISTURE RED", "pn": "D436-36", "seccion": "SPLICES", "nota": "" },
-      { "articulo": "SPLICE MOISTURE BLUE", "pn": "D436-37", "seccion": "SPLICES", "nota": "" },
-      { "articulo": "SPLICE MOISTURE YELLOW", "pn": "D436-38", "seccion": "SPLICES", "nota": "" },
-      { "articulo": "END CAP CRIMP TYPE (RED)", "pn": "324485", "seccion": "SPLICES", "nota": "CRIMP TOOL: 58573-1" },
-      { "articulo": "Terminal lug landing light", "pn": "323750", "seccion": "SPLICES", "nota": "CRIMP TOOL: 59461" },
-      { "articulo": "TERMINAL SPADE TYPE", "pn": "3-350816-2", "seccion": "SPLICES", "nota": "CRIMP TOOL: 9-1478240-0" },
-      { "articulo": "TEFLON TAPE", "pn": "P421", "seccion": "TAPES TO REPAIR HARNESS", "nota": "" },
-      { "articulo": "HEATSHRINK 1/4 YELLOW", "pn": "RNF100-1-4-4", "seccion": "HEATSHRINKS", "nota": "" },
-      { "articulo": "SMALL SCREW RACK CONNECTOR", "pn": "BACS12HN06-6", "seccion": "RACKS & SCREWS", "nota": "" },
-      { "articulo": "CABLE TIE (BACS38K6)", "pn": "BACS38K6", "seccion": "STRAP - CABLE TIE", "nota": "1st Longest" },
-      { "articulo": "CABLE TIE (BACS38K3)", "pn": "BACS38K3", "seccion": "STRAP - CABLE TIE", "nota": "2nd Longest" },
-      { "articulo": "CABLE TIE (BACS38K2)", "pn": "BACS38K2", "seccion": "STRAP - CABLE TIE", "nota": "Medium" },
-      { "articulo": "CABLE TIE (BACS38K7)", "pn": "BACS38K7", "seccion": "STRAP - CABLE TIE", "nota": "Medium" },
-      { "articulo": "CABLE TIE (BACS38K10)", "pn": "BACS38K10", "seccion": "STRAP - CABLE TIE", "nota": "Small" },
-      { "articulo": "CABLE TIE (BACS38K1)", "pn": "BACS38K1", "seccion": "STRAP - CABLE TIE", "nota": "Small" },
-      { "articulo": "CABLE TIE (BACS38K4)", "pn": "BACS38K4", "seccion": "STRAP - CABLE TIE", "nota": "Small (Typical)" },
-      { "articulo": "CABLE TIE (BACS38K9)", "pn": "BACS38K9", "seccion": "STRAP - CABLE TIE", "nota": "Smallest" },
-      { "articulo": "CABLE TIE (BACS38K5)", "pn": "BACS38K5", "seccion": "STRAP - CABLE TIE", "nota": "Smallest" },
-      { "articulo": "MCP SCREW (BLACK)", "pn": "BACS12CK3H7", "seccion": "COCKPIT", "nota": "" },
-      { "articulo": "MCP WASHER (BLACK)", "pn": "NAS1149C0332B", "seccion": "COCKPIT", "nota": "" },
-      { "articulo": "CAP PSU CONNECTORS", "pn": "M85049/138-47A", "seccion": "CABIN PARTS", "nota": "" },
-      { "articulo": "AIRSTAIRS LAMPS", "pn": "1864", "seccion": "AIRSTAIRS", "nota": "" },
-      { "articulo": "AIRSTAIR LIGHT LENS", "pn": "870661-1", "seccion": "AIRSTAIRS", "nota": "" },
-      { "articulo": "Inop tag label (small size)", "pn": "CBTAG", "seccion": "TAGS AND COLLARS", "nota": "" },
-      { "articulo": "Collars inop system", "pn": "S4933959-523", "seccion": "TAGS AND COLLARS", "nota": "" },
-      { "articulo": "White collar", "pn": "10164-3", "seccion": "TAGS AND COLLARS", "nota": "" },
-      { "articulo": "Red collar (inop system)", "pn": "10237-1", "seccion": "TAGS AND COLLARS", "nota": "" },
-      { "articulo": "Wire mount sliding windows", "pn": "MB-3", "seccion": "WINDOWS PARTS", "nota": "" },
-      { "articulo": "SCREW TERMINAL LUG WINDOW", "pn": "BACS12HN06-4", "seccion": "WINDOWS PARTS", "nota": "" },
-      { "articulo": "WASHER TERMINAL LUG WINDOW", "pn": "MS35338-98", "seccion": "WINDOWS PARTS", "nota": "" }
-    ];
-
-    const HERRAMIENTAS_INICIALES = [
-      { "articulo": "QUICKSET", "pn": "QUICKSET", "nota": "" },
-      { "articulo": "FLUKE117", "pn": "FLUKE117", "nota": "" },
-      { "articulo": "STAB TRIM CUTOUT TESTER", "pn": "C27007-46", "nota": "" },
-      { "articulo": "ELT ADT406AP 50 OHM DUMMY LOAD KIT", "pn": "112-3148", "nota": "" },
-      { "articulo": "PROBE OVHT AND TESTER", "pn": "BH17336A // BH16440-40", "nota": "" },
-      { "articulo": "TEMPCAL TESTER", "pn": "H394-230", "nota": "" },
-      { "articulo": "BONDING METER", "pn": "M1", "nota": "" },
-      { "articulo": "HAND HELD MULTIPURPOSE I/FACE HHMPI", "pn": "FDS400-301", "nota": "" },
-      { "articulo": "FIREX TEST CARGO", "pn": "C26006-1", "nota": "" },
-      { "articulo": "TEST SET / PITOT STATIC", "pn": "MPS45", "nota": "" },
-      { "articulo": "GROUND FAULT PROTECTION SYS TEST SET", "pn": "F72917-19", "nota": "" },
-      { "articulo": "PDL LAPTOP WITH TECHSAT PDL MKII", "pn": "TECHSATPDLLAPT0P", "nota": "" },
-      { "articulo": "FLUKE324 (CLAMP)", "pn": "FLUKE324", "nota": "" },
-      { "articulo": "CAJA RADIOALTIMETRO", "pn": "C34005-16", "nota": "" },
-      { "articulo": "RADIO ALTIMETER TEST SET", "pn": "DRA707", "nota": "" },
-      { "articulo": "TRAMMEL BAR", "pn": "F80055-1", "nota": "" },
-      { "articulo": "RUDDER PCU TEST SET", "pn": "C29002-17", "nota": "" },
-      { "articulo": "HIRFS", "pn": "906-10247-3 OR XLR-9703-01", "nota": "" },
-      { "articulo": "WTB FEEDTHROUGH CONNECTORS ADAPTER (HIRFS)", "pn": "WTBADAPTER", "nota": "" },
-      { "articulo": "TOOL CONNECTORS FOR BACKSHELLS", "pn": "CMS837", "nota": "" },
-      { "articulo": "KNIPEX CUTTING SAFTGLO", "pn": "9435215", "nota": "" },
-      { "articulo": "FIRE EXTINGUISHER BOTTLE SQUIB TESTER", "pn": "F80229-69", "nota": "" },
-      { "articulo": "WIRE JUMPER KIT MID-CABIN B737MAX", "pn": "RYR-EXITS-DDG-JUMPER-KIT", "nota": "" }
-    ];
-
-    const DOCUMENTOS_INICIALES = [
-      { id: "1LGKOrWHK4XtMfJx0blT1F68qGqQtQ-WB", nombre: "Buscar un conector.pdf" },
-      { id: "1SfKknSDXAUEzawX_0hoeBc2b-7JVM74e", nombre: "Buscar un splice.pdf" },
-      { id: "136Sy63TSLSPhAWHXx1a5G0Bg5NJq_AFQ", nombre: "Buscar un cable.pdf" },
-      { id: "1FL2GrFNo6Nayxkg80e4tW1XFqgzDldlO", nombre: "TAGS & TOOLS.pdf" },
-      { id: "1yncOpHr8G60YE1aRBH0LbeEiAnb0Mf01", nombre: "Tie straps picture.jpg" },
-      { id: "1Kk6nv4PKqwEijjieckj081bB9Tv4x09c", nombre: "SPARE BULB.jpeg" },
-      { id: "1qn4OZjnpeNwWW4NtTpGrv4kvcJeZiLD3", nombre: "WRN PTT CPT.jpeg" },
-      { id: "1nfwnqDNmkyoSoosPNvxx_YCHedUvBC5Y", nombre: "WRN PTT FO.jpeg" },
-      { id: "1mYzFByujXZWq0JvgF6ILP0B8D2Ap45pj", nombre: "Rellenar Tech log.jpeg" },
-      { id: "1d0vSLLoPVselONZSwlKyAuXFiW3cwJvS", nombre: "Clamp" },
-      { id: "1uOID8H4gmVmeWIEOfcf3MqhTZam9bXjT", nombre: "BSI LIGHTING SYSTEM.pdf" },
-      { id: "17Z8lUXNcySm2L8DImPs9xw8qnus6i0aK", nombre: "Flight Deck & CB Panels.pdf" },
-      { id: "10lMqgWVcna_bWoToLCjfEgM_BFlvNPqB", nombre: "737NG Flight Deck Panels.pdf" },
-      { id: "1ATcDP2bmVb-FyoMRpGKirJN-4sylB5BB", nombre: "AOG PARTS LIST.pdf" },
-      { id: "1YGZ0bcZLz9s97gmVz4Um-hFacdmU-ZV5", nombre: "APU SCMM_49.pdf" },
-      { id: "1adDKrCHrUkUIaukFjtEb-Y_cAQbaVV0L", nombre: "737NG COMPONENT LOCATOR GUIDE.pdf" }
-    ];
-
-    let listaArticulos = [];
-    let listaHerramientas = [];
-    let listaDocumentos = [];
-    let feedbackList = [];
-    let seccionesAbiertas = {};
-    let autenticado = false;
-    let adminTipoFiltro = 'consumible';
-
-    async function cargarDatosNube() {
-      try {
-        let { data: cons } = await _supabase.from('consumibles').select('*');
-        if (!cons || cons.length === 0) {
-          await _supabase.from('consumibles').insert(ARTICULOS_INICIALES);
-          let { data: cons2 } = await _supabase.from('consumibles').select('*');
-          listaArticulos = cons2 || ARTICULOS_INICIALES;
-        } else {
-          listaArticulos = cons;
-        }
-
-        let { data: tools } = await _supabase.from('herramientas').select('*');
-        if (!tools || tools.length === 0) {
-          await _supabase.from('herramientas').insert(HERRAMIENTAS_INICIALES);
-          let { data: tools2 } = await _supabase.from('herramientas').select('*');
-          listaHerramientas = tools2 || HERRAMIENTAS_INICIALES;
-        } else {
-          listaHerramientas = tools;
-        }
-        listaHerramientas.sort((a, b) => a.articulo.localeCompare(b.articulo));
-
-        let { data: docs } = await _supabase.from('documentos').select('*');
-        if (!docs || docs.length === 0) {
-          await _supabase.from('documentos').insert(DOCUMENTOS_INICIALES);
-          let { data: docs2 } = await _supabase.from('documentos').select('*');
-          listaDocumentos = docs2 || DOCUMENTOS_INICIALES;
-        } else {
-          listaDocumentos = docs;
-        }
-
-        let { data: fb } = await _supabase.from('feedback').select('*').order('id', { ascending: false });
-        feedbackList = fb || [];
-      } catch (e) {
-        console.error("Usando datos locales por fallo de red:", e);
-        listaArticulos = ARTICULOS_INICIALES;
-        listaHerramientas = HERRAMIENTAS_INICIALES;
-        listaHerramientas.sort((a, b) => a.articulo.localeCompare(b.articulo));
-        listaDocumentos = DOCUMENTOS_INICIALES;
-      }
-
-      filtrarYAgrupar();
-      filtrarTools();
-      renderizarSelectorDocumentos();
-      actualizarDatalistSecciones();
-      if (autenticado) {
-        renderizarAdminGestion();
-        renderizarDocsAdmin();
-        renderizarFeedbackAdmin();
-      }
-    }
-
-    // CONFIGURACIÓN DE TIEMPO REAL (SUPABASE REALTIME)
-    function configurarRealtime() {
-      _supabase
-        .channel('public-db-changes')
-        .on('postgres_changes', { event: '*', schema: 'public' }, (payload) => {
-          console.log('Cambio detectado en la base de datos, sincronizando...', payload);
-          cargarDatosNube();
-        })
-        .subscribe();
-    }
-
-    function actualizarDatalistSecciones() {
-      const datalist = document.getElementById('lista-secciones-datalist');
-      if (!datalist) return;
-      const seccionesUnicas = [...new Set(listaArticulos.map(item => item.seccion))].sort();
-      datalist.innerHTML = seccionesUnicas.map(sec => `<option value="${sec}">`).join('');
-    }
-
-    function cambiarPestana(target) {
-      const btns = ['btn-lista', 'btn-tools', 'btn-ramps', 'btn-calc', 'btn-docs', 'btn-feedback', 'btn-admin'];
-      const ps = ['pestana-lista', 'pestana-tools', 'pestana-ramps', 'pestana-calc', 'pestana-docs', 'pestana-feedback', 'pestana-admin'];
-      btns.forEach(b => document.getElementById(b).className = "px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1");
-      ps.forEach(p => document.getElementById(p).classList.add('hidden'));
-
-      const mapping = { lista: 0, tools: 1, ramps: 2, calc: 3, docs: 4, feedback: 5, admin: 6 };
-      const idx = mapping[target];
-      document.getElementById(btns[idx]).className = "px-4 py-2.5 rounded-xl text-center bg-sky-500 text-white shadow-lg transition-all flex flex-col items-center justify-center space-y-1";
-      document.getElementById(ps[idx]).classList.remove('hidden');
-
-      if (target === 'lista') filtrarYAgrupar();
-      if (target === 'tools') filtrarTools();
-      if (target === 'ramps') cargarEstadoChecks();
-      if (target === 'docs') renderizarSelectorDocumentos();
-      if (target === 'admin') { evaluarAuthUI(); renderizarFeedbackAdmin(); renderizarAdminGestion(); renderizarDocsAdmin(); actualizarDatalistSecciones(); }
-    }
-
-    function renderizarSelectorDocumentos() {
-      const select = document.getElementById('select-doc');
-      if (!select) return;
-      select.innerHTML = '<option value="" disabled selected>-- Elige un documento --</option>' +
-        listaDocumentos.map(doc => `<option value="${doc.id}">${doc.nombre}</option>`).join('');
-    }
-
-    function cambiarFlotaRamp(flota) {
-      const btnNg = document.getElementById('tab-flota-ng');
-      const btnMax = document.getElementById('tab-flota-max');
-      const secNg = document.getElementById('seccion-ramps-ng');
-      const secMax = document.getElementById('seccion-ramps-max');
-
-      if (flota === 'ng') {
-        btnNg.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-sky-500 text-white transition";
-        btnMax.className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-400 transition";
-        secNg.classList.remove('hidden');
-        secMax.classList.add('hidden');
-      } else {
-        btnMax.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-emerald-500 text-white transition";
-        btnNg.className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-400 transition";
-        secMax.classList.remove('hidden');
-        secNg.classList.add('hidden');
-      }
-    }
-
-    async function enviarFeedback() {
-      const tipo = document.getElementById('feed-tipo').value;
-      const elemento = document.getElementById('feed-elemento').value.trim();
-      const mensaje = document.getElementById('feed-mensaje').value.trim();
-      if (!elemento || !mensaje) { alert("Rellena todos los campos"); return; }
-      
-      const nuevoFeedback = { tipo, elemento, mensaje, fecha: new Date().toLocaleString() };
-      let { error } = await _supabase.from('feedback').insert([nuevoFeedback]);
-      if (error) { alert("Error al enviar el mensaje al buzón: " + error.message); return; }
-
-      alert("¡Enviado con éxito al administrador en la nube!");
-      document.getElementById('feed-elemento').value = '';
-      document.getElementById('feed-mensaje').value = '';
-      cambiarPestana('lista');
-    }
-
-    function renderizarFeedbackAdmin() {
-      const contenedor = document.getElementById('lista-feedback-admin');
-      if(!contenedor) return;
-      contenedor.innerHTML = feedbackList.length === 0 ? '<div class="text-slate-500">No hay avisos pendientes en la nube.</div>' : feedbackList.map((fb) => `
-        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1 relative">
-          <div class="flex justify-between text-[10px] text-slate-400"><span>${fb.fecha}</span><span class="text-amber-400 font-bold">${fb.tipo}</span></div>
-          <div class="font-bold text-white">${fb.elemento}</div>
-          <div class="text-slate-300 text-[11px]">${fb.mensaje}</div>
-          <button onclick="eliminarFeedback(${fb.id})" class="absolute top-2 right-2 bg-rose-500/20 text-rose-400 p-1.5 rounded-lg text-[10px]" title="Eliminar mensaje">🗑️</button>
-        </div>
-      `).join('');
-    }
-
-    async function eliminarFeedback(id) {
-      if (confirm("¿Eliminar este mensaje del buzón?")) {
-        let { error } = await _supabase.from('feedback').delete().eq('id', id);
-        if (error) { alert("Error al eliminar mensaje: " + error.message); return; }
-        await cargarDatosNube();
-      }
-    }
-
-    function filtrarTools() {
-      const buscadorEl = document.getElementById('buscador-tools');
-      const contenedor = document.getElementById('contenedor-tools');
-      const contador = document.getElementById('contador-tools');
-      if (!contenedor) return;
-      const query = buscadorEl ? buscadorEl.value.toLowerCase().trim() : '';
-      contenedor.innerHTML = '';
-      
-      listaHerramientas.sort((a, b) => a.articulo.localeCompare(b.articulo));
-
-      const filtrados = listaHerramientas.filter(item => item.articulo.toLowerCase().includes(query) || item.pn.toLowerCase().includes(query));
-      if (contador) contador.innerText = filtrados.length;
-      if (filtrados.length === 0) { contenedor.innerHTML = `<div class="text-center text-xs text-slate-500 py-12">No se encontraron herramientas.</div>`; return; }
-      
-      filtrados.forEach(tool => {
-        const div = document.createElement('div');
-        div.className = "bg-slate-900 border border-slate-800 rounded-xl p-3 flex justify-between items-center text-xs";
-        const notaBadge = tool.nota ? `<span class="bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[9px] px-1.5 py-0.5 rounded font-bold mt-1 inline-block">${tool.nota}</span>` : '';
-        div.innerHTML = `
-          <div class="space-y-1">
-            <span class="font-bold text-white uppercase block">${tool.articulo}</span>
-            ${notaBadge}
-          </div>
-          <code class="text-amber-400 font-mono">${tool.pn}</code>
-        `;
-        contenedor.appendChild(div);
-      });
-    }
-
-    function filtrarYAgrupar() {
-      const buscadorEl = document.getElementById('buscador');
-      const contenedor = document.getElementById('contenedor-secciones');
-      const contadorEl = document.getElementById('contador-items');
-      if (!contenedor) return;
-      const query = buscadorEl ? buscadorEl.value.toLowerCase().trim() : '';
-      contenedor.innerHTML = '';
-      const filtrados = listaArticulos.filter(item => item.articulo.toLowerCase().includes(query) || item.pn.toLowerCase().includes(query) || item.seccion.toLowerCase().includes(query));
-      if (contadorEl) contadorEl.innerText = filtrados.length;
-      
-      const grupos = {};
-      filtrados.forEach(item => { if (!grupos[item.seccion]) grupos[item.seccion] = []; grupos[item.seccion].push(item); });
-
-      Object.keys(grupos).sort().forEach(sec => {
-        const items = grupos[sec];
-        const estaAbierto = query !== '' || (seccionesAbiertas[sec] || false);
-        const div = document.createElement('div');
-        div.className = "bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden shadow";
-        div.innerHTML = `
-          <button onclick="toggleAcordeon('${sec}')" class="w-full bg-slate-900 px-4 py-3.5 flex justify-between items-center text-left">
-            <span class="font-bold text-xs text-sky-400 uppercase">📂 ${sec} (${items.length})</span>
-            <span class="text-slate-400 text-xs">${estaAbierto ? '▲' : '▼'}</span>
-          </button>
-          <div class="p-3 space-y-2 ${estaAbierto ? '' : 'hidden'}">
-            ${items.map(i => {
-              const notaBadge = i.nota ? `<span class="bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[9px] px-1.5 py-0.5 rounded font-bold mt-1 inline-block">${i.nota}</span>` : '';
-              return `
-                <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex justify-between items-center text-xs">
-                  <div class="space-y-1">
-                    <span class="font-bold text-white uppercase block">${i.articulo}</span>${notaBadge}
-                  </div>
-                  <code class="text-amber-400 font-mono">${i.pn}</code>
-                </div>
-              `;
-            }).join('')}
-          </div>
-        `;
-        contenedor.appendChild(div);
-      });
-    }
-
-    function toggleAcordeon(sec) { seccionesAbiertas[sec] = !seccionesAbiertas[sec]; filtrarYAgrupar(); }
-
-    function guardarEstadoCheck(checkbox) { localStorage.setItem(checkbox.id, checkbox.checked); }
-    function cargarEstadoChecks() {
-      const checkboxes = document.querySelectorAll('#pestana-ramps input[type="checkbox"]');
-      checkboxes.forEach(chk => {
-        const guardado = localStorage.getItem(chk.id);
-        if (guardado !== null) chk.checked = (guardado === 'true');
-      });
-    }
-    function resetearChecklist() {
-      if (confirm("¿Resetear todas las marcas de las rampas?")) {
-        const checkboxes = document.querySelectorAll('#pestana-ramps input[type="checkbox"]');
-        checkboxes.forEach(chk => { chk.checked = false; localStorage.removeItem(chk.id); });
-      }
-    }
-
-    function convertirTorque(tipo) {
-      const inlb = document.getElementById('calc-inlb');
-      const ftlb = document.getElementById('calc-ftlb');
-      const nm = document.getElementById('calc-nm');
-      if (!inlb || !ftlb || !nm) return;
-
-      if (tipo === 'inlb') {
-        const val = parseFloat(inlb.value);
-        if (isNaN(val)) { ftlb.value = ''; nm.value = ''; return; }
-        nm.value = (val * 0.112985).toFixed(2);
-        ftlb.value = (val / 12).toFixed(2);
-      } else if (tipo === 'ftlb') {
-        const val = parseFloat(ftlb.value);
-        if (isNaN(val)) { inlb.value = ''; nm.value = ''; return; }
-        inlb.value = (val * 12).toFixed(1);
-        nm.value = (val * 1.35582).toFixed(2);
-      } else {
-        const val = parseFloat(nm.value);
-        if (isNaN(val)) { inlb.value = ''; ftlb.value = ''; return; }
-        inlb.value = (val / 0.112985).toFixed(1);
-        ftlb.value = (val / 1.35582).toFixed(2);
-      }
-    }
-
-    // OCR INTELIGENTE
-    function procesarFotoCamara(event) {
-      const archivo = event.target.files[0];
-      if (!archivo) return;
-
-      const lector = new FileReader();
-      lector.onload = function(e) {
-        const img = document.getElementById('img-capturada');
-        const preview = document.getElementById('preview-foto');
-        if (img && preview) {
-          img.src = e.target.result;
-          preview.classList.remove('hidden');
-        }
-      }
-      lector.readAsDataURL(archivo);
-
-      const statusEl = document.getElementById('ocr-status');
-      if (statusEl) statusEl.classList.remove('hidden');
-
-      Tesseract.recognize(archivo, 'eng', { logger: m => console.log(m) }).then(({ data: { text } }) => {
-        if (statusEl) statusEl.classList.add('hidden');
-        console.log("Texto OCR:\n", text);
-
-        const lineas = text.split('\n').map(l => l.trim()).filter(l => l.length > 1);
-        let descDetectada = "";
-        let pnDetectado = "";
-
-        for (let linea of lineas) {
-          const lUpper = linea.toUpperCase();
-          if ((lUpper.includes("PART") || lUpper.includes("P/N") || lUpper.includes("PN") || lUpper.startsWith("P:")) && !pnDetectado) {
-            const partes = linea.split(/[:|]/);
-            pnDetectado = partes.length > 1 ? partes[1].trim() : linea.replace(/^(PART|P\/N|PN|P:)\s*/i, '').trim();
-          } else if ((lUpper.includes("DESC") || lUpper.includes("DESCRIPTION") || lUpper.startsWith("D:")) && !descDetectada) {
-            const partes = linea.split(/[:|]/);
-            descDetectada = partes.length > 1 ? partes[1].trim() : linea.replace(/^(DESC|DESCRIPTION|D:)\s*/i, '').trim();
-          }
-        }
-
-        if (!descDetectada && lineas.length > 0) descDetectada = lineas[0];
-        if (!pnDetectado && lineas.length > 1) {
-          const candidato = lineas.find(l => /[0-9-]/.test(l) && l !== descDetectada);
-          pnDetectado = candidato || lineas[1];
-        }
-
-        if (descDetectada) document.getElementById('admin-articulo').value = descDetectada;
-        if (pnDetectado) document.getElementById('admin-pn').value = pnDetectado;
-
-        alert(`¡OCR completado!\n- Descripción: ${descDetectada || 'No detectada'}\n- Part Number: ${pnDetectado || 'No detectado'}\nRevisa y ajusta si es necesario.`);
-      }).catch(err => {
-        if (statusEl) statusEl.classList.add('hidden');
-        console.error(err);
-        alert("No se pudo leer automáticamente el texto de la etiqueta.");
-      });
-    }
-
-    function limpiarFoto() {
-      const preview = document.getElementById('preview-foto');
-      const img = document.getElementById('img-capturada');
-      if (preview) preview.classList.add('hidden');
-      if (img) img.src = '';
-    }
-
-    function filtrarAdminList(tipo) {
-      adminTipoFiltro = tipo;
-      const btnCons = document.getElementById('btn-admin-cons');
-      const btnTls = document.getElementById('btn-admin-tls');
-      if (btnCons) btnCons.className = tipo === 'consumible' ? "flex-1 py-1 text-[10px] rounded-lg bg-sky-500 text-white font-bold" : "flex-1 py-1 text-[10px] rounded-lg bg-slate-950 text-slate-400 font-bold";
-      if (btnTls) btnTls.className = tipo === 'tool' ? "flex-1 py-1 text-[10px] rounded-lg bg-sky-500 text-white font-bold" : "flex-1 py-1 text-[10px] rounded-lg bg-slate-950 text-slate-400 font-bold";
-      renderizarAdminGestion();
-    }
-
-    function renderizarAdminGestion() {
-      const contenedor = document.getElementById('lista-gestion-admin');
-      if (!contenedor) return;
-      const data = adminTipoFiltro === 'consumible' ? listaArticulos : listaHerramientas;
-      if (adminTipoFiltro === 'tool') {
-        data.sort((a, b) => a.articulo.localeCompare(b.articulo));
-      }
-      contenedor.innerHTML = data.map((item, index) => `
-        <div onclick="editarRegistroAdmin('${adminTipoFiltro}', ${index})" class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center cursor-pointer hover:border-sky-500/50 transition">
-          <div>
-            <span class="font-bold text-white block uppercase">${item.articulo}</span>
-            <span class="text-[10px] text-amber-400 font-mono">${item.pn}</span>
-            ${item.seccion ? `<span class="text-[9px] text-sky-400 block">${item.seccion}</span>` : ''}
-            ${item.nota ? `<span class="text-[9px] text-rose-400 block">${item.nota}</span>` : ''}
-          </div>
-          <div>
-            <button onclick="event.stopPropagation(); eliminarRegistroAdmin('${adminTipoFiltro}', ${index})" class="bg-rose-500/20 text-rose-400 p-2 rounded-lg" title="Eliminar">🗑️</button>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    async function guardarRegistroAdmin() {
-      const tipo = document.getElementById('admin-tipo-reg').value;
-      const articulo = document.getElementById('admin-articulo').value.trim();
-      const pn = document.getElementById('admin-pn').value.trim();
-      const seccion = document.getElementById('admin-seccion').value.trim() || 'GENERAL';
-      const nota = document.getElementById('admin-nota').value.trim();
-      const editIndex = document.getElementById('admin-edit-index').value;
-
-      if (!articulo || !pn) { alert("Rellena el nombre y el Part Number"); return; }
-
-      const tabla = tipo === 'consumible' ? 'consumibles' : 'herramientas';
-      const dataActual = tipo === 'consumible' ? listaArticulos : listaHerramientas;
-
-      if (editIndex === "") {
-        const yaExiste = dataActual.some(i => i.pn.toUpperCase() === pn.toUpperCase());
-        if (yaExiste) {
-          alert(`⚠️ Error: El Part Number "${pn}" ya existe en la base de datos. No se permiten elementos duplicados.`);
-          return;
-        }
-      }
-
-      const nuevoItem = tipo === 'consumible' ? { articulo, pn, seccion, nota } : { articulo, pn, nota };
-
-      if (editIndex === "") {
-        let { error } = await _supabase.from(tabla).insert([nuevoItem]);
-        if (error) { alert("Error al guardar en Supabase: " + error.message); return; }
-      } else {
-        const itemOriginal = dataActual[parseInt(editIndex)];
-        let query = _supabase.from(tabla).update(nuevoItem);
-        if (itemOriginal.id) {
-          query = query.eq('id', itemOriginal.id);
-        } else {
-          query = query.eq('pn', itemOriginal.pn);
-        }
-        let { error } = await query;
-        if (error) { alert("Error al actualizar: " + error.message); return; }
-
-        document.getElementById('admin-edit-index').value = '';
-        document.getElementById('admin-form-title').innerText = "➕ Añadir Nuevo Consumible o Herramienta";
-      }
-
-      document.getElementById('admin-articulo').value = '';
-      document.getElementById('admin-pn').value = '';
-      document.getElementById('admin-seccion').value = '';
-      document.getElementById('admin-nota').value = '';
-      
-      await cargarDatosNube();
-      alert("¡Guardado y sincronizado en la nube con éxito!");
-    }
-
-    function editarRegistroAdmin(tipo, index) {
-      const data = tipo === 'consumible' ? listaArticulos : listaHerramientas;
-      const item = data[index];
-      if (!item) return;
-
-      document.getElementById('admin-tipo-reg').value = tipo;
-      document.getElementById('admin-articulo').value = item.articulo;
-      document.getElementById('admin-pn').value = item.pn;
-      document.getElementById('admin-seccion').value = item.seccion || '';
-      document.getElementById('admin-nota').value = item.nota || '';
-      document.getElementById('admin-edit-index').value = index;
-      document.getElementById('admin-form-title').innerText = "✏️ Editando Registro (Pulsa Guardar para aplicar)";
-      
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    async function eliminarRegistroAdmin(tipo, index) {
-      if (confirm("¿Seguro que deseas eliminar este registro de la nube?")) {
-        const data = tipo === 'consumible' ? listaArticulos : listaHerramientas;
-        const item = data[index];
-        if (!item) return;
-
-        const tabla = tipo === 'consumible' ? 'consumibles' : 'herramientas';
-        let query = _supabase.from(tabla).delete();
-        if (item.id) {
-          query = query.eq('id', item.id);
-        } else {
-          query = query.eq('pn', item.pn);
-        }
-        let { error } = await query;
-        if (error) { alert("Error al eliminar: " + error.message); return; }
-        await cargarDatosNube();
-        alert("¡Elemento eliminado correctamente!");
-      }
-    }
-
-    function renderizarDocsAdmin() {
-      const contenedor = document.getElementById('lista-docs-admin');
-      if (!contenedor) return;
-      contenedor.innerHTML = listaDocumentos.map((doc) => `
-        <div class="bg-slate-950 p-2 rounded-xl border border-slate-800 flex justify-between items-center text-[11px]">
-          <span class="font-bold text-white truncate max-w-[200px]">${doc.nombre}</span>
-          <button onclick="eliminarDocumentoAdmin('${doc.id}')" class="bg-rose-500/20 text-rose-400 px-2 py-1 rounded-lg">🗑️</button>
-        </div>
-      `).join('');
-    }
-
-    async function agregarDocumentoAdmin() {
-      const nombre = document.getElementById('admin-doc-nombre').value.trim();
-      const id = document.getElementById('admin-doc-id').value.trim();
-      if (!nombre || !id) { alert("Rellena el nombre y el ID del documento"); return; }
-      
-      let { error } = await _supabase.from('documentos').insert([{ id, nombre }]);
-      if (error) { alert("Error al añadir documento: " + error.message); return; }
-
-      document.getElementById('admin-doc-nombre').value = '';
-      document.getElementById('admin-doc-id').value = '';
-      await cargarDatosNube();
-      alert("¡Documento añadido a la nube con éxito!");
-    }
-
-    async function eliminarDocumentoAdmin(id) {
-      if (confirm("¿Eliminar este documento de la nube?")) {
-        let { error } = await _supabase.from('documentos').delete().eq('id', id);
-        if (error) { alert("Error al eliminar documento: " + error.message); return; }
-        await cargarDatosNube();
-      }
-    }
-
-    function verificarPassword() { 
-      const passInput = document.getElementById('input-password');
-      if (passInput && passInput.value === "@vioTech1993") { 
-        autenticado = true; 
-        evaluarAuthUI(); 
-        renderizarFeedbackAdmin(); 
-        renderizarAdminGestion();
-        renderizarDocsAdmin();
-        actualizarDatalistSecciones();
-      } else { 
-        alert("Contraseña incorrecta"); 
-      } 
-    }
-
-    function evaluarAuthUI() { 
-      const bloqueoAuth = document.getElementById('bloqueo-auth');
-      const panelAdmin = document.getElementById('panel-admin-contenido');
-      if (bloqueoAuth) bloqueoAuth.classList.toggle('hidden', autenticado); 
-      if (panelAdmin) panelAdmin.classList.toggle('hidden', !autenticado); 
-    }
-
-    function cerrarSesion() { 
-      autenticado = false; 
-      evaluarAuthUI(); 
-    }
-
-    function cargarDocumentoSeleccionado(id) { 
-      if(!id) return; 
-      const placeholder = document.getElementById('doc-placeholder');
-      const iframe = document.getElementById('iframe-doc-viewer');
-      if (placeholder) placeholder.classList.add('hidden'); 
-      if (iframe) iframe.src = `https://drive.google.com/file/d/${id}/preview?rm=minimal`; 
-    }
-
-    window.onload = function() {
-      cargarDatosNube();
-      cargarEstadoChecks();
-      configurarRealtime();
-    };
-  </script>
+ <!-- AVISO FIJO SUPERIOR -->
+ <div class="fixed top-3 left-4 right-4 z-50 pointer-events-none flex justify-between items-center">
+ <span class="text-[10px] font-black tracking-widest text-rose-500/95 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] uppercase pointer-events-auto">
+ ONLY FOR REFERENCE
+ </span>
+ </div>
+
+ <!-- Header Principal -->
+ <header class="text-center my-3">
+ <h1 class="text-2xl font-black text-sky-400 tracking-wider">AvioTech</h1>
+ <p class="text-[11px] text-slate-400 font-medium tracking-wide">Avionics Maintenance & Documentation</p>
+ </header>
+
+ <!-- NAVEGACIÓN INFERIOR FLOTANTE -->
+ <nav class="fixed bottom-3 left-3 right-3 z-40 bg-slate-950/95 backdrop-blur-md border border-slate-800/80 p-2 max-w-md mx-auto rounded-2xl shadow-2xl overflow-x-auto custom-scrollbar">
+ <div class="flex space-x-2 min-w-max text-[11px] font-bold tracking-wide">
+ <button id="btn-lista" onclick="cambiarPestana('lista')" class="px-4 py-2.5 rounded-xl text-center bg-sky-500 text-white shadow-lg transition-all flex flex-col items-center justify-center space-y-1">
+ <span class="text-sm leading-none">🔍</span><span>Search</span>
+ </button>
+ <button id="btn-tools" onclick="cambiarPestana('tools')" class="px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1">
+ <span class="text-sm leading-none">🧰</span><span>Tools</span>
+ </button>
+ <button id="btn-ramps" onclick="cambiarPestana('ramps')" class="px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1">
+ <span class="text-sm leading-none">📋</span><span>Ramps</span>
+ </button>
+ <button id="btn-calc" onclick="cambiarPestana('calc')" class="px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1">
+ <span class="text-sm leading-none">🧮</span><span>Calc</span>
+ </button>
+ <button id="btn-docs" onclick="cambiarPestana('docs')" class="px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1">
+ <span class="text-sm leading-none">📄</span><span>Docs</span>
+ </button>
+ <button id="btn-feedback" onclick="cambiarPestana('feedback')" class="px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1">
+ <span class="text-sm leading-none">💬</span><span>Buzón</span>
+ </button>
+ <button id="btn-admin" onclick="cambiarPestana('admin')" class="px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1">
+ <span class="text-sm leading-none">➕</span><span>Admin</span>
+ </button>
+ </div>
+ </nav>
+
+ <!-- PESTAÑA 1: SEARCH -->
+ <div id="pestana-lista" class="space-y-3">
+ <div class="relative">
+ <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-500">🔍</span>
+ <input type="text" id="buscador" oninput="filtrarYAgrupar()" placeholder="Buscar elemento, consumible o P/N..." 
+ class="w-full bg-slate-900/90 border border-slate-800 text-white placeholder-slate-500 rounded-2xl pl-11 pr-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/50 shadow-inner">
+ </div>
+ <div class="flex justify-between items-center px-1">
+ <span class="text-[11px] text-slate-400 font-medium">Elementos agrupados</span>
+ <span class="text-[11px] text-slate-400 font-medium"><span id="contador-items" class="text-sky-400 font-bold">0</span> consumibles</span>
+ </div>
+ <div id="contenedor-secciones" class="space-y-2.5"></div>
+ </div>
+
+ <!-- PESTAÑA 2: TOOLS (ORDENADAS A-Z) -->
+ <div id="pestana-tools" class="hidden space-y-3">
+ <div class="relative">
+ <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-500">🔍</span>
+ <input type="text" id="buscador-tools" oninput="filtrarTools()" placeholder="Buscar herramienta o equipo..." 
+ class="w-full bg-slate-900/90 border border-slate-800 text-white placeholder-slate-500 rounded-2xl pl-11 pr-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/50 shadow-inner">
+ </div>
+ <div class="flex justify-between items-center px-1">
+ <span class="text-[11px] text-slate-400 font-medium">Equipos de apoyo y útiles (A-Z)</span>
+ <span class="text-[11px] text-slate-400 font-medium"><span id="contador-tools" class="text-sky-400 font-bold">0</span> herramientas</span>
+ </div>
+ <div id="contenedor-tools" class="space-y-2.5"></div>
+ </div>
+
+ <!-- PESTAÑA 3: RAMPS (INALTERABLE) -->
+ <div id="pestana-ramps" class="hidden space-y-6">
+ <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+ <span class="text-xs text-slate-400 font-medium">Checklists completas (Guardado automático):</span>
+ <button onclick="resetearChecklist()" class="text-[11px] bg-rose-500/15 text-rose-400 border border-rose-500/30 px-2.5 py-1 rounded-xl hover:bg-rose-500/25 font-bold transition">
+ 🔄 Reset Checklist
+ </button>
+ </div>
+ <div class="flex space-x-2 bg-slate-900 p-1 rounded-xl border border-slate-800">
+ <button onclick="cambiarFlotaRamp('ng')" id="tab-flota-ng" class="flex-1 py-2 text-xs font-bold rounded-lg bg-sky-500 text-white transition">✈️ RAMPS NG</button>
+ <button onclick="cambiarFlotaRamp('max')" id="tab-flota-max" class="flex-1 py-2 text-xs font-bold rounded-lg text-slate-400 transition">🚀 RAMPS MAX</button>
+ </div>
+
+ <!-- RAMPS NG -->
+ <div id="seccion-ramps-ng" class="space-y-4">
+ <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
+ <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 1 CHECK – RA800</h3>
+ <div class="text-xs text-slate-300 space-y-2.5">
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r1-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PAGE 2/ ITEM 4.</span> 24-31-11-710-801 MAIN BATTERY DISCHARGE CHECK.</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r1-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG10/ ITEM 22.</span> 25-RYR-19 CHECK ALL EMERGENCY LIGHTS.</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r1-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG13/ ITEM 25.</span> 52-RYR-03 FLIGHT DECK DOOR SYSTEM OPERATIONAL CHECK.</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r1-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG13/ ITEM 26.</span> END OF RAMP1/3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span></label>
+ </div>
+ </div>
+ <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
+ <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 2 CHECK – RA801</h3>
+ <div class="text-xs text-slate-300 space-y-2.5">
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r2-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 1.</span> OPERATIONAL CHECK OF CVR IAW BTC 23-040-00-01 Ref: AMM: 23-71-00-710</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r2-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG2, PG3/ ITEM 2.</span> 23-100-00-01 OPERATIONALLY CHECK THE ELT.</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r2-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG5/ ITEM 9.</span> 33-010-00-01 OPERATIONAL CHECK OF THE EMERGENCY LIGHTS (RAMP 1).</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r2-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG6/ ITEM 10.</span> 33-RYR-01 OPERATIONAL CHECK OF PSU/ CABIN WALL /LAVATORY NO SMOKING / FASTEN SEAT BELT SIGN LIGHTS.</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r2-5" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG6/ ITEM 11.</span> 33-RYR-02 OPERATIONAL CHECK OF THE EXTERIOR LIGHTS AND CARGO HOLD LIGHTS.</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r2-6" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG7/ ITEM 12.</span> 33-RYR-03 CHECK OF THE COCKPIT INSTRUMENT AND PANEL LIGHTS.</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r2-7" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG7/ ITEM 13.</span> 33-RYR-04 OPERATIONAL CHECK OF THE PASSENGER COMPARTMENT LIGHTS.</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r2-8" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG8/ ITEM 15.</span> 9 EO.13/057 CHECK SPARE BULBS IN THE SPARE BULB COMPARTMENT.</span></label>
+ </div>
+ </div>
+ <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
+ <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 3 CHECK – RA901</h3>
+ <div class="text-xs text-slate-300 space-y-2.5">
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r3-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 2.</span> 21-150-00-01 CLEAN OR REPLACE THE CABIN TEMPERATURE SENSOR FILTERS.</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r3-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG7/ ITEM 10.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span></label>
+ </div>
+ </div>
+ <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
+ <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">RAMP 4 CHECK – RA902</h3>
+ <div class="text-xs text-slate-300 space-y-2.5">
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r4-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 3.</span> 27-162-00-01 OPERATIONAL CHECK THE FLAP SKEW AND ASYMMETRY SYSTEM AMM: 27-51-00-740</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r4-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG2/ ITEM 4.</span> 27-224-00-01 OPERATIONAL CHECK THE LEADING EDGE DEVICES UNCOMMANDED MOTION PROTECTION AMM: 27-81-00-710.</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r4-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG3/ ITEM 6.</span> 29-230-00-01 OPERATIONAL CHECK THE STANDBY RUDDER SYSTEM AMM: 29-21-00-700.</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-r4-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG4/ ITEM 8.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span></label>
+ </div>
+ </div>
+ <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
+ <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">50FC CHECK – RA858</h3>
+ <div class="text-xs text-slate-300 space-y-2.5">
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-fc50-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 3.</span> SPCU AMM: 24-34-00-710</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-fc50-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 5.</span> E/E EQUIPMENT CLEANING AND WEATHER RADAR TX/RX INSPECTION</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-fc50-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG2/ ITEM 6.</span> COCKPIT CLEAN AMM: 31-62-11-100-801</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-fc50-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG2/ ITEM 7.</span> P5 GUARDS</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-fc50-5" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG3/ ITEM 9.</span> LANDING GEAR LIGHTS (MASTER DIM TEST)</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-fc50-6" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG4/ ITEM 12.</span> FMC CDU LEFT ENGINE (SHORT TIME FAULTS)</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-fc50-7" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG5/ ITEM 13.</span> FMC CDU RIGHT ENGINE (SHORT TIME FAULTS)</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="ng-fc50-8" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-sky-500"><span><span class="font-semibold text-slate-400">PG6/ ITEM 14.</span> BITE CHECK PACK ZONE AMM 21-61-00-700-806-002</span></label>
+ </div>
+ </div>
+ </div>
+
+ <!-- RAMPS MAX -->
+ <div id="seccion-ramps-max" class="hidden space-y-4">
+ <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
+ <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wide">RAMP 1 CHECK – RA800</h3>
+ <div class="text-xs text-slate-300 space-y-2.5">
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r1-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PAGE 2/ ITEM 4.</span> 24-31-11-710-801 MAIN BATTERY DISCHARGE CHECK.</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r1-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG10/ ITEM 22.</span> 25-RYR-19 CHECK ALL EMERGENCY LIGHTS.</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r1-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG13/ ITEM 25.</span> 52-RYR-03 FLIGHT DECK DOOR SYSTEM OPERATIONAL CHECK.</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r1-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG13/ ITEM 26.</span> END OF RAMP1/3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span></label>
+ </div>
+ </div>
+ <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
+ <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wide">RAMP 2A/B CHECK – RA801</h3>
+ <div class="text-xs text-slate-300 space-y-2.5">
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r2-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">A/B - PG1/ ITEM 1.</span> OPERATIONAL CHECK OF CVR IAW BTC 23-040-00-01 Ref: AMM: 23-71-00-710</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r2-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">B - PG5/ ITEM 9.</span> 33-010-00-01 OPERATIONAL CHECK OF THE EMERGENCY LIGHTS (RAMP 1).</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r2-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">A/B - PG6/ ITEM 11.</span> 33-RYR-02 OPERATIONAL CHECK OF EXTERIOR & CARGO HOLD LIGHTS.</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r2-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">A/B - PG7/ ITEM 12.</span> 33-RYR-03 CHECK OF COCKPIT INSTRUMENT & PANEL LIGHTS.</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r2-5" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">A/B - PG8/ ITEM 15.</span> 9 EO.13/057 CHECK SPARE BULBS IN COMPARTMENT.</span></label>
+ </div>
+ </div>
+ <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
+ <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wide">RAMP 3 CHECK – RA901</h3>
+ <div class="text-xs text-slate-300 space-y-2.5">
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r3-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG3/ ITEM 3.</span> 27-162-00-01 OPERATIONAL CHECK FLAP SKEW & ASYMMETRY AMM: 27-51-00-740</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r3-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG7/ ITEM 2.</span> INOP DECALS ON ALL RADIO</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r3-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG7/ ITEM 10.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span></label>
+ </div>
+ </div>
+ <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
+ <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wide">RAMP 4 CHECK – RA902</h3>
+ <div class="text-xs text-slate-300 space-y-2.5">
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r4-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 1.</span> 21-150-00-01 CLEAN OR REPLACE CABIN TEMP SENSOR FILTERS.</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r4-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG2/ ITEM 4.</span> 27-224-00-01 LEADING EDGE DEVICES UNCOMMANDED MOTION AMM: 27-81-00-710.</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r4-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG3/ ITEM 6.</span> 29-230-00-01 STANDBY RUDDER SYSTEM AMM: 29-21-00-700.</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-r4-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG4/ ITEM 8.</span> END OF RAMP-3/4 CHECK C/B’s & SWITCH CONFIG IAW RYR T/N 20/14.</span></label>
+ </div>
+ </div>
+ <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
+ <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wide">50FC CHECK – RA858</h3>
+ <div class="text-xs text-slate-300 space-y-2.5">
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-fc50-1" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 3.</span> SPCU AMM: 24-34-00-710</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-fc50-2" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG1/ ITEM 5.</span> E/E EQUIPMENT CLEANING & WEATHER RADAR INSPECTION</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-fc50-3" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG2/ ITEM 6.</span> COCKPIT CLEAN AMM: 31-62-11-100-801</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-fc50-4" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG2/ ITEM 7.</span> P5 GUARDS</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-fc50-5" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG4/ ITEM 2.</span> 33-RYR-01 PSU / WALL / LAVATORY NO SMOKING SIGN LIGHTS</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-fc50-6" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG4/ ITEM 3.</span> 33-RYR-04 PASSENGER COMPARTMENT LIGHTS</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-fc50-7" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG3/ ITEM 9.</span> LANDING GEAR LIGHTS (MASTER DIM TEST)</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-fc50-8" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG4/ ITEM 12.</span> FMC CDU LEFT ENGINE (SHORT TIME FAULTS)</span></label>
+ <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" id="max-fc50-9" onchange="guardarEstadoCheck(this)" class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-emerald-500"><span><span class="font-semibold text-slate-400">PG5/ ITEM 13.</span> FMC CDU RIGHT ENGINE (SHORT TIME FAULTS)</span></label>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <!-- PESTAÑA 4: CALCULATOR -->
+ <div id="pestana-calc" class="hidden space-y-4">
+ <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-4 shadow-xl">
+ <h3 class="font-bold text-amber-400 text-xs uppercase tracking-wide">🔧 Conversión de Torque (In-Lb / Ft-Lb / Nm)</h3>
+ <div class="space-y-3">
+ <div>
+ <label class="block text-[11px] text-slate-400 mb-1">Libras-Pulgada (In-Lb)</label>
+ <input type="number" id="calc-inlb" oninput="convertirTorque('inlb')" placeholder="Ej. 50" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+ </div>
+ <div>
+ <label class="block text-[11px] text-slate-400 mb-1">Libras-Pie (Ft-Lb)</label>
+ <input type="number" id="calc-ftlb" oninput="convertirTorque('ftlb')" placeholder="Ej. 10" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+ </div>
+ <div>
+ <label class="block text-[11px] text-slate-400 mb-1">Newton-metro (Nm)</label>
+ <input type="number" id="calc-nm" oninput="convertirTorque('nm')" placeholder="Ej. 5.65" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <!-- PESTAÑA 5: DOCUMENTS -->
+ <div id="pestana-docs" class="hidden space-y-4">
+ <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 space-y-2 shadow-lg">
+ <label class="block text-xs font-bold text-sky-400 uppercase tracking-wide">Seleccionar Documento Técnico:</label>
+ <select id="select-doc" onchange="cargarDocumentoSeleccionado(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none">
+ <option value="" disabled selected>-- Elige un documento --</option>
+ </select>
+ </div>
+ <div class="relative w-full rounded-2xl overflow-hidden border border-slate-800 shadow-2xl bg-slate-950 h-[60vh] secure-container">
+ <div class="secure-overlay" title="Protección de documento"></div>
+ <div id="doc-placeholder" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center text-slate-400 space-y-2 z-5 bg-slate-950">
+ <span class="text-3xl">📂</span>
+ <p class="text-xs font-medium">Selecciona un documento para visualizar.</p>
+ </div>
+ <iframe id="iframe-doc-viewer" src="" class="w-full h-full border-0 relative z-10" title="Visor de Documentación"></iframe>
+ </div>
+ </div>
+
+ <!-- PESTAÑA 6: BUZÓN -->
+ <div id="pestana-feedback" class="hidden space-y-4">
+ <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
+ <div class="border-b border-slate-800 pb-2">
+ <h3 class="font-bold text-amber-400 text-sm">💬 Buzón de Sugerencias y Erratas</h3>
+ <p class="text-[11px] text-slate-400 mt-1">Comunica erratas, faltas o comentarios al administrador.</p>
+ </div>
+ <div class="space-y-3">
+ <select id="feed-tipo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+ <option value="Errata P/N">⚠️ Errata en Part Number</option>
+ <option value="Falta Artículo">📦 Falta un artículo</option>
+ <option value="Other">💬 Other / Opinión</option>
+ </select>
+ <input type="text" id="feed-elemento" placeholder="Elemento afectado o asunto" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+ <textarea id="feed-mensaje" rows="3" placeholder="Descripción..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white"></textarea>
+ <button onclick="enviarFeedback()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition">Enviar</button>
+ </div>
+ </div>
+ </div>
+
+ <!-- PESTAÑA 7: ADMIN -->
+ <div id="pestana-admin" class="hidden space-y-4">
+ <div id="bloqueo-auth" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center space-y-4 shadow-xl">
+ <div class="text-4xl">🔒</div>
+ <h3 class="text-base font-bold text-white">Panel de Administración</h3>
+ <input type="password" id="input-password" placeholder="Password" class="w-full bg-slate-950 border border-slate-800 text-center rounded-xl px-4 py-2.5 text-sm text-white">
+ <button onclick="verificarPassword()" class="w-full bg-sky-500 font-bold py-2.5 rounded-xl text-sm">Acceder</button>
+ </div>
+
+ <div id="panel-admin-contenido" class="hidden space-y-4">
+ <!-- CÁMARA CON OCR INTELIGENTE -->
+ <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
+ <h3 class="font-bold text-sky-400 text-xs">📷 Capturar Etiqueta (Autocompletar con OCR)</h3>
+ <input type="file" accept="image/*" capture="environment" onchange="procesarFotoCamara(event)" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-sky-500 file:text-white hover:file:bg-sky-600">
+ <div id="ocr-status" class="text-[11px] text-amber-400 font-medium hidden">⏳ Escaneando texto de la etiqueta...</div>
+ <div id="preview-foto" class="hidden mt-2">
+ <img id="img-capturada" class="w-full h-32 object-cover rounded-xl border border-slate-800" alt="Vista previa">
+ <button onclick="limpiarFoto()" class="mt-2 text-[10px] text-rose-400 underline">Quitar foto</button>
+ </div>
+ </div>
+
+ <!-- FORMULARIO CREAR / EDITAR -->
+ <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
+ <h3 id="admin-form-title" class="font-bold text-amber-400 text-xs">➕ Añadir Nuevo Consumible o Herramienta</h3>
+ <input type="hidden" id="admin-edit-index" value="">
+ <div class="space-y-2">
+ <select id="admin-tipo-reg" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+ <option value="consumible">📦 Consumible / Material (Search)</option>
+ <option value="tool">🧰 Herramienta / Equipo (Tools)</option>
+ </select>
+ <input type="text" id="admin-articulo" placeholder="Nombre / Descripción (ej. RING)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+ <input type="text" id="admin-pn" placeholder="Part Number (ej. MS28778-6)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+ 
+ <!-- SECCIÓN CON DATALIST DE CARPETAS DE SEARCH -->
+ <div>
+ <input type="text" id="admin-seccion" list="lista-secciones-datalist" placeholder="Sección (solo para consumibles)..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+ <datalist id="lista-secciones-datalist"></datalist>
+ </div>
+
+ <input type="text" id="admin-nota" placeholder="Nota / Consejo o Tool requerida (opcional)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+ <button onclick="guardarRegistroAdmin()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition">Guardar en la Nube</button>
+ </div>
+ </div>
+
+ <!-- GESTIÓN DE REGISTROS (CLIC PARA EDITAR) -->
+ <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
+ <h3 class="font-bold text-amber-400 text-xs">📋 Gestionar Registros en la Nube (Pulsa para editar)</h3>
+ <div class="flex space-x-2">
+ <button onclick="filtrarAdminList('consumible')" id="btn-admin-cons" class="flex-1 py-1 text-[10px] rounded-lg bg-sky-500 text-white font-bold">Consumibles</button>
+ <button onclick="filtrarAdminList('tool')" id="btn-admin-tls" class="flex-1 py-1 text-[10px] rounded-lg bg-slate-950 text-slate-400 font-bold">Herramientas</button>
+ </div>
+ <div id="lista-gestion-admin" class="space-y-2 max-h-60 overflow-y-auto pr-1 text-xs"></div>
+ </div>
+
+ <!-- GESTIÓN DE DOCUMENTOS -->
+ <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
+ <h3 class="font-bold text-sky-400 text-xs">📄 Gestionar Documentos de Google Drive</h3>
+ <div class="space-y-2">
+ <input type="text" id="admin-doc-nombre" placeholder="Nombre del documento" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+ <input type="text" id="admin-doc-id" placeholder="ID de Google Drive" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+ <button onclick="agregarDocumentoAdmin()" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-2 rounded-xl text-xs transition">Añadir Documento</button>
+ </div>
+ <div id="lista-docs-admin" class="space-y-2 max-h-40 overflow-y-auto pr-1 text-xs mt-2"></div>
+ </div>
+
+ <!-- BUZÓN RECIBIDO -->
+ <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
+ <h3 class="font-bold text-amber-400 text-xs">📥 Buzón Recibido (Nube)</h3>
+ <div id="lista-feedback-admin" class="space-y-2 text-xs max-h-60 overflow-y-auto pr-1"></div>
+ </div>
+
+ <button onclick="cerrarSesion()" class="text-xs text-rose-400 underline block text-center w-full pt-2">Cerrar Sesión</button>
+ </div>
+ </div>
+
+ <!-- Script Principal -->
+ <script>
+ const SUPABASE_URL = 'https://vlrloizxrvklkzdvgkii.supabase.co';
+ const SUPABASE_KEY = 'sb_publishable_veJeqUFfhqIVoCk0JLma6A_fN9llMru';
+ const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+ const ARTICULOS_INICIALES = [
+ { "articulo": "O-RING 1", "pn": "MS9385-07", "seccion": "AIR PACK OVHT SENSOR", "nota": "" },
+ { "articulo": "O-RING 2", "pn": "S9028A905", "seccion": "AIR PACK OVHT SENSOR", "nota": "" },
+ { "articulo": "MOLYKOTE4", "pn": "M0LYKOTE44", "seccion": "AIR PACK OVHT SENSOR", "nota": "" },
+ { "articulo": "KRYTOX P", "pn": "GPL206", "seccion": "AIR PACK OVHT SENSOR", "nota": "" },
+ { "articulo": "NEVER SEEZ COMPOUND", "pn": "NSBT8N", "seccion": "AIR PACK OVHT SENSOR", "nota": "" },
+ { "articulo": "PACKING", "pn": "AS3582-028", "seccion": "ATC ANTENNAS", "nota": "" },
+ { "articulo": "SEALANT", "pn": "BMS5-95 / PS870B1-2", "seccion": "ATC ANTENNAS", "nota": "" },
+ { "articulo": "COMPOUND", "pn": "DC4", "seccion": "ATC ANTENNAS", "nota": "" },
+ { "articulo": "EMERGENCY LIGHT SIGNS SMALL LAMPS", "pn": "3071BPEGPL", "seccion": "CABIN LIGHTS", "nota": "" },
+ { "articulo": "EMERGENCY LIGHTS EXTERIOR LAMPS", "pn": "767", "seccion": "CABIN LIGHTS", "nota": "" },
+ { "articulo": "BELT AND NO SMOKE LIGHT", "pn": "387", "seccion": "CABIN LIGHTS", "nota": "" },
+ { "articulo": "READING LIGHT", "pn": "9204", "seccion": "CABIN LIGHTS", "nota": "" },
+ { "articulo": "FUEL STATION LIGHT", "pn": "GE1495", "seccion": "CABIN LIGHTS", "nota": "" },
+ { "articulo": "WORK LIGHT COVER", "pn": "239052-13", "seccion": "CABIN LIGHTS", "nota": "" },
+ { "articulo": "FIRE TEST LIGHT COVER GREEN", "pn": "682-1001-001", "seccion": "CABIN LIGHTS", "nota": "" },
+ { "articulo": "LENS COVER FOR GALLEY LIGHT", "pn": "239004-19", "seccion": "CABIN LIGHTS", "nota": "" },
+ { "articulo": "LAMP BULB FOR EEC ALT SWITCH", "pn": "MS24515-685AS15", "seccion": "CABIN LIGHTS", "nota": "" },
+ { "articulo": "ASSY LOWER EMERG SIGN", "pn": "70-0366-11", "seccion": "CABIN LIGHTS", "nota": "" },
+ { "articulo": "GALLEY BULB", "pn": "OLN115-18K", "seccion": "CABIN LIGHTS", "nota": "" },
+ { "articulo": "BASE WHITE EMERG SIGNS", "pn": "207330", "seccion": "CABIN LIGHTS", "nota": "" },
+ { "articulo": "EMERG SIGNS LENS (EXIT)", "pn": "207377-1001", "seccion": "CABIN LIGHTS", "nota": "" },
+ { "articulo": "FMC CDU SHIM", "pn": "137300-78", "seccion": "CDU", "nota": "" },
+ { "articulo": "FMC CDU SCREW", "pn": "117357-21", "seccion": "CDU", "nota": "" },
+ { "articulo": "EMERG BATTERIES", "pn": "ADD71701-100", "seccion": "EMERG BATTERIES", "nota": "" },
+ { "articulo": "FUSE", "pn": "B215-06", "seccion": "EMERG BATTERIES", "nota": "" },
+ { "articulo": "FLASHLIGHT BATTERIES", "pn": "P4-01-0021", "seccion": "FLASHLIGHT", "nota": "" },
+ { "articulo": "FLASHLIGHT SHIELD", "pn": "A1-18-1030", "seccion": "FLASHLIGHT", "nota": "" },
+ { "articulo": "MEGAPHONE SET SCREW KIT", "pn": "9416", "seccion": "MEGAPHONE", "nota": "" },
+ { "articulo": "COVER (BLUE)", "pn": "5180453792", "seccion": "FLOORPATH", "nota": "" },
+ { "articulo": "ENDCAP 1CM", "pn": "417N5212-1CM", "seccion": "FLOORPATH", "nota": "" },
+ { "articulo": "BULB (EMERGENCY LIGHT)", "pn": "3071BPEGPL", "seccion": "FLOORPATH", "nota": "" },
+ { "articulo": "EMERG FLOORPATH LIGHT ASSY", "pn": "81000-22608ATS", "seccion": "FLOORPATH", "nota": "" },
+ { "articulo": "FLOORPATH RECEPTACLE - PIN", "pn": "60983-3", "seccion": "FLOORPATH", "nota": "" },
+ { "articulo": "FLOORPATH LIGHT", "pn": "60888-4", "seccion": "FLOORPATH", "nota": "" },
+ { "articulo": "CRIMP TOOL PIN", "pn": "10131-4", "seccion": "FLOORPATH", "nota": "" },
+ { "articulo": "COVER TRACK (BLACK)", "pn": "ACIFL00121-02", "seccion": "FLOORPATH", "nota": "" },
+ { "articulo": "RED LENS", "pn": "S417N509-6", "seccion": "FLOORPATH", "nota": "" },
+ { "articulo": "WHITE LENS", "pn": "S417N509-2", "seccion": "FLOORPATH", "nota": "" },
+ { "articulo": "SOCKETS EMERG LIGHTS", "pn": "60988-3", "seccion": "FLOORPATH", "nota": "" },
+ { "articulo": "SAFTGLO TAPE", "pn": "POLYKEN108FR0-5", "seccion": "FLOORPATH", "nota": "" },
+ { "articulo": "LOGO LIGHT BULB", "pn": "HLX64621", "seccion": "LOGO LIGHTS", "nota": "" },
+ { "articulo": "SCREWS LARGE", "pn": "BACB30ZE4-8", "seccion": "LOGO LIGHTS", "nota": "" },
+ { "articulo": "SCREWS SMALL", "pn": "BACB30XD3K8", "seccion": "LOGO LIGHTS", "nota": "" },
+ { "articulo": "SPRING A", "pn": "81116-37601", "seccion": "LOGO LIGHTS", "nota": "" },
+ { "articulo": "SPRING B", "pn": "81115-37601", "seccion": "LOGO LIGHTS", "nota": "" },
+ { "articulo": "SOCKET", "pn": "81004-37602", "seccion": "LOGO LIGHTS", "nota": "" },
+ { "articulo": "RED SEALANT", "pn": "PR1428B1-2", "seccion": "LRRA", "nota": "" },
+ { "articulo": "BLACK SEALANT", "pn": "BMS5-95 / PS870B1-2", "seccion": "LRRA", "nota": "" },
+ { "articulo": "GASKET", "pn": "AG723000-40", "seccion": "LRRA", "nota": "" },
+ { "articulo": "GREEN SEALANT", "pn": "HT3326-5-50", "seccion": "LRRA", "nota": "" },
+ { "articulo": "ANTENNA", "pn": "S67-2002-28", "seccion": "LRRA", "nota": "" },
+ { "articulo": "SCREWS", "pn": "BACB30NM3K4", "seccion": "MAIN & AUX BATTERIES", "nota": "" },
+ { "articulo": "BATTERY", "pn": "024147-000", "seccion": "MAIN & AUX BATTERIES", "nota": "" },
+ { "articulo": "CONNECTOR", "pn": "BACC45FT12-12P", "seccion": "MAIN & AUX BATTERIES", "nota": "" },
+ { "articulo": "FUEL PANEL E&E", "pn": "NAS514P1032-16", "seccion": "PANELS SCREWS", "nota": "" },
+ { "articulo": "E&E DOOR SWITCH PANEL", "pn": "NAS514P832-12", "seccion": "PANELS SCREWS", "nota": "" },
+ { "articulo": "NUTPLATE FUEL PANEL E&E", "pn": "BACN10ZR3CD", "seccion": "PANELS SCREWS", "nota": "" },
+ { "articulo": "Cockpit cap (rosca)", "pn": "15PA90-6W", "seccion": "RAMPS", "nota": "Ver Switch tips" },
+ { "articulo": "COCKPit cap (fino)", "pn": "69-44578-2", "seccion": "RAMPS", "nota": "Ver Switch tips" },
+ { "articulo": "Cabin Temp sensor filter (small)", "pn": "412A1605-41", "seccion": "RAMPS", "nota": "" },
+ { "articulo": "Flt comp temp sensor filter (big)", "pn": "213A6404-1", "seccion": "RAMPS", "nota": "" },
+ { "articulo": "INOP STICKER", "pn": "INT1072", "seccion": "RAMPS", "nota": "" },
+ { "articulo": "GRILLE (FILTRO CABINA)", "pn": "412N1122-3A", "seccion": "RAMPS", "nota": "" },
+ { "articulo": "BULB GALLEY", "pn": "MSC115", "seccion": "RAMPS", "nota": "" },
+ { "articulo": "BEZEL", "pn": "11-6557-7GATS", "seccion": "RAMPS", "nota": "" },
+ { "articulo": "COVER CALL LIGHT FOR CABIN CREW", "pn": "25-1734-15", "seccion": "RAMPS", "nota": "" },
+ { "articulo": "LACING TAPE", "pn": "BMS13-54TY3CL1FC", "seccion": "SKEW SENSOR", "nota": "" },
+ { "articulo": "TAPE", "pn": "SCOTH70", "seccion": "SKEW SENSOR", "nota": "" },
+ { "articulo": "AV25", "pn": "AV25", "seccion": "SKEW SENSOR", "nota": "" },
+ { "articulo": "D50", "pn": "D5026NS", "seccion": "SKEW SENSOR", "nota": "" },
+ { "articulo": "NUT SCREWS HARNESS EGT", "pn": "AS3486-10", "seccion": "ENGINES", "nota": "" },
+ { "articulo": "MOX TAPE", "pn": "M0XNESS620B1", "seccion": "ENGINES", "nota": "" },
+ { "articulo": "TAPE HIGH TEMP ALUMINIUM FOIL", "pn": "3M363", "seccion": "ENGINES", "nota": "" },
+ { "articulo": "TAPE GLASS CLOTH HIGH TEMP", "pn": "3M361", "seccion": "ENGINES", "nota": "" },
+ { "articulo": "LOCKWIRE FOR HARNESS REPAIR", "pn": "MS20995C15", "seccion": "ENGINES", "nota": "" },
+ { "articulo": "CLAMP BANDS CONNECTOR", "pn": "600-052", "seccion": "ENGINES", "nota": "TOOL: DBS-1101" },
+ { "articulo": "YELLOW / WHITE", "pn": "M81969-14-04", "seccion": "INSERTS/EXTRACTORS", "nota": "" },
+ { "articulo": "BLUE / WHITE", "pn": "M81969-14-03", "seccion": "INSERTS/EXTRACTORS", "nota": "" },
+ { "articulo": "RED / WHITE", "pn": "M81969-14-02", "seccion": "INSERTS/EXTRACTORS", "nota": "" },
+ { "articulo": "RED / WHITE (VARIANT)", "pn": "M81969-14-11", "seccion": "INSERTS/EXTRACTORS", "nota": "" },
+ { "articulo": "GREEN / WHITE", "pn": "M81969-14-01", "seccion": "INSERTS/EXTRACTORS", "nota": "" },
+ { "articulo": "VERDE / ROJO", "pn": "CTA1160", "seccion": "INSERTS/EXTRACTORS", "nota": "" },
+ { "articulo": "GREEN / WHITE METAL", "pn": "M81969-1-01", "seccion": "INSERTS/EXTRACTORS", "nota": "" },
+ { "articulo": "RED / WHITE METAL", "pn": "M81969-1-02", "seccion": "INSERTS/EXTRACTORS", "nota": "" },
+ { "articulo": "BLUE / WHITE METAL", "pn": "M81969-1-03", "seccion": "INSERTS/EXTRACTORS", "nota": "" },
+ { "articulo": "ELEVATOR PLUG FOR LEAK TEST", "pn": "MS21913V6P", "seccion": "OTHERS", "nota": "" },
+ { "articulo": "LOCKWIRE FLIGHT DECK SWITCHES", "pn": "MS20995CY15", "seccion": "OTHERS", "nota": "" },
+ { "articulo": "RODFILLER CLAMPS", "pn": "69B47961-2", "seccion": "OTHERS", "nota": "" },
+ { "articulo": "ANTISTATIC BAGS", "pn": "ESDBAG62X48", "seccion": "OTHERS", "nota": "" },
+ { "articulo": "STATIC DISCHARGER LARGE", "pn": "740001", "seccion": "OTHERS", "nota": "" },
+ { "articulo": "STATIC DISCHARGER SHORT", "pn": "740007", "seccion": "OTHERS", "nota": "" },
+ { "articulo": "SPLICE MOISTURE RED", "pn": "D436-36", "seccion": "SPLICES", "nota": "" },
+ { "articulo": "SPLICE MOISTURE BLUE", "pn": "D436-37", "seccion": "SPLICES", "nota": "" },
+ { "articulo": "SPLICE MOISTURE YELLOW", "pn": "D436-38", "seccion": "SPLICES", "nota": "" },
+ { "articulo": "END CAP CRIMP TYPE (RED)", "pn": "324485", "seccion": "SPLICES", "nota": "CRIMP TOOL: 58573-1" },
+ { "articulo": "Terminal lug landing light", "pn": "323750", "seccion": "SPLICES", "nota": "CRIMP TOOL: 59461" },
+ { "articulo": "TERMINAL SPADE TYPE", "pn": "3-350816-2", "seccion": "SPLICES", "nota": "CRIMP TOOL: 9-1478240-0" },
+ { "articulo": "TEFLON TAPE", "pn": "P421", "seccion": "TAPES TO REPAIR HARNESS", "nota": "" },
+ { "articulo": "HEATSHRINK 1/4 YELLOW", "pn": "RNF100-1-4-4", "seccion": "HEATSHRINKS", "nota": "" },
+ { "articulo": "SMALL SCREW RACK CONNECTOR", "pn": "BACS12HN06-6", "seccion": "RACKS & SCREWS", "nota": "" },
+ { "articulo": "CABLE TIE (BACS38K6)", "pn": "BACS38K6", "seccion": "STRAP - CABLE TIE", "nota": "1st Longest" },
+ { "articulo": "CABLE TIE (BACS38K3)", "pn": "BACS38K3", "seccion": "STRAP - CABLE TIE", "nota": "2nd Longest" },
+ { "articulo": "CABLE TIE (BACS38K2)", "pn": "BACS38K2", "seccion": "STRAP - CABLE TIE", "nota": "Medium" },
+ { "articulo": "CABLE TIE (BACS38K7)", "pn": "BACS38K7", "seccion": "STRAP - CABLE TIE", "nota": "Medium" },
+ { "articulo": "CABLE TIE (BACS38K10)", "pn": "BACS38K10", "seccion": "STRAP - CABLE TIE", "nota": "Small" },
+ { "articulo": "CABLE TIE (BACS38K1)", "pn": "BACS38K1", "seccion": "STRAP - CABLE TIE", "nota": "Small" },
+ { "articulo": "CABLE TIE (BACS38K4)", "pn": "BACS38K4", "seccion": "STRAP - CABLE TIE", "nota": "Small (Typical)" },
+ { "articulo": "CABLE TIE (BACS38K9)", "pn": "BACS38K9", "seccion": "STRAP - CABLE TIE", "nota": "Smallest" },
+ { "articulo": "CABLE TIE (BACS38K5)", "pn": "BACS38K5", "seccion": "STRAP - CABLE TIE", "nota": "Smallest" },
+ { "articulo": "MCP SCREW (BLACK)", "pn": "BACS12CK3H7", "seccion": "COCKPIT", "nota": "" },
+ { "articulo": "MCP WASHER (BLACK)", "pn": "NAS1149C0332B", "seccion": "COCKPIT", "nota": "" },
+ { "articulo": "CAP PSU CONNECTORS", "pn": "M85049/138-47A", "seccion": "CABIN PARTS", "nota": "" },
+ { "articulo": "AIRSTAIRS LAMPS", "pn": "1864", "seccion": "AIRSTAIRS", "nota": "" },
+ { "articulo": "AIRSTAIR LIGHT LENS", "pn": "870661-1", "seccion": "AIRSTAIRS", "nota": "" },
+ { "articulo": "Inop tag label (small size)", "pn": "CBTAG", "seccion": "TAGS AND COLLARS", "nota": "" },
+ { "articulo": "Collars inop system", "pn": "S4933959-523", "seccion": "TAGS AND COLLARS", "nota": "" },
+ { "articulo": "White collar", "pn": "10164-3", "seccion": "TAGS AND COLLARS", "nota": "" },
+ { "articulo": "Red collar (inop system)", "pn": "10237-1", "seccion": "TAGS AND COLLARS", "nota": "" },
+ { "articulo": "Wire mount sliding windows", "pn": "MB-3", "seccion": "WINDOWS PARTS", "nota": "" },
+ { "articulo": "SCREW TERMINAL LUG WINDOW", "pn": "BACS12HN06-4", "seccion": "WINDOWS PARTS", "nota": "" },
+ { "articulo": "WASHER TERMINAL LUG WINDOW", "pn": "MS35338-98", "seccion": "WINDOWS PARTS", "nota": "" }
+ ];
+
+ const HERRAMIENTAS_INICIALES = [
+ { "articulo": "QUICKSET", "pn": "QUICKSET", "nota": "" },
+ { "articulo": "FLUKE117", "pn": "FLUKE117", "nota": "" },
+ { "articulo": "STAB TRIM CUTOUT TESTER", "pn": "C27007-46", "nota": "" },
+ { "articulo": "ELT ADT406AP 50 OHM DUMMY LOAD KIT", "pn": "112-3148", "nota": "" },
+ { "articulo": "PROBE OVHT AND TESTER", "pn": "BH17336A // BH16440-40", "nota": "" },
+ { "articulo": "TEMPCAL TESTER", "pn": "H394-230", "nota": "" },
+ { "articulo": "BONDING METER", "pn": "M1", "nota": "" },
+ { "articulo": "HAND HELD MULTIPURPOSE I/FACE HHMPI", "pn": "FDS400-301", "nota": "" },
+ { "articulo": "FIREX TEST CARGO", "pn": "C26006-1", "nota": "" },
+ { "articulo": "TEST SET / PITOT STATIC", "pn": "MPS45", "nota": "" },
+ { "articulo": "GROUND FAULT PROTECTION SYS TEST SET", "pn": "F72917-19", "nota": "" },
+ { "articulo": "PDL LAPTOP WITH TECHSAT PDL MKII", "pn": "TECHSATPDLLAPT0P", "nota": "" },
+ { "articulo": "FLUKE324 (CLAMP)", "pn": "FLUKE324", "nota": "" },
+ { "articulo": "CAJA RADIOALTIMETRO", "pn": "C34005-16", "nota": "" },
+ { "articulo": "RADIO ALTIMETER TEST SET", "pn": "DRA707", "nota": "" },
+ { "articulo": "TRAMMEL BAR", "pn": "F80055-1", "nota": "" },
+ { "articulo": "RUDDER PCU TEST SET", "pn": "C29002-17", "nota": "" },
+ { "articulo": "HIRFS", "pn": "906-10247-3 OR XLR-9703-01", "nota": "" },
+ { "articulo": "WTB FEEDTHROUGH CONNECTORS ADAPTER (HIRFS)", "pn": "WTBADAPTER", "nota": "" },
+ { "articulo": "TOOL CONNECTORS FOR BACKSHELLS", "pn": "CMS837", "nota": "" },
+ { "articulo": "KNIPEX CUTTING SAFTGLO", "pn": "9435215", "nota": "" },
+ { "articulo": "FIRE EXTINGUISHER BOTTLE SQUIB TESTER", "pn": "F80229-69", "nota": "" },
+ { "articulo": "WIRE JUMPER KIT MID-CABIN B737MAX", "pn": "RYR-EXITS-DDG-JUMPER-KIT", "nota": "" }
+ ];
+
+ const DOCUMENTOS_INICIALES = [
+ { id: "1LGKOrWHK4XtMfJx0blT1F68qGqQtQ-WB", nombre: "Buscar un conector.pdf" },
+ { id: "1SfKknSDXAUEzawX_0hoeBc2b-7JVM74e", nombre: "Buscar un splice.pdf" },
+ { id: "136Sy63TSLSPhAWHXx1a5G0Bg5NJq_AFQ", nombre: "Buscar un cable.pdf" },
+ { id: "1FL2GrFNo6Nayxkg80e4tW1XFqgzDldlO", nombre: "TAGS & TOOLS.pdf" },
+ { id: "1yncOpHr8G60YE1aRBH0LbeEiAnb0Mf01", nombre: "Tie straps picture.jpg" },
+ { id: "1Kk6nv4PKqwEijjieckj081bB9Tv4x09c", nombre: "SPARE BULB.jpeg" },
+ { id: "1qn4OZjnpeNwWW4NtTpGrv4kvcJeZiLD3", nombre: "WRN PTT CPT.jpeg" },
+ { id: "1nfwnqDNmkyoSoosPNvxx_YCHedUvBC5Y", nombre: "WRN PTT FO.jpeg" },
+ { id: "1mYzFByujXZWq0JvgF6ILP0B8D2Ap45pj", nombre: "Rellenar Tech log.jpeg" },
+ { id: "1d0vSLLoPVselONZSwlKyAuXFiW3cwJvS", nombre: "Clamp" },
+ { id: "1uOID8H4gmVmeWIEOfcf3MqhTZam9bXjT", nombre: "BSI LIGHTING SYSTEM.pdf" },
+ { id: "17Z8lUXNcySm2L8DImPs9xw8qnus6i0aK", nombre: "Flight Deck & CB Panels.pdf" },
+ { id: "10lMqgWVcna_bWoToLCjfEgM_BFlvNPqB", nombre: "737NG Flight Deck Panels.pdf" },
+ { id: "1ATcDP2bmVb-FyoMRpGKirJN-4sylB5BB", nombre: "AOG PARTS LIST.pdf" },
+ { id: "1YGZ0bcZLz9s97gmVz4Um-hFacdmU-ZV5", nombre: "APU SCMM_49.pdf" },
+ { id: "1adDKrCHrUkUIaukFjtEb-Y_cAQbaVV0L", nombre: "737NG COMPONENT LOCATOR GUIDE.pdf" }
+ ];
+
+ let listaArticulos = [];
+ let listaHerramientas = [];
+ let listaDocumentos = [];
+ let feedbackList = [];
+ let seccionesAbiertas = {};
+ let autenticado = false;
+ let adminTipoFiltro = 'consumible';
+
+ async function cargarDatosNube() {
+ try {
+ let { data: cons } = await _supabase.from('consumibles').select('*');
+ if (!cons || cons.length === 0) {
+ await _supabase.from('consumibles').insert(ARTICULOS_INICIALES);
+ let { data: cons2 } = await _supabase.from('consumibles').select('*');
+ listaArticulos = cons2 || ARTICULOS_INICIALES;
+ } else {
+ listaArticulos = cons;
+ }
+
+ let { data: tools } = await _supabase.from('herramientas').select('*');
+ if (!tools || tools.length === 0) {
+ await _supabase.from('herramientas').insert(HERRAMIENTAS_INICIALES);
+ let { data: tools2 } = await _supabase.from('herramientas').select('*');
+ listaHerramientas = tools2 || HERRAMIENTAS_INICIALES;
+ } else {
+ listaHerramientas = tools;
+ }
+ listaHerramientas.sort((a, b) => a.articulo.localeCompare(b.articulo));
+
+ let { data: docs } = await _supabase.from('documentos').select('*');
+ if (!docs || docs.length === 0) {
+ await _supabase.from('documentos').insert(DOCUMENTOS_INICIALES);
+ let { data: docs2 } = await _supabase.from('documentos').select('*');
+ listaDocumentos = docs2 || DOCUMENTOS_INICIALES;
+ } else {
+ listaDocumentos = docs;
+ }
+
+ let { data: fb } = await _supabase.from('buzon').select('*').order('id', { ascending: false });
+ feedbackList = fb || [];
+ } catch (e) {
+ console.error("Usando datos locales por fallo de red:", e);
+ listaArticulos = ARTICULOS_INICIALES;
+ listaHerramientas = HERRAMIENTAS_INICIALES;
+ listaHerramientas.sort((a, b) => a.articulo.localeCompare(b.articulo));
+ listaDocumentos = DOCUMENTOS_INICIALES;
+ }
+
+ filtrarYAgrupar();
+ filtrarTools();
+ renderizarSelectorDocumentos();
+ actualizarDatalistSecciones();
+ if (autenticado) {
+ renderizarAdminGestion();
+ renderizarDocsAdmin();
+ renderizarFeedbackAdmin();
+ }
+ }
+
+ // CONFIGURACIÓN DE TIEMPO REAL (SUPABASE REALTIME)
+ function configurarRealtime() {
+ _supabase
+ .channel('public-db-changes')
+ .on('postgres_changes', { event: '*', schema: 'public' }, (payload) => {
+ console.log('Cambio detectado en la base de datos, sincronizando...', payload);
+ cargarDatosNube();
+ })
+ .subscribe();
+ }
+
+ function actualizarDatalistSecciones() {
+ const datalist = document.getElementById('lista-secciones-datalist');
+ if (!datalist) return;
+ const seccionesUnicas = [...new Set(listaArticulos.map(item => item.seccion))].sort();
+ datalist.innerHTML = seccionesUnicas.map(sec => `<option value="${sec}">`).join('');
+ }
+
+ function cambiarPestana(target) {
+ const btns = ['btn-lista', 'btn-tools', 'btn-ramps', 'btn-calc', 'btn-docs', 'btn-feedback', 'btn-admin'];
+ const ps = ['pestana-lista', 'pestana-tools', 'pestana-ramps', 'pestana-calc', 'pestana-docs', 'pestana-feedback', 'pestana-admin'];
+ btns.forEach(b => document.getElementById(b).className = "px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1");
+ ps.forEach(p => document.getElementById(p).classList.add('hidden'));
+
+ const mapping = { lista: 0, tools: 1, ramps: 2, calc: 3, docs: 4, feedback: 5, admin: 6 };
+ const idx = mapping[target];
+ document.getElementById(btns[idx]).className = "px-4 py-2.5 rounded-xl text-center bg-sky-500 text-white shadow-lg transition-all flex flex-col items-center justify-center space-y-1";
+ document.getElementById(ps[idx]).classList.remove('hidden');
+
+ if (target === 'lista') filtrarYAgrupar();
+ if (target === 'tools') filtrarTools();
+ if (target === 'ramps') cargarEstadoChecks();
+ if (target === 'docs') renderizarSelectorDocumentos();
+ if (target === 'admin') { evaluarAuthUI(); renderizarFeedbackAdmin(); renderizarAdminGestion(); renderizarDocsAdmin(); actualizarDatalistSecciones(); }
+ }
+
+ function renderizarSelectorDocumentos() {
+ const select = document.getElementById('select-doc');
+ if (!select) return;
+ select.innerHTML = '<option value="" disabled selected>-- Elige un documento --</option>' +
+ listaDocumentos.map(doc => `<option value="${doc.id}">${doc.nombre}</option>`).join('');
+ }
+
+ function cambiarFlotaRamp(flota) {
+ const btnNg = document.getElementById('tab-flota-ng');
+ const btnMax = document.getElementById('tab-flota-max');
+ const secNg = document.getElementById('seccion-ramps-ng');
+ const secMax = document.getElementById('seccion-ramps-max');
+
+ if (flota === 'ng') {
+ btnNg.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-sky-500 text-white transition";
+ btnMax.className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-400 transition";
+ secNg.classList.remove('hidden');
+ secMax.classList.add('hidden');
+ } else {
+ btnMax.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-emerald-500 text-white transition";
+ btnNg.className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-400 transition";
+ secMax.classList.remove('hidden');
+ secNg.classList.add('hidden');
+ }
+ }
+
+ async function enviarFeedback() {
+ const tipo = document.getElementById('feed-tipo').value;
+ const elemento = document.getElementById('feed-elemento').value.trim();
+ const mensaje = document.getElementById('feed-mensaje').value.trim();
+ if (!elemento || !mensaje) { alert("Rellena todos los campos"); return; }
+ 
+ const nuevoFeedback = { tipo, elemento, mensaje, fecha: new Date().toLocaleString() };
+ let { error } = await _supabase.from('buzon').insert([nuevoFeedback]);
+ if (error) { alert("Error al enviar el mensaje al buzón: " + error.message); return; }
+
+ alert("¡Enviado con éxito al administrador en la nube!");
+ document.getElementById('feed-elemento').value = '';
+ document.getElementById('feed-mensaje').value = '';
+ cambiarPestana('lista');
+ }
+
+ function renderizarFeedbackAdmin() {
+ const contenedor = document.getElementById('lista-feedback-admin');
+ if(!contenedor) return;
+ contenedor.innerHTML = feedbackList.length === 0 ? '<div class="text-slate-500">No hay avisos pendientes en la nube.</div>' : feedbackList.map((fb) => `
+ <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1 relative">
+ <div class="flex justify-between text-[10px] text-slate-400"><span>${fb.fecha}</span><span class="text-amber-400 font-bold">${fb.tipo}</span></div>
+ <div class="font-bold text-white">${fb.elemento}</div>
+ <div class="text-slate-300 text-[11px]">${fb.mensaje}</div>
+ <button onclick="eliminarFeedback(${fb.id})" class="absolute top-2 right-2 bg-rose-500/20 text-rose-400 p-1.5 rounded-lg text-[10px]" title="Eliminar mensaje">🗑️</button>
+ </div>
+ `).join('');
+ }
+
+ async function eliminarFeedback(id) {
+ if (confirm("¿Eliminar este mensaje del buzón?")) {
+ let { error } = await _supabase.from('buzon').delete().eq('id', id);
+ if (error) { alert("Error al eliminar mensaje: " + error.message); return; }
+ await cargarDatosNube();
+ }
+ }
+
+ function filtrarTools() {
+ const buscadorEl = document.getElementById('buscador-tools');
+ const contenedor = document.getElementById('contenedor-tools');
+ const contador = document.getElementById('contador-tools');
+ if (!contenedor) return;
+ const query = buscadorEl ? buscadorEl.value.toLowerCase().trim() : '';
+ contenedor.innerHTML = '';
+ 
+ listaHerramientas.sort((a, b) => a.articulo.localeCompare(b.articulo));
+
+ const filtrados = listaHerramientas.filter(item => item.articulo.toLowerCase().includes(query) || item.pn.toLowerCase().includes(query));
+ if (contador) contador.innerText = filtrados.length;
+ if (filtrados.length === 0) { contenedor.innerHTML = `<div class="text-center text-xs text-slate-500 py-12">No se encontraron herramientas.</div>`; return; }
+ filtrados.forEach(tool => {
+ const div = document.createElement('div');
+ div.className = "bg-slate-900 border border-slate-800 rounded-xl p-3 flex justify-between items-center text-xs";
+ const notaBadge = tool.nota ? `<span class="bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[9px] px-1.5 py-0.5 rounded font-bold block mt-1">${tool.nota}</span>` : '';
+ div.innerHTML = `
+ <div class="space-y-1">
+ <span class="font-bold text-white uppercase block">${tool.articulo}</span>
+ ${notaBadge}
+ </div>
+ <code class="text-amber-400 font-mono">${tool.pn}</code>
+ `;
+ contenedor.appendChild(div);
+ });
+ }
+
+ function filtrarYAgrupar() {
+ const buscadorEl = document.getElementById('buscador');
+ const contenedor = document.getElementById('contenedor-secciones');
+ const contadorEl = document.getElementById('contador-items');
+ if (!contenedor) return;
+ const query = buscadorEl ? buscadorEl.value.toLowerCase().trim() : '';
+ contenedor.innerHTML = '';
+ const filtrados = listaArticulos.filter(item => item.articulo.toLowerCase().includes(query) || item.pn.toLowerCase().includes(query) || item.seccion.toLowerCase().includes(query));
+ if (contadorEl) contadorEl.innerText = filtrados.length;
+ 
+ const grupos = {};
+ filtrados.forEach(item => { if (!grupos[item.seccion]) grupos[item.seccion] = []; grupos[item.seccion].push(item); });
+
+ Object.keys(grupos).sort().forEach(sec => {
+ const items = grupos[sec];
+ const estaAbierto = query !== '' || (seccionesAbiertas[sec] || false);
+ const div = document.createElement('div');
+ div.className = "bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden shadow";
+ div.innerHTML = `
+ <button onclick="toggleAcordeon('${sec}')" class="w-full bg-slate-900 px-4 py-3.5 flex justify-between items-center text-left">
+ <span class="font-bold text-xs text-sky-400 uppercase">📂 ${sec} (${items.length})</span>
+ <span class="text-slate-400 text-xs">${estaAbierto ? '▲' : '▼'}</span>
+ </button>
+ <div class="p-3 space-y-2 ${estaAbierto ? '' : 'hidden'}">
+ ${items.map(i => {
+ const notaBadge = i.nota ? `<span class="bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[9px] px-1.5 py-0.5 rounded font-bold">${i.nota}</span>` : '';
+ return `
+ <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex justify-between items-center text-xs">
+ <div class="space-y-1">
+ <span class="font-bold text-white uppercase block">${i.articulo}</span>${notaBadge}
+ </div>
+ <code class="text-amber-400 font-mono">${i.pn}</code>
+ </div>
+ `;
+ }).join('')}
+ </div>
+ `;
+ contenedor.appendChild(div);
+ });
+ }
+
+ function toggleAcordeon(sec) { seccionesAbiertas[sec] = !seccionesAbiertas[sec]; filtrarYAgrupar(); }
+
+ function guardarEstadoCheck(checkbox) { localStorage.setItem(checkbox.id, checkbox.checked); }
+ function cargarEstadoChecks() {
+ const checkboxes = document.querySelectorAll('#pestana-ramps input[type="checkbox"]');
+ checkboxes.forEach(chk => {
+ const guardado = localStorage.getItem(chk.id);
+ if (guardado !== null) chk.checked = (guardado === 'true');
+ });
+ }
+ function resetearChecklist() {
+ if (confirm("¿Resetear todas las marcas de las rampas?")) {
+ const checkboxes = document.querySelectorAll('#pestana-ramps input[type="checkbox"]');
+ checkboxes.forEach(chk => { chk.checked = false; localStorage.removeItem(chk.id); });
+ }
+ }
+
+ function convertirTorque(tipo) {
+ const inlb = document.getElementById('calc-inlb');
+ const ftlb = document.getElementById('calc-ftlb');
+ const nm = document.getElementById('calc-nm');
+ if (!inlb || !ftlb || !nm) return;
+
+ if (tipo === 'inlb') {
+ const val = parseFloat(inlb.value);
+ if (isNaN(val)) { ftlb.value = ''; nm.value = ''; return; }
+ nm.value = (val * 0.112985).toFixed(2);
+ ftlb.value = (val / 12).toFixed(2);
+ } else if (tipo === 'ftlb') {
+ const val = parseFloat(ftlb.value);
+ if (isNaN(val)) { inlb.value = ''; nm.value = ''; return; }
+ inlb.value = (val * 12).toFixed(1);
+ nm.value = (val * 1.35582).toFixed(2);
+ } else {
+ const val = parseFloat(nm.value);
+ if (isNaN(val)) { inlb.value = ''; ftlb.value = ''; return; }
+ inlb.value = (val / 0.112985).toFixed(1);
+ ftlb.value = (val / 1.35582).toFixed(2);
+ }
+ }
+
+ // OCR INTELIGENTE
+ function procesarFotoCamara(event) {
+ const archivo = event.target.files[0];
+ if (!archivo) return;
+
+ const lector = new FileReader();
+ lector.onload = function(e) {
+ const img = document.getElementById('img-capturada');
+ const preview = document.getElementById('preview-foto');
+ if (img && preview) {
+ img.src = e.target.result;
+ preview.classList.remove('hidden');
+ }
+ }
+ lector.readAsDataURL(archivo);
+
+ const statusEl = document.getElementById('ocr-status');
+ if (statusEl) statusEl.classList.remove('hidden');
+
+ Tesseract.recognize(archivo, 'eng', { logger: m => console.log(m) }).then(({ data: { text } }) => {
+ if (statusEl) statusEl.classList.add('hidden');
+ console.log("Texto OCR:\n", text);
+
+ const lineas = text.split('\n').map(l => l.trim()).filter(l => l.length > 1);
+ let descDetectada = "";
+ let pnDetectado = "";
+
+ for (let linea of lineas) {
+ const lUpper = linea.toUpperCase();
+ if ((lUpper.includes("PART") || lUpper.includes("P/N") || lUpper.includes("PN") || lUpper.startsWith("P:")) && !pnDetectado) {
+ const partes = linea.split(/[:|]/);
+ pnDetectado = partes.length > 1 ? partes[1].trim() : linea.replace(/^(PART|P\/N|PN|P:)\s*/i, '').trim();
+ } else if ((lUpper.includes("DESC") || lUpper.includes("DESCRIPTION") || lUpper.startsWith("D:")) && !descDetectada) {
+ const partes = linea.split(/[:|]/);
+ descDetectada = partes.length > 1 ? partes[1].trim() : linea.replace(/^(DESC|DESCRIPTION|D:)\s*/i, '').trim();
+ }
+ }
+
+ if (!descDetectada && lineas.length > 0) descDetectada = lineas[0];
+ if (!pnDetectado && lineas.length > 1) {
+ const candidato = lineas.find(l => /[0-9-]/.test(l) && l !== descDetectada);
+ pnDetectado = candidato || lineas[1];
+ }
+
+ if (descDetectada) document.getElementById('admin-articulo').value = descDetectada;
+ if (pnDetectado) document.getElementById('admin-pn').value = pnDetectado;
+
+ alert(`¡OCR completado!\n- Descripción: ${descDetectada || 'No detectada'}\n- Part Number: ${pnDetectado || 'No detectado'}\nRevisa y ajusta si es necesario.`);
+ }).catch(err => {
+ if (statusEl) statusEl.classList.add('hidden');
+ console.error(err);
+ alert("No se pudo leer automáticamente el texto de la etiqueta.");
+ });
+ }
+
+ function limpiarFoto() {
+ const preview = document.getElementById('preview-foto');
+ const img = document.getElementById('img-capturada');
+ if (preview) preview.classList.add('hidden');
+ if (img) img.src = '';
+ }
+
+ function filtrarAdminList(tipo) {
+ adminTipoFiltro = tipo;
+ const btnCons = document.getElementById('btn-admin-cons');
+ const btnTls = document.getElementById('btn-admin-tls');
+ if (btnCons) btnCons.className = tipo === 'consumible' ? "flex-1 py-1 text-[10px] rounded-lg bg-sky-500 text-white font-bold" : "flex-1 py-1 text-[10px] rounded-lg bg-slate-950 text-slate-400 font-bold";
+ if (btnTls) btnTls.className = tipo === 'tool' ? "flex-1 py-1 text-[10px] rounded-lg bg-sky-500 text-white font-bold" : "flex-1 py-1 text-[10px] rounded-lg bg-slate-950 text-slate-400 font-bold";
+ renderizarAdminGestion();
+ }
+
+ function renderizarAdminGestion() {
+ const contenedor = document.getElementById('lista-gestion-admin');
+ if (!contenedor) return;
+ const data = adminTipoFiltro === 'consumible' ? listaArticulos : listaHerramientas;
+ if (adminTipoFiltro === 'tool') {
+ data.sort((a, b) => a.articulo.localeCompare(b.articulo));
+ }
+ contenedor.innerHTML = data.map((item, index) => `
+ <div onclick="editarRegistroAdmin('${adminTipoFiltro}', ${index})" class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center cursor-pointer hover:border-sky-500/50 transition">
+ <div>
+ <span class="font-bold text-white block uppercase">${item.articulo}</span>
+ <span class="text-[10px] text-amber-400 font-mono">${item.pn}</span>
+ ${item.seccion ? `<span class="text-[9px] text-sky-400 block">${item.seccion}</span>` : ''}
+ ${item.nota ? `<span class="text-[9px] text-rose-400 block">${item.nota}</span>` : ''}
+ </div>
+ <div>
+ <button onclick="event.stopPropagation(); eliminarRegistroAdmin('${adminTipoFiltro}', ${index})" class="bg-rose-500/20 text-rose-400 p-2 rounded-lg" title="Eliminar">🗑️</button>
+ </div>
+ </div>
+ `).join('');
+ }
+
+ async function guardarRegistroAdmin() {
+ const tipo = document.getElementById('admin-tipo-reg').value;
+ const articulo = document.getElementById('admin-articulo').value.trim();
+ const pn = document.getElementById('admin-pn').value.trim();
+ const seccion = document.getElementById('admin-seccion').value.trim() || 'GENERAL';
+ const nota = document.getElementById('admin-nota').value.trim();
+ const editIndex = document.getElementById('admin-edit-index').value;
+
+ if (!articulo || !pn) { alert("Rellena el nombre y el Part Number"); return; }
+
+ const tabla = tipo === 'consumible' ? 'consumibles' : 'herramientas';
+ const dataActual = tipo === 'consumible' ? listaArticulos : listaHerramientas;
+
+ if (editIndex === "") {
+ const yaExiste = dataActual.some(i => i.pn.toUpperCase() === pn.toUpperCase());
+ if (yaExiste) {
+ alert(`⚠️ Error: El Part Number "${pn}" ya existe en la base de datos. No se permiten elementos duplicados.`);
+ return;
+ }
+ }
+
+ const nuevoItem = tipo === 'consumible' ? { articulo, pn, seccion, nota } : { articulo, pn, nota };
+
+ if (editIndex === "") {
+ let { error } = await _supabase.from(tabla).insert([nuevoItem]);
+ if (error) { alert("Error al guardar en Supabase: " + error.message); return; }
+ } else {
+ const itemOriginal = dataActual[parseInt(editIndex)];
+ let query = _supabase.from(tabla).update(nuevoItem);
+ if (itemOriginal.id) {
+ query = query.eq('id', itemOriginal.id);
+ } else {
+ query = query.eq('pn', itemOriginal.pn);
+ }
+ let { error } = await query;
+ if (error) { alert("Error al actualizar: " + error.message); return; }
+
+ document.getElementById('admin-edit-index').value = '';
+ document.getElementById('admin-form-title').innerText = "➕ Añadir Nuevo Consumible o Herramienta";
+ }
+
+ document.getElementById('admin-articulo').value = '';
+ document.getElementById('admin-pn').value = '';
+ document.getElementById('admin-seccion').value = '';
+ document.getElementById('admin-nota').value = '';
+ 
+ await cargarDatosNube();
+ alert("¡Guardado y sincronizado en la nube con éxito!");
+ }
+
+ function editarRegistroAdmin(tipo, index) {
+ const data = tipo === 'consumible' ? listaArticulos : listaHerramientas;
+ const item = data[index];
+ if (!item) return;
+
+ document.getElementById('admin-tipo-reg').value = tipo;
+ document.getElementById('admin-articulo').value = item.articulo;
+ document.getElementById('admin-pn').value = item.pn;
+ document.getElementById('admin-seccion').value = item.seccion || '';
+ document.getElementById('admin-nota').value = item.nota || '';
+ document.getElementById('admin-edit-index').value = index;
+ document.getElementById('admin-form-title').innerText = "✏️ Editando Registro (Pulsa Guardar para aplicar)";
+ 
+ window.scrollTo({ top: 0, behavior: 'smooth' });
+ }
+
+ async function eliminarRegistroAdmin(tipo, index) {
+ if (confirm("¿Seguro que deseas eliminar este registro de la nube?")) {
+ const data = tipo === 'consumible' ? listaArticulos : listaHerramientas;
+ const item = data[index];
+ if (!item) return;
+
+ const tabla = tipo === 'consumible' ? 'consumibles' : 'herramientas';
+ let query = _supabase.from(tabla).delete();
+ if (item.id) {
+ query = query.eq('id', item.id);
+ } else {
+ query = query.eq('pn', item.pn);
+ }
+ let { error } = await query;
+ if (error) { alert("Error al eliminar: " + error.message); return; }
+ await cargarDatosNube();
+ alert("¡Elemento eliminado correctamente!");
+ }
+ }
+
+ function renderizarDocsAdmin() {
+ const contenedor = document.getElementById('lista-docs-admin');
+ if (!contenedor) return;
+ contenedor.innerHTML = listaDocumentos.map((doc) => `
+ <div class="bg-slate-950 p-2 rounded-xl border border-slate-800 flex justify-between items-center text-[11px]">
+ <span class="font-bold text-white truncate max-w-[200px]">${doc.nombre}</span>
+ <button onclick="eliminarDocumentoAdmin('${doc.id}')" class="bg-rose-500/20 text-rose-400 px-2 py-1 rounded-lg">🗑️</button>
+ </div>
+ `).join('');
+ }
+
+ async function agregarDocumentoAdmin() {
+ const nombre = document.getElementById('admin-doc-nombre').value.trim();
+ const id = document.getElementById('admin-doc-id').value.trim();
+ if (!nombre || !id) { alert("Rellena el nombre y el ID del documento"); return; }
+ 
+ let { error } = await _supabase.from('documentos').insert([{ id, nombre }]);
+ if (error) { alert("Error al añadir documento: " + error.message); return; }
+
+ document.getElementById('admin-doc-nombre').value = '';
+ document.getElementById('admin-doc-id').value = '';
+ await cargarDatosNube();
+ alert("¡Documento añadido a la nube con éxito!");
+ }
+
+ async function eliminarDocumentoAdmin(id) {
+ if (confirm("¿Eliminar este documento de la nube?")) {
+ let { error } = await _supabase.from('documentos').delete().eq('id', id);
+ if (error) { alert("Error al eliminar documento: " + error.message); return; }
+ await cargarDatosNube();
+ }
+ }
+
+ function verificarPassword() { 
+ const passInput = document.getElementById('input-password');
+ if (passInput && passInput.value === "@vioTech1993") { 
+ autenticado = true; 
+ evaluarAuthUI(); 
+ renderizarFeedbackAdmin(); 
+ renderizarAdminGestion();
+ renderizarDocsAdmin();
+ actualizarDatalistSecciones();
+ } else { 
+ alert("Contraseña incorrecta"); 
+ } 
+ }
+
+ function evaluarAuthUI() { 
+ const bloqueoAuth = document.getElementById('bloqueo-auth');
+ const panelAdmin = document.getElementById('panel-admin-contenido');
+ if (bloqueoAuth) bloqueoAuth.classList.toggle('hidden', autenticado); 
+ if (panelAdmin) panelAdmin.classList.toggle('hidden', !autenticado); 
+ }
+
+ function cerrarSesion() { 
+ autenticado = false; 
+ evaluarAuthUI(); 
+ }
+
+ function cargarDocumentoSeleccionado(id) { 
+ if(!id) return; 
+ const placeholder = document.getElementById('doc-placeholder');
+ const iframe = document.getElementById('iframe-doc-viewer');
+ if (placeholder) placeholder.classList.add('hidden'); 
+ if (iframe) iframe.src = `https://drive.google.com/file/d/${id}/preview?rm=minimal`; 
+ }
+
+ window.onload = function() {
+ cargarDatosNube();
+ cargarEstadoChecks();
+ configurarRealtime();
+ };
+ </script>
 </body>
 </html>
