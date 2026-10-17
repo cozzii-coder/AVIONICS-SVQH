@@ -309,7 +309,7 @@ class="w-full bg-slate-900/90 border border-slate-800 text-white placeholder-sla
  <input type="text" id="admin-articulo" placeholder="Nombre / Descripción (ej. RING)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
  <input type="text" id="admin-pn" placeholder="Part Number (ej. MS28778-6)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
  
-<!-- SECCIÓN CON DATALIST DE CARPETAS DE SEARCH -->
+ <!-- SECCIÓN CON DATALIST DE CARPETAS DE SEARCH -->
  <div>
  <input type="text" id="admin-seccion" list="lista-secciones-datalist" placeholder="Selecciona o escribe la sección/carpeta..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
  <datalist id="lista-secciones-datalist"></datalist>
@@ -343,7 +343,7 @@ class="w-full bg-slate-900/90 border border-slate-800 text-white placeholder-sla
 
  <!-- BUZÓN RECIBIDO -->
  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
- <h3 class="font-bold text-amber-400 text-xs">📥 Buzón Recibido</h3>
+ <h3 class="font-bold text-amber-400 text-xs">📥 Buzón Recibido (Nube)</h3>
  <div id="lista-feedback-admin" class="space-y-2 text-xs max-h-60 overflow-y-auto pr-1"></div>
  </div>
 
@@ -564,15 +564,14 @@ class="w-full bg-slate-900/90 border border-slate-800 text-white placeholder-sla
  listaDocumentos = docs;
  }
 
- let { data: buzon } = await _supabase.from('buzon').select('*').order('created_at', { ascending: false });
- feedbackList = buzon || [];
+ let { data: fb } = await _supabase.from('feedback').select('*').order('id', { ascending: false });
+ feedbackList = fb || [];
  } catch (e) {
  console.error("Usando datos locales por fallo de red:", e);
  listaArticulos = ARTICULOS_INICIALES;
  listaHerramientas = HERRAMIENTAS_INICIALES;
  listaHerramientas.sort((a, b) => a.articulo.localeCompare(b.articulo));
  listaDocumentos = DOCUMENTOS_INICIALES;
- feedbackList = [];
  }
 
  filtrarYAgrupar();
@@ -584,6 +583,17 @@ class="w-full bg-slate-900/90 border border-slate-800 text-white placeholder-sla
  renderizarDocsAdmin();
  renderizarFeedbackAdmin();
  }
+ }
+
+ // CONFIGURACIÓN DE TIEMPO REAL (SUPABASE REALTIME)
+ function configurarRealtime() {
+ _supabase
+ .channel('public-db-changes')
+ .on('postgres_changes', { event: '*', schema: 'public' }, (payload) => {
+ console.log('Cambio detectado en la base de datos, sincronizando...', payload);
+ cargarDatosNube();
+ })
+ .subscribe();
  }
 
  function actualizarDatalistSecciones() {
@@ -608,15 +618,7 @@ class="w-full bg-slate-900/90 border border-slate-800 text-white placeholder-sla
  if (target === 'tools') filtrarTools();
  if (target === 'ramps') cargarEstadoChecks();
  if (target === 'docs') renderizarSelectorDocumentos();
- if (target === 'admin') { 
- cargarDatosNube().then(() => {
- evaluarAuthUI(); 
- renderizarFeedbackAdmin(); 
- renderizarAdminGestion(); 
- renderizarDocsAdmin(); 
- actualizarDatalistSecciones(); 
- });
- }
+ if (target === 'admin') { evaluarAuthUI(); renderizarFeedbackAdmin(); renderizarAdminGestion(); renderizarDocsAdmin(); actualizarDatalistSecciones(); }
  }
 
  function renderizarSelectorDocumentos() {
@@ -650,14 +652,12 @@ class="w-full bg-slate-900/90 border border-slate-800 text-white placeholder-sla
  const elemento = document.getElementById('feed-elemento').value.trim();
  const mensaje = document.getElementById('feed-mensaje').value.trim();
  if (!elemento || !mensaje) { alert("Rellena todos los campos"); return; }
+ 
+ const nuevoFeedback = { tipo, elemento, mensaje, fecha: new Date().toLocaleString() };
+ let { error } = await _supabase.from('feedback').insert([nuevoFeedback]);
+ if (error) { alert("Error al enviar el mensaje al buzón: " + error.message); return; }
 
- const { error } = await _supabase.from('buzon').insert([{ tipo, elemento, mensaje }]);
- if (error) {
- alert("Error al enviar el mensaje: " + error.message);
- return;
- }
-
- alert("¡Enviado con éxito al administrador!");
+ alert("¡Enviado con éxito al administrador en la nube!");
  document.getElementById('feed-elemento').value = '';
  document.getElementById('feed-mensaje').value = '';
  cambiarPestana('lista');
@@ -666,9 +666,9 @@ class="w-full bg-slate-900/90 border border-slate-800 text-white placeholder-sla
  function renderizarFeedbackAdmin() {
  const contenedor = document.getElementById('lista-feedback-admin');
  if(!contenedor) return;
- contenedor.innerHTML = feedbackList.length === 0 ? '<div class="text-slate-500">No hay avisos pendientes.</div>' : feedbackList.map((fb) => `
+ contenedor.innerHTML = feedbackList.length === 0 ? '<div class="text-slate-500">No hay avisos pendientes en la nube.</div>' : feedbackList.map((fb) => `
  <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1 relative">
- <div class="flex justify-between text-[10px] text-slate-400"><span>${new Date(fb.created_at).toLocaleString()}</span><span class="text-amber-400 font-bold">${fb.tipo}</span></div>
+ <div class="flex justify-between text-[10px] text-slate-400"><span>${fb.fecha}</span><span class="text-amber-400 font-bold">${fb.tipo}</span></div>
  <div class="font-bold text-white">${fb.elemento}</div>
  <div class="text-slate-300 text-[11px]">${fb.mensaje}</div>
  <button onclick="eliminarFeedback(${fb.id})" class="absolute top-2 right-2 bg-rose-500/20 text-rose-400 p-1.5 rounded-lg text-[10px]" title="Eliminar mensaje">🗑️</button>
@@ -678,10 +678,9 @@ class="w-full bg-slate-900/90 border border-slate-800 text-white placeholder-sla
 
  async function eliminarFeedback(id) {
  if (confirm("¿Eliminar este mensaje del buzón?")) {
- let { error } = await _supabase.from('buzon').delete().eq('id', id);
- if (error) { alert("Error al eliminar: " + error.message); return; }
+ let { error } = await _supabase.from('feedback').delete().eq('id', id);
+ if (error) { alert("Error al eliminar mensaje: " + error.message); return; }
  await cargarDatosNube();
- renderizarFeedbackAdmin();
  }
  }
 
@@ -1005,12 +1004,10 @@ class="w-full bg-slate-900/90 border border-slate-800 text-white placeholder-sla
  if (passInput && passInput.value === "@vioTech1993") { 
  autenticado = true; 
  evaluarAuthUI(); 
- cargarDatosNube().then(() => {
  renderizarFeedbackAdmin(); 
  renderizarAdminGestion();
  renderizarDocsAdmin();
  actualizarDatalistSecciones();
- });
  } else { 
  alert("Contraseña incorrecta"); 
  } 
@@ -1039,6 +1036,7 @@ class="w-full bg-slate-900/90 border border-slate-800 text-white placeholder-sla
  window.onload = function() {
  cargarDatosNube();
  cargarEstadoChecks();
+ configurarRealtime();
  };
  </script>
 </body>
