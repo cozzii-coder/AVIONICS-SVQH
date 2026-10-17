@@ -105,7 +105,7 @@
  <div id="contenedor-tools" class="space-y-2.5"></div>
  </div>
 
- <!-- PESTAÑA 3: RAMPS (BLOQUE 1 - INALTERABLE) -->
+ <!-- PESTAÑA 3: RAMPS (INALTERABLE) -->
  <div id="pestana-ramps" class="hidden space-y-6">
  <div class="flex justify-between items-center border-b border-slate-800 pb-2">
  <span class="text-xs text-slate-400 font-medium">Checklists completas (Guardado automático):</span>
@@ -312,7 +312,6 @@
  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
  <h3 id="admin-form-title" class="font-bold text-amber-400 text-xs">➕ Añadir Nuevo Consumible o Herramienta</h3>
  <input type="hidden" id="admin-edit-id" value="">
- <input type="hidden" id="admin-edit-tipo" value="consumible">
  <div class="space-y-2">
  <select id="admin-tipo-reg" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
  <option value="consumible">📦 Consumible / Material (Search)</option>
@@ -357,7 +356,7 @@
  </div>
  </div>
 
- <!-- Script Principal con Supabase y Respaldo Local -->
+ <!-- Script Principal -->
  <script>
  const SUPABASE_URL = 'https://vlrloizxrvklkzdvgkii.supabase.co';
  const SUPABASE_KEY = 'sb_publishable_veJeqUFfhqIVoCk0JLma6A_fN9llMru';
@@ -703,7 +702,6 @@
  const query = buscadorEl ? buscadorEl.value.toLowerCase().trim() : '';
  contenedor.innerHTML = '';
  
- // Ordenar alfabéticamente A-Z antes de filtrar y mostrar
  listaHerramientas.sort((a, b) => a.articulo.localeCompare(b.articulo));
 
  const filtrados = listaHerramientas.filter(item => item.articulo.toLowerCase().includes(query) || item.pn.toLowerCase().includes(query));
@@ -802,7 +800,7 @@
  }
  }
 
- // OCR AUTOMÁTICO CON CÁMARA
+ // OCR AUTOMÁTICO INTELIGENTE PARA ETIQUETAS
  function procesarFotoCamara(event) {
  const archivo = event.target.files[0];
  if (!archivo) return;
@@ -823,25 +821,43 @@
 
  Tesseract.recognize(archivo, 'eng', { logger: m => console.log(m) }).then(({ data: { text } }) => {
  if (statusEl) statusEl.classList.add('hidden');
+ console.log("Texto OCR detectado:\n", text);
+ 
  const lineas = text.split('\n');
  let descDetectada = "";
  let pnDetectado = "";
 
  lineas.forEach(linea => {
  const l = linea.trim();
- if (l.toUpperCase().startsWith("DESC") || l.toUpperCase().startsWith("DESCRIPTION")) {
- const partes = l.split(/[:|\s]+/);
- if (partes.length > 1) descDetectada = partes.slice(1).join(' ');
+ const lUpper = l.toUpperCase();
+
+ // Detección flexible de descripción (ej: "Desc: RING" o "Description:")
+ if (lUpper.startsWith("DESC") || lUpper.startsWith("DESCRIPTION") || lUpper.startsWith("DES:")) {
+ const partes = l.split(/[:|]/);
+ if (partes.length > 1) {
+ descDetectada = partes.slice(1).join(' ').trim();
+ } else {
+ const palabras = l.split(/\s+/);
+ if (palabras.length > 1) descDetectada = palabras.slice(1).join(' ').trim();
  }
- if (l.toUpperCase().startsWith("PART") || l.toUpperCase().startsWith("P/N") || l.toUpperCase().startsWith("P:")) {
- const partes = l.split(/[:|\s]+/);
- if (partes.length > 1) pnDetectado = partes[1];
+ }
+
+ // Detección flexible de Part Number (ej: "Part: MS28778-6" o "P/N:")
+ if (lUpper.startsWith("PART") || lUpper.startsWith("P/N") || lUpper.startsWith("PN") || lUpper.startsWith("P:")) {
+ const partes = l.split(/[:|]/);
+ if (partes.length > 1) {
+ pnDetectado = partes[1].trim();
+ } else {
+ const palabras = l.split(/\s+/);
+ if (palabras.length > 1) pnDetectado = palabras[1].trim();
+ }
  }
  });
 
  if (descDetectada) document.getElementById('admin-articulo').value = descDetectada;
  if (pnDetectado) document.getElementById('admin-pn').value = pnDetectado;
- alert("¡Etiqueta escaneada con éxito!");
+
+ alert("¡Etiqueta escaneada! Se han autocompletado la descripción y el Part Number. Comprueba y selecciona si es Consumible o Herramienta.");
  }).catch(err => {
  if (statusEl) statusEl.classList.add('hidden');
  console.error(err);
