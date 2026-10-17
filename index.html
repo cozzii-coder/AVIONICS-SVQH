@@ -674,7 +674,7 @@
  }
 
  // OCR INTELIGENTE ADAPTADO A ETIQUETAS DE AVIACIÓN (RYR Y ESTÁNDAR)
- function procesarFotoCamara(event) {
+function procesarFotoCamara(event) {
  const archivo = event.target.files[0];
  if (!archivo) return;
 
@@ -700,9 +700,40 @@
  let descDetectada = "";
  let pnDetectado = "";
 
- for (let i = 0; i < lineas.length; i++) {
- let linea = lineas[i];
+ for (let linea of lineas) {
  let lUpper = linea.toUpperCase();
+
+ // Detección flexible de Descripción
+ if (lUpper.includes("DESC")) {
+ let partes = linea.split(/[:|]/);
+ if (partes.length > 1 && partes[1].trim().length > 0) {
+ descDetectada = partes[1].trim();
+ }
+ }
+
+ // Detección flexible de Part Number (limpiando Qnty si viene pegado)
+ if ((lUpper.includes("PART") || lUpper.includes("P/N") || lUpper.includes("PN")) && !lUpper.includes("DESC")) {
+ let partes = linea.split(/[:|]/);
+ if (partes.length > 1 && partes[1].trim().length > 0) {
+ let val = partes[1].trim();
+ if (val.toUpperCase().includes("QNTY")) {
+ val = val.split(/qnty/i)[0].trim();
+ }
+ pnDetectado = val;
+ }
+ }
+ }
+
+ if (descDetectada) document.getElementById('admin-articulo').value = descDetectada;
+ if (pnDetectado) document.getElementById('admin-pn').value = pnDetectado;
+
+ alert(`¡OCR completado!\n- Descripción: ${descDetectada || 'No detectada'}\n- Part Number: ${pnDetectado || 'No detectado'}\nRevisa y ajusta si es necesario.`);
+ }).catch(err => {
+ if (statusEl) statusEl.classList.add('hidden');
+ console.error(err);
+ alert("No se pudo leer automáticamente el texto de la etiqueta.");
+ });
+ }
 
  // Detección para etiquetas tipo Ryanair ("Desc:" o "Desc :")
  if (lUpper.startsWith("DESC") || lUpper.startsWith("D:")) {
