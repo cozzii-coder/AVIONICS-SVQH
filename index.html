@@ -15,14 +15,16 @@
  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
  <!-- Supabase JS SDK -->
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
- <style>
+<style>
  :root { --bg-main: #080c19; --text-main: #f8fafc; }
  body { background-color: var(--bg-main); color: var(--text-main); font-family: system-ui, -apple-system, sans-serif; user-select: none; -webkit-user-select: none; }
  .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
  .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
  .custom-scrollbar::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: 9999px; }
  .secure-container { position: relative; }
- .secure-overlay { position: absolute; top: 0; left: 0; right: 0; height: 50px; z-index: 20; background: transparent; }
+ 
+ /* MODIFICA ESTA LÍNEA (cambia 50px por 70px) */
+ .secure-overlay { position: absolute; top: 0; left: 0; right: 0; height: 70px; z-index: 20; background: transparent; }
 
  @media print {
  body { display: none !important; }
