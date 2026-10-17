@@ -71,7 +71,7 @@
  <div class="relative">
  <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-500">🔍</span>
  <input type="text" id="buscador" oninput="filtrarYAgrupar()" placeholder="Buscar elemento, consumible o P/N..." 
- class="w-full bg-slate-900/90 border border-slate-800 text-white placeholder-slate-500 rounded-2xl pl-11 pr-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/50 shadow-inner">
+class="w-full bg-slate-900/90 border border-slate-800 text-white placeholder-slate-500 rounded-2xl pl-11 pr-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/50 shadow-inner">
  </div>
  <div class="flex justify-between items-center px-1">
  <span class="text-[11px] text-slate-400 font-medium">Elementos agrupados</span>
@@ -85,7 +85,7 @@
  <div class="relative">
  <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-500">🔍</span>
  <input type="text" id="buscador-tools" oninput="filtrarTools()" placeholder="Buscar herramienta o equipo..." 
- class="w-full bg-slate-900/90 border border-slate-800 text-white placeholder-slate-500 rounded-2xl pl-11 pr-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/50 shadow-inner">
+class="w-full bg-slate-900/90 border border-slate-800 text-white placeholder-slate-500 rounded-2xl pl-11 pr-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/50 shadow-inner">
  </div>
  <div class="flex justify-between items-center px-1">
  <span class="text-[11px] text-slate-400 font-medium">Equipos de apoyo y útiles (A-Z)</span>
@@ -309,7 +309,7 @@
  <input type="text" id="admin-articulo" placeholder="Nombre / Descripción (ej. RING)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
  <input type="text" id="admin-pn" placeholder="Part Number (ej. MS28778-6)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
  
- <!-- SECCIÓN CON DATALIST DE CARPETAS DE SEARCH -->
+<!-- SECCIÓN CON DATALIST DE CARPETAS DE SEARCH -->
  <div>
  <input type="text" id="admin-seccion" list="lista-secciones-datalist" placeholder="Selecciona o escribe la sección/carpeta..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
  <datalist id="lista-secciones-datalist"></datalist>
@@ -529,7 +529,7 @@
  let listaArticulos = [];
  let listaHerramientas = [];
  let listaDocumentos = [];
- let feedbackList = JSON.parse(localStorage.getItem('svqh_feedback')) || [];
+ let feedbackList = [];
  let seccionesAbiertas = {};
  let autenticado = false;
  let adminTipoFiltro = 'consumible';
@@ -563,12 +563,16 @@
  } else {
  listaDocumentos = docs;
  }
+
+ let { data: buzon } = await _supabase.from('buzon').select('*').order('created_at', { ascending: false });
+ feedbackList = buzon || [];
  } catch (e) {
  console.error("Usando datos locales por fallo de red:", e);
  listaArticulos = ARTICULOS_INICIALES;
  listaHerramientas = HERRAMIENTAS_INICIALES;
  listaHerramientas.sort((a, b) => a.articulo.localeCompare(b.articulo));
  listaDocumentos = DOCUMENTOS_INICIALES;
+ feedbackList = [];
  }
 
  filtrarYAgrupar();
@@ -578,6 +582,7 @@
  if (autenticado) {
  renderizarAdminGestion();
  renderizarDocsAdmin();
+ renderizarFeedbackAdmin();
  }
  }
 
@@ -603,7 +608,15 @@
  if (target === 'tools') filtrarTools();
  if (target === 'ramps') cargarEstadoChecks();
  if (target === 'docs') renderizarSelectorDocumentos();
- if (target === 'admin') { evaluarAuthUI(); renderizarFeedbackAdmin(); renderizarAdminGestion(); renderizarDocsAdmin(); actualizarDatalistSecciones(); }
+ if (target === 'admin') { 
+ cargarDatosNube().then(() => {
+ evaluarAuthUI(); 
+ renderizarFeedbackAdmin(); 
+ renderizarAdminGestion(); 
+ renderizarDocsAdmin(); 
+ actualizarDatalistSecciones(); 
+ });
+ }
  }
 
  function renderizarSelectorDocumentos() {
@@ -632,13 +645,18 @@
  }
  }
 
- function enviarFeedback() {
+ async function enviarFeedback() {
  const tipo = document.getElementById('feed-tipo').value;
  const elemento = document.getElementById('feed-elemento').value.trim();
  const mensaje = document.getElementById('feed-mensaje').value.trim();
  if (!elemento || !mensaje) { alert("Rellena todos los campos"); return; }
- feedbackList.unshift({ tipo, elemento, mensaje, fecha: new Date().toLocaleString() });
- localStorage.setItem('svqh_feedback', JSON.stringify(feedbackList));
+
+ const { error } = await _supabase.from('buzon').insert([{ tipo, elemento, mensaje }]);
+ if (error) {
+ alert("Error al enviar el mensaje: " + error.message);
+ return;
+ }
+
  alert("¡Enviado con éxito al administrador!");
  document.getElementById('feed-elemento').value = '';
  document.getElementById('feed-mensaje').value = '';
@@ -648,20 +666,21 @@
  function renderizarFeedbackAdmin() {
  const contenedor = document.getElementById('lista-feedback-admin');
  if(!contenedor) return;
- contenedor.innerHTML = feedbackList.length === 0 ? '<div class="text-slate-500">No hay avisos pendientes.</div>' : feedbackList.map((fb, index) => `
+ contenedor.innerHTML = feedbackList.length === 0 ? '<div class="text-slate-500">No hay avisos pendientes.</div>' : feedbackList.map((fb) => `
  <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1 relative">
- <div class="flex justify-between text-[10px] text-slate-400"><span>${fb.fecha}</span><span class="text-amber-400 font-bold">${fb.tipo}</span></div>
+ <div class="flex justify-between text-[10px] text-slate-400"><span>${new Date(fb.created_at).toLocaleString()}</span><span class="text-amber-400 font-bold">${fb.tipo}</span></div>
  <div class="font-bold text-white">${fb.elemento}</div>
  <div class="text-slate-300 text-[11px]">${fb.mensaje}</div>
- <button onclick="eliminarFeedback(${index})" class="absolute top-2 right-2 bg-rose-500/20 text-rose-400 p-1.5 rounded-lg text-[10px]" title="Eliminar mensaje">🗑️</button>
+ <button onclick="eliminarFeedback(${fb.id})" class="absolute top-2 right-2 bg-rose-500/20 text-rose-400 p-1.5 rounded-lg text-[10px]" title="Eliminar mensaje">🗑️</button>
  </div>
  `).join('');
  }
 
- function eliminarFeedback(index) {
+ async function eliminarFeedback(id) {
  if (confirm("¿Eliminar este mensaje del buzón?")) {
- feedbackList.splice(index, 1);
- localStorage.setItem('svqh_feedback', JSON.stringify(feedbackList));
+ let { error } = await _supabase.from('buzon').delete().eq('id', id);
+ if (error) { alert("Error al eliminar: " + error.message); return; }
+ await cargarDatosNube();
  renderizarFeedbackAdmin();
  }
  }
@@ -875,7 +894,6 @@
  const tabla = tipo === 'consumible' ? 'consumibles' : 'herramientas';
  const dataActual = tipo === 'consumible' ? listaArticulos : listaHerramientas;
 
- // VALIDACIÓN ANTIDUPLICADOS: Comprobar si el P/N ya existe (solo al crear nuevo)
  if (editIndex === "") {
  const yaExiste = dataActual.some(i => i.pn.toUpperCase() === pn.toUpperCase());
  if (yaExiste) {
@@ -926,7 +944,6 @@
  document.getElementById('admin-edit-index').value = index;
  document.getElementById('admin-form-title').innerText = "✏️ Editando Registro (Pulsa Guardar para aplicar)";
  
- // Subir la vista hacia arriba para ver el formulario cómodamente
  window.scrollTo({ top: 0, behavior: 'smooth' });
  }
 
@@ -988,10 +1005,12 @@
  if (passInput && passInput.value === "@vioTech1993") { 
  autenticado = true; 
  evaluarAuthUI(); 
+ cargarDatosNube().then(() => {
  renderizarFeedbackAdmin(); 
  renderizarAdminGestion();
  renderizarDocsAdmin();
  actualizarDatalistSecciones();
+ });
  } else { 
  alert("Contraseña incorrecta"); 
  } 
