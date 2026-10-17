@@ -8,14 +8,11 @@
  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
  <!-- Tesseract.js para OCR de etiquetas con cámara -->
  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+ <!-- Supabase JS SDK -->
+ <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
  <style>
  :root { --bg-main: #080c19; --text-main: #f8fafc; }
- body.light-mode { background-color: #f1f5f9 !important; color: #0f172a !important; }
- body.light-mode .bg-slate-900, body.light-mode .bg-slate-950 { background-color: #ffffff !important; color: #0f172a !important; border-color: #cbd5e1 !important; }
- body.light-mode .text-slate-400 { color: #475569 !important; }
- body.light-mode input, body.light-mode select, body.light-mode textarea { background-color: #f8fafc !important; color: #0f172a !important; border-color: #cbd5e1 !important; }
- 
- body { background-color: var(--bg-main); color: var(--text-main); font-family: system-ui, -apple-system, sans-serif; transition: background 0.3s, color 0.3s; user-select: none; -webkit-user-select: none; }
+ body { background-color: var(--bg-main); color: var(--text-main); font-family: system-ui, -apple-system, sans-serif; user-select: none; -webkit-user-select: none; }
  .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
  .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
  .custom-scrollbar::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: 9999px; }
@@ -28,20 +25,17 @@
  }
  </style>
 </head>
-<body class="p-3 max-w-md mx-auto pb-32 pt-20" oncontextmenu="return false;">
+<body class="p-3 max-w-md mx-auto pb-32 pt-16" oncontextmenu="return false;">
 
  <!-- AVISO FIJO SUPERIOR -->
- <div class="fixed top-14 left-4 right-4 z-50 pointer-events-none flex justify-between items-center">
+ <div class="fixed top-3 left-4 right-4 z-50 pointer-events-none flex justify-between items-center">
  <span class="text-[10px] font-black tracking-widest text-rose-500/95 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] uppercase pointer-events-auto">
  ONLY FOR REFERENCE
  </span>
- <button onclick="alternarModoSol()" id="btn-modo-sol" class="pointer-events-auto bg-slate-900/90 border border-slate-700 text-amber-400 text-xs px-3 py-1.5 rounded-full shadow-lg backdrop-blur-md transition">
- ☀️ Sol
- </button>
  </div>
 
  <!-- NOTIFICACIÓN TOAST -->
- <div id="toast-notif" class="fixed top-24 right-4 z-50 bg-sky-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-2xl transition-all duration-300 transform -translate-y-10 opacity-0 pointer-events-none flex items-center space-x-2 border border-sky-400">
+ <div id="toast-notif" class="fixed top-20 right-4 z-50 bg-sky-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-2xl transition-all duration-300 transform -translate-y-10 opacity-0 pointer-events-none flex items-center space-x-2 border border-sky-400">
  <span>📋</span>
  <span id="toast-msg">¡P/N copiado al portapapeles!</span>
  </div>
@@ -97,7 +91,7 @@
  <div id="contenedor-secciones" class="space-y-2.5"></div>
  </div>
 
- <!-- PESTAÑA 2: TOOLS -->
+ <!-- PESTAÑA 2: TOOLS (ORDENADAS A-Z) -->
  <div id="pestana-tools" class="hidden space-y-3">
  <div class="relative">
  <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-500">🔍</span>
@@ -105,13 +99,13 @@
  class="w-full bg-slate-900/90 border border-slate-800 text-white placeholder-slate-500 rounded-2xl pl-11 pr-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/50 shadow-inner">
  </div>
  <div class="flex justify-between items-center px-1">
- <span class="text-[11px] text-slate-400 font-medium">Equipos de apoyo y útiles</span>
+ <span class="text-[11px] text-slate-400 font-medium">Equipos de apoyo y útiles (A-Z)</span>
  <span class="text-[11px] text-slate-400 font-medium"><span id="contador-tools" class="text-sky-400 font-bold">0</span> herramientas</span>
  </div>
  <div id="contenedor-tools" class="space-y-2.5"></div>
  </div>
 
- <!-- PESTAÑA 3: RAMPS (INALTERABLE) -->
+ <!-- PESTAÑA 3: RAMPS (BLOQUE 1 - INALTERABLE) -->
  <div id="pestana-ramps" class="hidden space-y-6">
  <div class="flex justify-between items-center border-b border-slate-800 pb-2">
  <span class="text-xs text-slate-400 font-medium">Checklists completas (Guardado automático):</span>
@@ -255,7 +249,7 @@
  </div>
  </div>
 
- <!-- PESTAÑA 5: DOCUMENTS (Seguro y Protegido) -->
+ <!-- PESTAÑA 5: DOCUMENTS -->
  <div id="pestana-docs" class="hidden space-y-4">
  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 space-y-2 shadow-lg">
  <label class="block text-xs font-bold text-sky-400 uppercase tracking-wide">Seleccionar Documento Técnico:</label>
@@ -314,11 +308,11 @@
  </div>
  </div>
 
- <!-- FORMULARIO CREAR / EDITAR CONSUMIBLE O HERRAMIENTA -->
+ <!-- FORMULARIO CREAR / EDITAR -->
  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
  <h3 id="admin-form-title" class="font-bold text-amber-400 text-xs">➕ Añadir Nuevo Consumible o Herramienta</h3>
- <input type="hidden" id="admin-edit-index" value="-1">
- <input type="hidden" id="admin-edit-tipo" value="">
+ <input type="hidden" id="admin-edit-id" value="">
+ <input type="hidden" id="admin-edit-tipo" value="consumible">
  <div class="space-y-2">
  <select id="admin-tipo-reg" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
  <option value="consumible">📦 Consumible / Material (Search)</option>
@@ -326,15 +320,15 @@
  </select>
  <input type="text" id="admin-articulo" placeholder="Nombre / Descripción (ej. RING)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
  <input type="text" id="admin-pn" placeholder="Part Number (ej. MS28778-6)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
- <input type="text" id="admin-seccion" placeholder="Sección" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+ <input type="text" id="admin-seccion" placeholder="Sección (solo consumibles)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
  <input type="text" id="admin-nota" placeholder="Tool / Nota requerida (opcional)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
- <button onclick="guardarRegistroAdmin()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition">Guardar Registro</button>
+ <button onclick="guardarRegistroAdmin()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition">Guardar en la Nube</button>
  </div>
  </div>
 
- <!-- GESTIÓN DE REGISTROS (CONSUMIBLES / HERRAMIENTAS) -->
+ <!-- GESTIÓN DE REGISTROS -->
  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
- <h3 class="font-bold text-amber-400 text-xs">📋 Gestionar Registros Existentes</h3>
+ <h3 class="font-bold text-amber-400 text-xs">📋 Gestionar Registros en la Nube</h3>
  <div class="flex space-x-2">
  <button onclick="filtrarAdminList('consumible')" id="btn-admin-cons" class="flex-1 py-1 text-[10px] rounded-lg bg-sky-500 text-white font-bold">Consumibles</button>
  <button onclick="filtrarAdminList('tool')" id="btn-admin-tls" class="flex-1 py-1 text-[10px] rounded-lg bg-slate-950 text-slate-400 font-bold">Herramientas</button>
@@ -342,13 +336,12 @@
  <div id="lista-gestion-admin" class="space-y-2 max-h-60 overflow-y-auto pr-1 text-xs"></div>
  </div>
 
- <!-- GESTIÓN DE DOCUMENTOS DE DRIVE -->
+ <!-- GESTIÓN DE DOCUMENTOS -->
  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
  <h3 class="font-bold text-sky-400 text-xs">📄 Gestionar Documentos de Google Drive</h3>
- <p class="text-[10px] text-slate-400">Añade o elimina documentos sin tocar el código fuente.</p>
  <div class="space-y-2">
- <input type="text" id="admin-doc-nombre" placeholder="Nombre del documento (ej. Manual X)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
- <input type="text" id="admin-doc-id" placeholder="ID de Google Drive del archivo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+ <input type="text" id="admin-doc-nombre" placeholder="Nombre del documento" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+ <input type="text" id="admin-doc-id" placeholder="ID de Google Drive" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
  <button onclick="agregarDocumentoAdmin()" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-2 rounded-xl text-xs transition">Añadir Documento</button>
  </div>
  <div id="lista-docs-admin" class="space-y-2 max-h-40 overflow-y-auto pr-1 text-xs mt-2"></div>
@@ -364,8 +357,12 @@
  </div>
  </div>
 
- <!-- Script Principal -->
+ <!-- Script Principal con Supabase y Respaldo Local -->
  <script>
+ const SUPABASE_URL = 'https://vlrloizxrvklkzdvgkii.supabase.co';
+ const SUPABASE_KEY = 'sb_publishable_veJeqUFfhqIVoCk0JLma6A_fN9llMru';
+ const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
  const ARTICULOS_INICIALES = [
  { "articulo": "O-RING 1", "pn": "MS9385-07", "seccion": "AIR PACK OVHT SENSOR", "nota": "" },
  { "articulo": "O-RING 2", "pn": "S9028A905", "seccion": "AIR PACK OVHT SENSOR", "nota": "" },
@@ -535,14 +532,60 @@
  { id: "1adDKrCHrUkUIaukFjtEb-Y_cAQbaVV0L", nombre: "737NG COMPONENT LOCATOR GUIDE.pdf" }
  ];
 
- let listaArticulos = JSON.parse(localStorage.getItem('svqh_items_v12')) || ARTICULOS_INICIALES;
- let listaHerramientas = JSON.parse(localStorage.getItem('svqh_tools_v12')) || HERRAMIENTAS_INICIALES;
- let listaDocumentos = JSON.parse(localStorage.getItem('svqh_docs_v2')) || DOCUMENTOS_INICIALES;
+ let listaArticulos = [];
+ let listaHerramientas = [];
+ let listaDocumentos = [];
  let historialPns = JSON.parse(localStorage.getItem('svqh_historial_pns')) || [];
  let feedbackList = JSON.parse(localStorage.getItem('svqh_feedback')) || [];
  let seccionesAbiertas = {};
  let autenticado = false;
  let adminTipoFiltro = 'consumible';
+
+ async function cargarDatosNube() {
+ try {
+ let { data: cons } = await _supabase.from('consumibles').select('*');
+ if (!cons || cons.length === 0) {
+ await _supabase.from('consumibles').insert(ARTICULOS_INICIALES);
+ let { data: cons2 } = await _supabase.from('consumibles').select('*');
+ listaArticulos = cons2 || ARTICULOS_INICIALES;
+ } else {
+ listaArticulos = cons;
+ }
+
+ let { data: tools } = await _supabase.from('herramientas').select('*');
+ if (!tools || tools.length === 0) {
+ await _supabase.from('herramientas').insert(HERRAMIENTAS_INICIALES);
+ let { data: tools2 } = await _supabase.from('herramientas').select('*');
+ listaHerramientas = tools2 || HERRAMIENTAS_INICIALES;
+ } else {
+ listaHerramientas = tools;
+ }
+ listaHerramientas.sort((a, b) => a.articulo.localeCompare(b.articulo));
+
+ let { data: docs } = await _supabase.from('documentos').select('*');
+ if (!docs || docs.length === 0) {
+ await _supabase.from('documentos').insert(DOCUMENTOS_INICIALES);
+ let { data: docs2 } = await _supabase.from('documentos').select('*');
+ listaDocumentos = docs2 || DOCUMENTOS_INICIALES;
+ } else {
+ listaDocumentos = docs;
+ }
+ } catch (e) {
+ console.error("Usando datos locales por fallo de red:", e);
+ listaArticulos = ARTICULOS_INICIALES;
+ listaHerramientas = HERRAMIENTAS_INICIALES;
+ listaHerramientas.sort((a, b) => a.articulo.localeCompare(b.articulo));
+ listaDocumentos = DOCUMENTOS_INICIALES;
+ }
+
+ filtrarYAgrupar();
+ filtrarTools();
+ renderizarSelectorDocumentos();
+ if (autenticado) {
+ renderizarAdminGestion();
+ renderizarDocsAdmin();
+ }
+ }
 
  function cambiarPestana(target) {
  const btns = ['btn-lista', 'btn-tools', 'btn-ramps', 'btn-calc', 'btn-docs', 'btn-feedback', 'btn-admin'];
@@ -586,17 +629,6 @@
  secMax.classList.remove('hidden');
  secNg.classList.add('hidden');
  }
- }
-
- function alternarModoSol() {
- document.body.classList.toggle('light-mode');
- const esClaro = document.body.classList.contains('light-mode');
- document.getElementById('btn-modo-sol').innerText = esClaro ? '🌙 Noche' : '☀️ Sol';
- localStorage.setItem('svqh_modo_claro', esClaro);
- }
- if (localStorage.getItem('svqh_modo_claro') === 'true') {
- document.body.classList.add('light-mode');
- document.getElementById('btn-modo-sol').innerText = '🌙 Noche';
  }
 
  function registrarPNCopiado(pn) {
@@ -670,6 +702,10 @@
  if (!contenedor) return;
  const query = buscadorEl ? buscadorEl.value.toLowerCase().trim() : '';
  contenedor.innerHTML = '';
+ 
+ // Ordenar alfabéticamente A-Z antes de filtrar y mostrar
+ listaHerramientas.sort((a, b) => a.articulo.localeCompare(b.articulo));
+
  const filtrados = listaHerramientas.filter(item => item.articulo.toLowerCase().includes(query) || item.pn.toLowerCase().includes(query));
  if (contador) contador.innerText = filtrados.length;
  if (filtrados.length === 0) { contenedor.innerHTML = `<div class="text-center text-xs text-slate-500 py-12">No se encontraron herramientas.</div>`; return; }
@@ -766,7 +802,7 @@
  }
  }
 
- // PROCESAMIENTO DE FOTO Y OCR AUTOMÁTICO (Tesseract.js)
+ // OCR AUTOMÁTICO CON CÁMARA
  function procesarFotoCamara(event) {
  const archivo = event.target.files[0];
  if (!archivo) return;
@@ -785,15 +821,8 @@
  const statusEl = document.getElementById('ocr-status');
  if (statusEl) statusEl.classList.remove('hidden');
 
- Tesseract.recognize(
- archivo,
- 'eng',
- { logger: m => console.log(m) }
- ).then(({ data: { text } }) => {
+ Tesseract.recognize(archivo, 'eng', { logger: m => console.log(m) }).then(({ data: { text } }) => {
  if (statusEl) statusEl.classList.add('hidden');
- console.log("Texto reconocido:", text);
- 
- // Analizar líneas para extraer descripción y part number
  const lineas = text.split('\n');
  let descDetectada = "";
  let pnDetectado = "";
@@ -802,26 +831,21 @@
  const l = linea.trim();
  if (l.toUpperCase().startsWith("DESC") || l.toUpperCase().startsWith("DESCRIPTION")) {
  const partes = l.split(/[:|\s]+/);
- if (partes.length > 1) {
- descDetectada = partes.slice(1).join(' ');
- }
+ if (partes.length > 1) descDetectada = partes.slice(1).join(' ');
  }
  if (l.toUpperCase().startsWith("PART") || l.toUpperCase().startsWith("P/N") || l.toUpperCase().startsWith("P:")) {
  const partes = l.split(/[:|\s]+/);
- if (partes.length > 1) {
- pnDetectado = partes[1];
- }
+ if (partes.length > 1) pnDetectado = partes[1];
  }
  });
 
  if (descDetectada) document.getElementById('admin-articulo').value = descDetectada;
  if (pnDetectado) document.getElementById('admin-pn').value = pnDetectado;
-
- alert("¡Imagen escaneada! Se han intentado autocompletar la descripción y el Part Number.");
+ alert("¡Etiqueta escaneada con éxito!");
  }).catch(err => {
  if (statusEl) statusEl.classList.add('hidden');
  console.error(err);
- alert("No se pudo escanear automáticamente el texto de la etiqueta.");
+ alert("No se pudo leer automáticamente el texto de la etiqueta.");
  });
  }
 
@@ -845,7 +869,10 @@
  const contenedor = document.getElementById('lista-gestion-admin');
  if (!contenedor) return;
  const data = adminTipoFiltro === 'consumible' ? listaArticulos : listaHerramientas;
- contenedor.innerHTML = data.map((item, index) => `
+ if (adminTipoFiltro === 'tool') {
+ data.sort((a, b) => a.articulo.localeCompare(b.articulo));
+ }
+ contenedor.innerHTML = data.map((item) => `
  <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center">
  <div>
  <span class="font-bold text-white block uppercase">${item.articulo}</span>
@@ -854,113 +881,104 @@
  ${item.nota ? `<span class="text-[9px] text-rose-400 block">${item.nota}</span>` : ''}
  </div>
  <div class="flex space-x-1">
- <button onclick="editarRegistroAdmin('${adminTipoFiltro}', ${index})" class="bg-amber-500/20 text-amber-400 px-2 py-1 rounded-lg">✏️</button>
- <button onclick="eliminarRegistroAdmin('${adminTipoFiltro}', ${index})" class="bg-rose-500/20 text-rose-400 px-2 py-1 rounded-lg">🗑️</button>
+ <button onclick="editarRegistroAdmin('${adminTipoFiltro}', '${item.id || item.pn}')" class="bg-amber-500/20 text-amber-400 px-2 py-1 rounded-lg">✏️</button>
+ <button onclick="eliminarRegistroAdmin('${adminTipoFiltro}', '${item.id || item.pn}')" class="bg-rose-500/20 text-rose-400 px-2 py-1 rounded-lg">🗑️</button>
  </div>
  </div>
  `).join('');
  }
 
- function guardarRegistroAdmin() {
+ async function guardarRegistroAdmin() {
  const tipo = document.getElementById('admin-tipo-reg').value;
  const articulo = document.getElementById('admin-articulo').value.trim();
  const pn = document.getElementById('admin-pn').value.trim();
  const seccion = document.getElementById('admin-seccion').value.trim() || 'GENERAL';
  const nota = document.getElementById('admin-nota').value.trim();
- const editIdx = parseInt(document.getElementById('admin-edit-index').value);
- const editTipo = document.getElementById('admin-edit-tipo').value;
+ const editId = document.getElementById('admin-edit-id').value;
 
- if (!articulo || !pn) { alert("Rellena al menos el nombre y el Part Number"); return; }
+ if (!articulo || !pn) { alert("Rellena el nombre y el Part Number"); return; }
 
+ const tabla = tipo === 'consumible' ? 'consumibles' : 'herramientas';
  const nuevoItem = tipo === 'consumible' ? { articulo, pn, seccion, nota } : { articulo, pn };
 
- if (editIdx === -1) {
- if (tipo === 'consumible') listaArticulos.unshift(nuevoItem);
- else listaHerramientas.unshift(nuevoItem);
+ if (!editId) {
+ let { error } = await _supabase.from(tabla).insert([nuevoItem]);
+ if (error) { alert("Error al guardar en Supabase: " + error.message); return; }
  } else {
- // Si cambió de tipo o se edita en su array correspondiente
- if (editTipo === 'consumible') {
- listaArticulos.splice(editIdx, 1);
- } else if (editTipo === 'tool') {
- listaHerramientas.splice(editIdx, 1);
- }
- 
- if (tipo === 'consumible') listaArticulos.unshift(nuevoItem);
- else listaHerramientas.unshift(nuevoItem);
-
- document.getElementById('admin-edit-index').value = '-1';
- document.getElementById('admin-edit-tipo').value = '';
+ let { error } = await _supabase.from(tabla).update(nuevoItem).eq('id', editId);
+ if (error) { alert("Error al actualizar: " + error.message); return; }
+ document.getElementById('admin-edit-id').value = '';
  document.getElementById('admin-form-title').innerText = "➕ Añadir Nuevo Consumible o Herramienta";
  }
-
- localStorage.setItem('svqh_items_v12', JSON.stringify(listaArticulos));
- localStorage.setItem('svqh_tools_v12', JSON.stringify(listaHerramientas));
 
  document.getElementById('admin-articulo').value = '';
  document.getElementById('admin-pn').value = '';
  document.getElementById('admin-seccion').value = '';
  document.getElementById('admin-nota').value = '';
- renderizarAdminGestion();
- filtrarYAgrupar();
- filtrarTools();
- alert("¡Guardado con éxito!");
+ 
+ await cargarDatosNube();
+ alert("¡Guardado y sincronizado en la nube con éxito!");
  }
 
- function editarRegistroAdmin(tipo, index) {
- const item = tipo === 'consumible' ? listaArticulos[index] : listaHerramientas[index];
+ function editarRegistroAdmin(tipo, id) {
+ const data = tipo === 'consumible' ? listaArticulos : listaHerramientas;
+ const item = data.find(i => String(i.id) === String(id) || String(i.pn) === String(id));
+ if (!item) return;
+
  document.getElementById('admin-tipo-reg').value = tipo;
  document.getElementById('admin-articulo').value = item.articulo;
  document.getElementById('admin-pn').value = item.pn;
  document.getElementById('admin-seccion').value = item.seccion || '';
  document.getElementById('admin-nota').value = item.nota || '';
- document.getElementById('admin-edit-index').value = index;
- document.getElementById('admin-edit-tipo').value = tipo;
+ document.getElementById('admin-edit-id').value = item.id || '';
  document.getElementById('admin-form-title').innerText = "✏️ Editando Registro";
  }
 
- function eliminarRegistroAdmin(tipo, index) {
- if (confirm("¿Seguro que deseas eliminar este registro?")) {
- if (tipo === 'consumible') listaArticulos.splice(index, 1);
- else listaHerramientas.splice(index, 1);
- localStorage.setItem('svqh_items_v12', JSON.stringify(listaArticulos));
- localStorage.setItem('svqh_tools_v12', JSON.stringify(listaHerramientas));
- renderizarAdminGestion();
- filtrarYAgrupar();
- filtrarTools();
+ async function eliminarRegistroAdmin(tipo, id) {
+ if (confirm("¿Seguro que deseas eliminar este registro de la nube?")) {
+ const tabla = tipo === 'consumible' ? 'consumibles' : 'herramientas';
+ let query = _supabase.from(tabla).delete();
+ if (id && !isNaN(id)) {
+ query = query.eq('id', id);
+ } else {
+ query = query.eq('pn', id);
+ }
+ let { error } = await query;
+ if (error) { alert("Error al eliminar: " + error.message); return; }
+ await cargarDatosNube();
  }
  }
 
- // GESTIÓN DINÁMICA DE DOCUMENTOS DESDE ADMIN
  function renderizarDocsAdmin() {
  const contenedor = document.getElementById('lista-docs-admin');
  if (!contenedor) return;
- contenedor.innerHTML = listaDocumentos.map((doc, index) => `
+ contenedor.innerHTML = listaDocumentos.map((doc) => `
  <div class="bg-slate-950 p-2 rounded-xl border border-slate-800 flex justify-between items-center text-[11px]">
  <span class="font-bold text-white truncate max-w-[200px]">${doc.nombre}</span>
- <button onclick="eliminarDocumentoAdmin(${index})" class="bg-rose-500/20 text-rose-400 px-2 py-1 rounded-lg">🗑️</button>
+ <button onclick="eliminarDocumentoAdmin('${doc.id}')" class="bg-rose-500/20 text-rose-400 px-2 py-1 rounded-lg">🗑️</button>
  </div>
  `).join('');
  }
 
- function agregarDocumentoAdmin() {
+ async function agregarDocumentoAdmin() {
  const nombre = document.getElementById('admin-doc-nombre').value.trim();
  const id = document.getElementById('admin-doc-id').value.trim();
  if (!nombre || !id) { alert("Rellena el nombre y el ID del documento"); return; }
- listaDocumentos.push({ id, nombre });
- localStorage.setItem('svqh_docs_v2', JSON.stringify(listaDocumentos));
+ 
+ let { error } = await _supabase.from('documentos').insert([{ id, nombre }]);
+ if (error) { alert("Error al añadir documento: " + error.message); return; }
+
  document.getElementById('admin-doc-nombre').value = '';
  document.getElementById('admin-doc-id').value = '';
- renderizarDocsAdmin();
- renderizarSelectorDocumentos();
- alert("¡Documento añadido con éxito!");
+ await cargarDatosNube();
+ alert("¡Documento añadido a la nube con éxito!");
  }
 
- function eliminarDocumentoAdmin(index) {
- if (confirm("¿Eliminar este documento de la lista?")) {
- listaDocumentos.splice(index, 1);
- localStorage.setItem('svqh_docs_v2', JSON.stringify(listaDocumentos));
- renderizarDocsAdmin();
- renderizarSelectorDocumentos();
+ async function eliminarDocumentoAdmin(id) {
+ if (confirm("¿Eliminar este documento de la nube?")) {
+ let { error } = await _supabase.from('documentos').delete().eq('id', id);
+ if (error) { alert("Error al eliminar documento: " + error.message); return; }
+ await cargarDatosNube();
  }
  }
 
@@ -998,11 +1016,9 @@
  }
 
  window.onload = function() {
- filtrarYAgrupar();
+ cargarDatosNube();
  renderizarHistorialPns();
- filtrarTools();
  cargarEstadoChecks();
- renderizarSelectorDocumentos();
  };
  </script>
 </body>
