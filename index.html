@@ -674,7 +674,8 @@
  }
 
  // OCR INTELIGENTE ADAPTADO A ETIQUETAS DE AVIACIÓN (RYR Y ESTÁNDAR)
-function procesarFotoCamara(event) {
+// OCR INTELIGENTE ADAPTADO A ETIQUETAS DE AVIACIÓN (RYR Y ESTÁNDAR)
+ function procesarFotoCamara(event) {
  const archivo = event.target.files[0];
  if (!archivo) return;
 
@@ -700,18 +701,21 @@ function procesarFotoCamara(event) {
  let descDetectada = "";
  let pnDetectado = "";
 
- for (let linea of lineas) {
+ for (let i = 0; i < lineas.length; i++) {
+ let linea = lineas[i];
  let lUpper = linea.toUpperCase();
 
- // Detección flexible de Descripción
+ // Detección flexible de Descripción (busca Desc o Description)
  if (lUpper.includes("DESC")) {
  let partes = linea.split(/[:|]/);
  if (partes.length > 1 && partes[1].trim().length > 0) {
  descDetectada = partes[1].trim();
+ } else if (i + 1 < lineas.length) {
+ descDetectada = lineas[i + 1].trim();
  }
  }
 
- // Detección flexible de Part Number (limpiando Qnty si viene pegado)
+ // Detección flexible de Part Number (busca Part, Part Number o P/N)
  if ((lUpper.includes("PART") || lUpper.includes("P/N") || lUpper.includes("PN")) && !lUpper.includes("DESC")) {
  let partes = linea.split(/[:|]/);
  if (partes.length > 1 && partes[1].trim().length > 0) {
@@ -720,43 +724,13 @@ function procesarFotoCamara(event) {
  val = val.split(/qnty/i)[0].trim();
  }
  pnDetectado = val;
- }
- }
- }
-
- if (descDetectada) document.getElementById('admin-articulo').value = descDetectada;
- if (pnDetectado) document.getElementById('admin-pn').value = pnDetectado;
-
- alert(`¡OCR completado!\n- Descripción: ${descDetectada || 'No detectada'}\n- Part Number: ${pnDetectado || 'No detectado'}\nRevisa y ajusta si es necesario.`);
- }).catch(err => {
- if (statusEl) statusEl.classList.add('hidden');
- console.error(err);
- alert("No se pudo leer automáticamente el texto de la etiqueta.");
- });
- }
-
- // Detección para etiquetas tipo Ryanair ("Desc:" o "Desc :")
- if (lUpper.startsWith("DESC") || lUpper.startsWith("D:")) {
- let partes = linea.split(/[:|]/);
- if (partes.length > 1 && partes[1].trim().length > 1) {
- descDetectada = partes[1].trim();
- } else if (i + 1 < lineas.length) {
- descDetectada = lineas[i + 1].trim();
- }
- }
-
- // Detección para Part Number ("Part:", "Part Number", "P/N", etc.)
- if (lUpper.startsWith("PART") || lUpper.startsWith("P/N") || lUpper.startsWith("PN") || lUpper.startsWith("P:")) {
- let partes = linea.split(/[:|]/);
- if (partes.length > 1 && partes[1].trim().length > 1) {
- pnDetectado = partes[1].trim();
  } else if (i + 1 < lineas.length) {
  pnDetectado = lineas[i + 1].trim();
  }
  }
  }
 
- // Fallbacks de etiquetas si el texto está en la línea siguiente
+ // Fallbacks adicionales si el texto está en la línea siguiente exacta
  if (!descDetectada) {
  let idx = lineas.findIndex(l => l.toUpperCase() === "DESCRIPTION" || l.toUpperCase() === "DESC");
  if (idx !== -1 && idx + 1 < lineas.length) descDetectada = lineas[idx + 1];
@@ -778,6 +752,11 @@ function procesarFotoCamara(event) {
  }
 
  function limpiarFoto() {
+ const preview = document.getElementById('preview-foto');
+ const img = document.getElementById('img-capturada');
+ if (preview) preview.classList.add('hidden');
+ if (img) img.src = '';
+ } 
  const preview = document.getElementById('preview-foto');
  const img = document.getElementById('img-capturada');
  if (preview) preview.classList.add('hidden');
