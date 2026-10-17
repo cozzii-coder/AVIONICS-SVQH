@@ -320,9 +320,9 @@
  </div>
  </div>
 
- <!-- GESTIÓN DE REGISTROS -->
+ <!-- GESTIÓN DE REGISTROS (CLIC PARA EDITAR) -->
  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
- <h3 class="font-bold text-amber-400 text-xs">📋 Gestionar Registros en la Nube</h3>
+ <h3 class="font-bold text-amber-400 text-xs">📋 Gestionar Registros en la Nube (Pulsa para editar)</h3>
  <div class="flex space-x-2">
  <button onclick="filtrarAdminList('consumible')" id="btn-admin-cons" class="flex-1 py-1 text-[10px] rounded-lg bg-sky-500 text-white font-bold">Consumibles</button>
  <button onclick="filtrarAdminList('tool')" id="btn-admin-tls" class="flex-1 py-1 text-[10px] rounded-lg bg-slate-950 text-slate-400 font-bold">Herramientas</button>
@@ -769,7 +769,7 @@
  }
  }
 
- // OCR INTELIGENTE MEJORADO
+ // OCR INTELIGENTE
  function procesarFotoCamara(event) {
  const archivo = event.target.files[0];
  if (!archivo) return;
@@ -796,7 +796,6 @@
  let descDetectada = "";
  let pnDetectado = "";
 
- // Heurística inteligente para buscar descripciones y P/Ns
  for (let linea of lineas) {
  const lUpper = linea.toUpperCase();
  if ((lUpper.includes("PART") || lUpper.includes("P/N") || lUpper.includes("PN") || lUpper.startsWith("P:")) && !pnDetectado) {
@@ -808,10 +807,7 @@
  }
  }
 
- // Si no encontró etiquetas específicas, toma líneas lógicas
- if (!descDetectada && lineas.length > 0) {
- descDetectada = lineas[0];
- }
+ if (!descDetectada && lineas.length > 0) descDetectada = lineas[0];
  if (!pnDetectado && lineas.length > 1) {
  const candidato = lineas.find(l => /[0-9-]/.test(l) && l !== descDetectada);
  pnDetectado = candidato || lineas[1];
@@ -820,7 +816,7 @@
  if (descDetectada) document.getElementById('admin-articulo').value = descDetectada;
  if (pnDetectado) document.getElementById('admin-pn').value = pnDetectado;
 
- alert(`¡OCR completado!\n- Descripción: ${descDetectada || 'No detectada'}\n- Part Number: ${pnDetectado || 'No detectado'}\nRevisa los campos y guárdalos.`);
+ alert(`¡OCR completado!\n- Descripción: ${descDetectada || 'No detectada'}\n- Part Number: ${pnDetectado || 'No detectado'}\nRevisa y ajusta si es necesario.`);
  }).catch(err => {
  if (statusEl) statusEl.classList.add('hidden');
  console.error(err);
@@ -852,16 +848,15 @@
  data.sort((a, b) => a.articulo.localeCompare(b.articulo));
  }
  contenedor.innerHTML = data.map((item, index) => `
- <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center">
+ <div onclick="editarRegistroAdmin('${adminTipoFiltro}', ${index})" class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center cursor-pointer hover:border-sky-500/50 transition">
  <div>
  <span class="font-bold text-white block uppercase">${item.articulo}</span>
  <span class="text-[10px] text-amber-400 font-mono">${item.pn}</span>
  ${item.seccion ? `<span class="text-[9px] text-sky-400 block">${item.seccion}</span>` : ''}
  ${item.nota ? `<span class="text-[9px] text-rose-400 block">${item.nota}</span>` : ''}
  </div>
- <div class="flex space-x-1">
- <button onclick="editarRegistroAdmin('${adminTipoFiltro}', ${index})" class="bg-amber-500/20 text-amber-400 px-2 py-1 rounded-lg">✏️</button>
- <button onclick="eliminarRegistroAdmin('${adminTipoFiltro}', ${index})" class="bg-rose-500/20 text-rose-400 px-2 py-1 rounded-lg">🗑️</button>
+ <div>
+ <button onclick="event.stopPropagation(); eliminarRegistroAdmin('${adminTipoFiltro}', ${index})" class="bg-rose-500/20 text-rose-400 p-2 rounded-lg" title="Eliminar">🗑️</button>
  </div>
  </div>
  `).join('');
@@ -878,23 +873,30 @@
  if (!articulo || !pn) { alert("Rellena el nombre y el Part Number"); return; }
 
  const tabla = tipo === 'consumible' ? 'consumibles' : 'herramientas';
- const nuevoItem = tipo === 'consumible' ? { articulo, pn, seccion, nota } : { articulo, pn };
  const dataActual = tipo === 'consumible' ? listaArticulos : listaHerramientas;
+
+ // VALIDACIÓN ANTIDUPLICADOS: Comprobar si el P/N ya existe (solo al crear nuevo)
+ if (editIndex === "") {
+ const yaExiste = dataActual.some(i => i.pn.toUpperCase() === pn.toUpperCase());
+ if (yaExiste) {
+ alert(`⚠️ Error: El Part Number "${pn}" ya existe en la base de datos. No se permiten elementos duplicados.`);
+ return;
+ }
+ }
+
+ const nuevoItem = tipo === 'consumible' ? { articulo, pn, seccion, nota } : { articulo, pn };
 
  if (editIndex === "") {
  let { error } = await _supabase.from(tabla).insert([nuevoItem]);
  if (error) { alert("Error al guardar en Supabase: " + error.message); return; }
  } else {
  const itemOriginal = dataActual[parseInt(editIndex)];
- const idFiltro = itemOriginal.id;
- 
  let query = _supabase.from(tabla).update(nuevoItem);
- if (idFiltro) {
- query = query.eq('id', idFiltro);
+ if (itemOriginal.id) {
+ query = query.eq('id', itemOriginal.id);
  } else {
  query = query.eq('pn', itemOriginal.pn);
  }
- 
  let { error } = await query;
  if (error) { alert("Error al actualizar: " + error.message); return; }
 
@@ -922,8 +924,10 @@
  document.getElementById('admin-seccion').value = item.seccion || '';
  document.getElementById('admin-nota').value = item.nota || '';
  document.getElementById('admin-edit-index').value = index;
- document.getElementById('admin-form-title').innerText = "✏️ Editando Registro";
- cambiarPestana('admin');
+ document.getElementById('admin-form-title').innerText = "✏️ Editando Registro (Pulsa Guardar para aplicar)";
+ 
+ // Subir la vista hacia arriba para ver el formulario cómodamente
+ window.scrollTo({ top: 0, behavior: 'smooth' });
  }
 
  async function eliminarRegistroAdmin(tipo, index) {
@@ -942,6 +946,7 @@
  let { error } = await query;
  if (error) { alert("Error al eliminar: " + error.message); return; }
  await cargarDatosNube();
+ alert("¡Elemento eliminado correctamente!");
  }
  }
 
