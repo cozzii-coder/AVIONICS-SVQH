@@ -316,10 +316,13 @@
  <input type="text" id="admin-articulo" placeholder="Nombre / Descripción (ej. SCREW)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
  <input type="text" id="admin-pn" placeholder="Part Number (ej. NAS514P832-12)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
  
- <!-- SECCIÓN CON DATALIST DE CARPETAS DE SEARCH -->
- <div>
- <input type="text" id="admin-seccion" list="lista-secciones-datalist" placeholder="Sección (solo para consumibles)..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
- <datalist id="lista-secciones-datalist"></datalist>
+ <!-- SELECTOR DE SECCIONES EXISTENTES O CREAR NUEVA -->
+ <div class="space-y-2">
+ <select id="admin-seccion-select" onchange="toggleNuevaSeccion(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+ <option value="" disabled selected>-- Seleccionar sección existente --</option>
+ <option value="__nueva__">➕ Crear sección nueva...</option>
+ </select>
+ <input type="text" id="admin-seccion-nueva" placeholder="Escribe el nombre de la nueva sección..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white hidden">
  </div>
 
  <input type="text" id="admin-nota" placeholder="Nota / Consejo o Tool requerida (opcional)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
@@ -424,7 +427,7 @@
  filtrarYAgrupar();
  filtrarTools();
  renderizarSelectorDocumentos();
- actualizarDatalistSecciones();
+ actualizarSelectSecciones();
  if (autenticado) {
  renderizarAdminGestion();
  renderizarDocsAdmin();
@@ -466,11 +469,33 @@
  .subscribe();
  }
 
- function actualizarDatalistSecciones() {
- const datalist = document.getElementById('lista-secciones-datalist');
- if (!datalist) return;
+ function actualizarSelectSecciones() {
+ const select = document.getElementById('admin-seccion-select');
+ if (!select) return;
  const seccionesUnicas = [...new Set(listaArticulos.map(item => item.seccion))].sort();
- datalist.innerHTML = seccionesUnicas.map(sec => `<option value="${sec}">`).join('');
+ 
+ let html = '<option value="" disabled selected>-- Seleccionar sección existente --</option>';
+ seccionesUnicas.forEach(sec => {
+ html += `<option value="${sec}">${sec}</option>`;
+ });
+ html += '<option value="__nueva__">➕ Crear sección nueva...</option>';
+ select.innerHTML = html;
+
+ const inputNueva = document.getElementById('admin-seccion-nueva');
+ if (inputNueva) inputNueva.classList.add('hidden');
+ }
+
+ function toggleNuevaSeccion(val) {
+ const inputNueva = document.getElementById('admin-seccion-nueva');
+ if (!inputNueva) return;
+ if (val === '__nueva__') {
+ inputNueva.classList.remove('hidden');
+ inputNueva.value = '';
+ inputNueva.focus();
+ } else {
+ inputNueva.classList.add('hidden');
+ inputNueva.value = '';
+ }
  }
 
  function cambiarPestana(target) {
@@ -488,7 +513,7 @@
  if (target === 'tools') filtrarTools();
  if (target === 'ramps') cargarEstadoChecks();
  if (target === 'docs') renderizarSelectorDocumentos();
- if (target === 'admin') { evaluarAuthUI(); renderizarFeedbackAdmin(); renderizarAdminGestion(); renderizarDocsAdmin(); renderizarAuditoriaAdmin(); actualizarDatalistSecciones(); }
+ if (target === 'admin') { evaluarAuthUI(); renderizarFeedbackAdmin(); renderizarAdminGestion(); renderizarDocsAdmin(); renderizarAuditoriaAdmin(); actualizarSelectSecciones(); }
  }
 
  function renderizarSelectorDocumentos() {
@@ -673,8 +698,7 @@
  }
  }
 
-
-// OCR INTELIGENTE ADAPTADO A ETIQUETAS DE AVIACIÓN (RYR Y ESTÁNDAR)
+ // OCR INTELIGENTE ADAPTADO A ETIQUETAS DE AVIACIÓN (RYR Y ESTÁNDAR)
  function procesarFotoCamara(event) {
  const archivo = event.target.files[0];
  if (!archivo) return;
@@ -705,7 +729,6 @@
  let linea = lineas[i];
  let lUpper = linea.toUpperCase();
 
- // Detección flexible de Descripción (busca Desc o Description)
  if (lUpper.includes("DESC")) {
  let partes = linea.split(/[:|]/);
  if (partes.length > 1 && partes[1].trim().length > 0) {
@@ -715,7 +738,6 @@
  }
  }
 
- // Detección flexible de Part Number (busca Part, Part Number o P/N)
  if ((lUpper.includes("PART") || lUpper.includes("P/N") || lUpper.includes("PN")) && !lUpper.includes("DESC")) {
  let partes = linea.split(/[:|]/);
  if (partes.length > 1 && partes[1].trim().length > 0) {
@@ -730,7 +752,6 @@
  }
  }
 
- // Fallbacks adicionales si el texto está en la línea siguiente exacta
  if (!descDetectada) {
  let idx = lineas.findIndex(l => l.toUpperCase() === "DESCRIPTION" || l.toUpperCase() === "DESC");
  if (idx !== -1 && idx + 1 < lineas.length) descDetectada = lineas[idx + 1];
@@ -793,7 +814,17 @@
  const tipo = document.getElementById('admin-tipo-reg').value;
  const articulo = document.getElementById('admin-articulo').value.trim();
  const pn = document.getElementById('admin-pn').value.trim();
- const seccion = document.getElementById('admin-seccion').value.trim() || 'GENERAL';
+ 
+ let seccion = 'GENERAL';
+ if (tipo === 'consumible') {
+ const selectSec = document.getElementById('admin-seccion-select').value;
+ if (selectSec === '__nueva__') {
+ seccion = document.getElementById('admin-seccion-nueva').value.trim().toUpperCase() || 'GENERAL';
+ } else {
+ seccion = selectSec || 'GENERAL';
+ }
+ }
+
  const nota = document.getElementById('admin-nota').value.trim();
  const editIndex = document.getElementById('admin-edit-index').value;
 
@@ -832,7 +863,13 @@
 
  document.getElementById('admin-articulo').value = '';
  document.getElementById('admin-pn').value = '';
- document.getElementById('admin-seccion').value = '';
+ const selectSec = document.getElementById('admin-seccion-select');
+ if (selectSec) selectSec.selectedIndex = 0;
+ const inputNueva = document.getElementById('admin-seccion-nueva');
+ if (inputNueva) {
+ inputNueva.value = '';
+ inputNueva.classList.add('hidden');
+ }
  document.getElementById('admin-nota').value = '';
  
  await cargarDatosNube();
@@ -847,7 +884,31 @@
  document.getElementById('admin-tipo-reg').value = tipo;
  document.getElementById('admin-articulo').value = item.articulo;
  document.getElementById('admin-pn').value = item.pn;
- document.getElementById('admin-seccion').value = item.seccion || '';
+ 
+ if (tipo === 'consumible') {
+ const selectSec = document.getElementById('admin-seccion-select');
+ const inputNueva = document.getElementById('admin-seccion-nueva');
+ const secItem = item.seccion || 'GENERAL';
+ 
+ let existe = false;
+ for (let opt of selectSec.options) {
+ if (opt.value === secItem) {
+ existe = true;
+ break;
+ }
+ }
+ 
+ if (existe) {
+ selectSec.value = secItem;
+ inputNueva.classList.add('hidden');
+ inputNueva.value = '';
+ } else {
+ selectSec.value = '__nueva__';
+ inputNueva.classList.remove('hidden');
+ inputNueva.value = secItem;
+ }
+ }
+
  document.getElementById('admin-nota').value = item.nota || '';
  document.getElementById('admin-edit-index').value = index;
  document.getElementById('admin-form-title').innerText = "✏️ Editando Registro (Pulsa Guardar para aplicar)";
@@ -920,7 +981,7 @@
  renderizarAdminGestion();
  renderizarDocsAdmin();
  renderizarAuditoriaAdmin();
- actualizarDatalistSecciones();
+ actualizarSelectSecciones();
  } else { 
  alert("Contraseña incorrecta"); 
  } 
