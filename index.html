@@ -3,7 +3,9 @@
 <head>
  <meta charset="UTF-8">
  <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <!-- Cabeceras anti-caché para actualizaciones fluidas -->
+ <meta name="apple-mobile-web-app-capable" content="yes">
+ <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+ <!-- Cabeceras anti-caché -->
  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
  <meta http-equiv="Pragma" content="no-cache">
  <meta http-equiv="Expires" content="0">
@@ -15,15 +17,13 @@
  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
  <!-- Supabase JS SDK -->
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
+ <style>
  :root { --bg-main: #080c19; --text-main: #f8fafc; }
  body { background-color: var(--bg-main); color: var(--text-main); font-family: system-ui, -apple-system, sans-serif; user-select: none; -webkit-user-select: none; }
  .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
  .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
  .custom-scrollbar::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: 9999px; }
  .secure-container { position: relative; }
- 
- /* MODIFICA ESTA LÍNEA (cambia 50px por 70px) */
  .secure-overlay { position: absolute; top: 0; left: 0; right: 0; height: 70px; z-index: 20; background: transparent; }
 
  @media print {
@@ -101,7 +101,7 @@
  <div id="contenedor-tools" class="space-y-2.5"></div>
  </div>
 
- <!-- PESTAÑA 3: RAMPS (INALTERABLE) -->
+ <!-- PESTAÑA 3: RAMPS -->
  <div id="pestana-ramps" class="hidden space-y-6">
  <div class="flex justify-between items-center border-b border-slate-800 pb-2">
  <span class="text-xs text-slate-400 font-medium">Checklists completas (Guardado automático):</span>
@@ -245,7 +245,7 @@
  </div>
  </div>
 
-<!-- PESTAÑA 5: DOCUMENTS -->
+ <!-- PESTAÑA 5: DOCUMENTS -->
  <div id="pestana-docs" class="hidden space-y-4">
  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 space-y-2 shadow-lg">
  <label class="block text-xs font-bold text-sky-400 uppercase tracking-wide">Seleccionar Documento Técnico:</label>
@@ -259,7 +259,6 @@
  <span class="text-3xl">📂</span>
  <p class="text-xs font-medium">Selecciona un documento para visualizar.</p>
  </div>
- <!-- AÑADIDO: sandbox para bloquear apertura de pestañas externas y descargas -->
  <iframe id="iframe-doc-viewer" src="" sandbox="allow-scripts allow-same-origin" class="w-full h-full border-0 relative z-10" title="Visor de Documentación"></iframe>
  </div>
  </div>
@@ -294,11 +293,11 @@
  </div>
 
  <div id="panel-admin-contenido" class="hidden space-y-4">
- <!-- CÁMARA CON OCR INTELIGENTE -->
+ <!-- CÁMARA CON OCR INTELIGENTE MEJORADO -->
  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
- <h3 class="font-bold text-sky-400 text-xs">📷 Capturar Etiqueta (Autocompletar con OCR)</h3>
+ <h3 class="font-bold text-sky-400 text-xs">📷 Capturar Etiqueta (OCR Inteligente)</h3>
  <input type="file" accept="image/*" capture="environment" onchange="procesarFotoCamara(event)" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-sky-500 file:text-white hover:file:bg-sky-600">
- <div id="ocr-status" class="text-[11px] text-amber-400 font-medium hidden">⏳ Escaneando texto de la etiqueta...</div>
+ <div id="ocr-status" class="text-[11px] text-amber-400 font-medium hidden">⏳ Analizando etiqueta de aviación...</div>
  <div id="preview-foto" class="hidden mt-2">
  <img id="img-capturada" class="w-full h-32 object-cover rounded-xl border border-slate-800" alt="Vista previa">
  <button onclick="limpiarFoto()" class="mt-2 text-[10px] text-rose-400 underline">Quitar foto</button>
@@ -314,8 +313,8 @@
  <option value="consumible">📦 Consumible / Material (Search)</option>
  <option value="tool">🧰 Herramienta / Equipo (Tools)</option>
  </select>
- <input type="text" id="admin-articulo" placeholder="Nombre / Descripción (ej. RING)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
- <input type="text" id="admin-pn" placeholder="Part Number (ej. MS28778-6)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+ <input type="text" id="admin-articulo" placeholder="Nombre / Descripción (ej. SCREW)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+ <input type="text" id="admin-pn" placeholder="Part Number (ej. NAS514P832-12)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
  
  <!-- SECCIÓN CON DATALIST DE CARPETAS DE SEARCH -->
  <div>
@@ -349,13 +348,22 @@
  <div id="lista-docs-admin" class="space-y-2 max-h-40 overflow-y-auto pr-1 text-xs mt-2"></div>
  </div>
 
- <!-- BUZÓN RECIBIDO CON BOTÓN DE REFRESCAR -->
+ <!-- BUZÓN RECIBIDO -->
  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
  <div class="flex justify-between items-center">
  <h3 class="font-bold text-amber-400 text-xs">📥 Buzón Recibido (Nube)</h3>
  <button onclick="refrescarBuzonAdmin()" class="text-[10px] bg-sky-500/20 text-sky-400 border border-sky-500/30 px-2.5 py-1 rounded-xl hover:bg-sky-500/30 font-bold transition">🔄 Actualizar Buzón</button>
  </div>
  <div id="lista-feedback-admin" class="space-y-2 text-xs max-h-60 overflow-y-auto pr-1"></div>
+ </div>
+
+ <!-- AUDITORÍA DE CAMBIOS -->
+ <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
+ <div class="flex justify-between items-center">
+ <h3 class="font-bold text-purple-400 text-xs">🛡️ Auditoría / Historial de Cambios</h3>
+ <button onclick="cargarAuditoria()" class="text-[10px] bg-purple-500/20 text-purple-400 border border-purple-500/30 px-2.5 py-1 rounded-xl hover:bg-purple-500/30 font-bold transition">🔄 Refrescar Log</button>
+ </div>
+ <div id="lista-auditoria-admin" class="space-y-2 text-[11px] max-h-48 overflow-y-auto pr-1"></div>
  </div>
 
  <button onclick="cerrarSesion()" class="text-xs text-rose-400 underline block text-center w-full pt-2">Cerrar Sesión</button>
@@ -368,221 +376,49 @@
  const SUPABASE_KEY = 'sb_publishable_veJeqUFfhqIVoCk0JLma6A_fN9llMru';
  const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
- const ARTICULOS_INICIALES = [
- { "articulo": "O-RING 1", "pn": "MS9385-07", "seccion": "AIR PACK OVHT SENSOR", "nota": "" },
- { "articulo": "O-RING 2", "pn": "S9028A905", "seccion": "AIR PACK OVHT SENSOR", "nota": "" },
- { "articulo": "MOLYKOTE4", "pn": "M0LYKOTE44", "seccion": "AIR PACK OVHT SENSOR", "nota": "" },
- { "articulo": "KRYTOX P", "pn": "GPL206", "seccion": "AIR PACK OVHT SENSOR", "nota": "" },
- { "articulo": "NEVER SEEZ COMPOUND", "pn": "NSBT8N", "seccion": "AIR PACK OVHT SENSOR", "nota": "" },
- { "articulo": "PACKING", "pn": "AS3582-028", "seccion": "ATC ANTENNAS", "nota": "" },
- { "articulo": "SEALANT", "pn": "BMS5-95 / PS870B1-2", "seccion": "ATC ANTENNAS", "nota": "" },
- { "articulo": "COMPOUND", "pn": "DC4", "seccion": "ATC ANTENNAS", "nota": "" },
- { "articulo": "EMERGENCY LIGHT SIGNS SMALL LAMPS", "pn": "3071BPEGPL", "seccion": "CABIN LIGHTS", "nota": "" },
- { "articulo": "EMERGENCY LIGHTS EXTERIOR LAMPS", "pn": "767", "seccion": "CABIN LIGHTS", "nota": "" },
- { "articulo": "BELT AND NO SMOKE LIGHT", "pn": "387", "seccion": "CABIN LIGHTS", "nota": "" },
- { "articulo": "READING LIGHT", "pn": "9204", "seccion": "CABIN LIGHTS", "nota": "" },
- { "articulo": "FUEL STATION LIGHT", "pn": "GE1495", "seccion": "CABIN LIGHTS", "nota": "" },
- { "articulo": "WORK LIGHT COVER", "pn": "239052-13", "seccion": "CABIN LIGHTS", "nota": "" },
- { "articulo": "FIRE TEST LIGHT COVER GREEN", "pn": "682-1001-001", "seccion": "CABIN LIGHTS", "nota": "" },
- { "articulo": "LENS COVER FOR GALLEY LIGHT", "pn": "239004-19", "seccion": "CABIN LIGHTS", "nota": "" },
- { "articulo": "LAMP BULB FOR EEC ALT SWITCH", "pn": "MS24515-685AS15", "seccion": "CABIN LIGHTS", "nota": "" },
- { "articulo": "ASSY LOWER EMERG SIGN", "pn": "70-0366-11", "seccion": "CABIN LIGHTS", "nota": "" },
- { "articulo": "GALLEY BULB", "pn": "OLN115-18K", "seccion": "CABIN LIGHTS", "nota": "" },
- { "articulo": "BASE WHITE EMERG SIGNS", "pn": "207330", "seccion": "CABIN LIGHTS", "nota": "" },
- { "articulo": "EMERG SIGNS LENS (EXIT)", "pn": "207377-1001", "seccion": "CABIN LIGHTS", "nota": "" },
- { "articulo": "FMC CDU SHIM", "pn": "137300-78", "seccion": "CDU", "nota": "" },
- { "articulo": "FMC CDU SCREW", "pn": "117357-21", "seccion": "CDU", "nota": "" },
- { "articulo": "EMERG BATTERIES", "pn": "ADD71701-100", "seccion": "EMERG BATTERIES", "nota": "" },
- { "articulo": "FUSE", "pn": "B215-06", "seccion": "EMERG BATTERIES", "nota": "" },
- { "articulo": "FLASHLIGHT BATTERIES", "pn": "P4-01-0021", "seccion": "FLASHLIGHT", "nota": "" },
- { "articulo": "FLASHLIGHT SHIELD", "pn": "A1-18-1030", "seccion": "FLASHLIGHT", "nota": "" },
- { "articulo": "MEGAPHONE SET SCREW KIT", "pn": "9416", "seccion": "MEGAPHONE", "nota": "" },
- { "articulo": "COVER (BLUE)", "pn": "5180453792", "seccion": "FLOORPATH", "nota": "" },
- { "articulo": "ENDCAP 1CM", "pn": "417N5212-1CM", "seccion": "FLOORPATH", "nota": "" },
- { "articulo": "BULB (EMERGENCY LIGHT)", "pn": "3071BPEGPL", "seccion": "FLOORPATH", "nota": "" },
- { "articulo": "EMERG FLOORPATH LIGHT ASSY", "pn": "81000-22608ATS", "seccion": "FLOORPATH", "nota": "" },
- { "articulo": "FLOORPATH RECEPTACLE - PIN", "pn": "60983-3", "seccion": "FLOORPATH", "nota": "" },
- { "articulo": "FLOORPATH LIGHT", "pn": "60888-4", "seccion": "FLOORPATH", "nota": "" },
- { "articulo": "CRIMP TOOL PIN", "pn": "10131-4", "seccion": "FLOORPATH", "nota": "" },
- { "articulo": "COVER TRACK (BLACK)", "pn": "ACIFL00121-02", "seccion": "FLOORPATH", "nota": "" },
- { "articulo": "RED LENS", "pn": "S417N509-6", "seccion": "FLOORPATH", "nota": "" },
- { "articulo": "WHITE LENS", "pn": "S417N509-2", "seccion": "FLOORPATH", "nota": "" },
- { "articulo": "SOCKETS EMERG LIGHTS", "pn": "60988-3", "seccion": "FLOORPATH", "nota": "" },
- { "articulo": "SAFTGLO TAPE", "pn": "POLYKEN108FR0-5", "seccion": "FLOORPATH", "nota": "" },
- { "articulo": "LOGO LIGHT BULB", "pn": "HLX64621", "seccion": "LOGO LIGHTS", "nota": "" },
- { "articulo": "SCREWS LARGE", "pn": "BACB30ZE4-8", "seccion": "LOGO LIGHTS", "nota": "" },
- { "articulo": "SCREWS SMALL", "pn": "BACB30XD3K8", "seccion": "LOGO LIGHTS", "nota": "" },
- { "articulo": "SPRING A", "pn": "81116-37601", "seccion": "LOGO LIGHTS", "nota": "" },
- { "articulo": "SPRING B", "pn": "81115-37601", "seccion": "LOGO LIGHTS", "nota": "" },
- { "articulo": "SOCKET", "pn": "81004-37602", "seccion": "LOGO LIGHTS", "nota": "" },
- { "articulo": "RED SEALANT", "pn": "PR1428B1-2", "seccion": "LRRA", "nota": "" },
- { "articulo": "BLACK SEALANT", "pn": "BMS5-95 / PS870B1-2", "seccion": "LRRA", "nota": "" },
- { "articulo": "GASKET", "pn": "AG723000-40", "seccion": "LRRA", "nota": "" },
- { "articulo": "GREEN SEALANT", "pn": "HT3326-5-50", "seccion": "LRRA", "nota": "" },
- { "articulo": "ANTENNA", "pn": "S67-2002-28", "seccion": "LRRA", "nota": "" },
- { "articulo": "SCREWS", "pn": "BACB30NM3K4", "seccion": "MAIN & AUX BATTERIES", "nota": "" },
- { "articulo": "BATTERY", "pn": "024147-000", "seccion": "MAIN & AUX BATTERIES", "nota": "" },
- { "articulo": "CONNECTOR", "pn": "BACC45FT12-12P", "seccion": "MAIN & AUX BATTERIES", "nota": "" },
- { "articulo": "FUEL PANEL E&E", "pn": "NAS514P1032-16", "seccion": "PANELS SCREWS", "nota": "" },
- { "articulo": "E&E DOOR SWITCH PANEL", "pn": "NAS514P832-12", "seccion": "PANELS SCREWS", "nota": "" },
- { "articulo": "NUTPLATE FUEL PANEL E&E", "pn": "BACN10ZR3CD", "seccion": "PANELS SCREWS", "nota": "" },
- { "articulo": "Cockpit cap (rosca)", "pn": "15PA90-6W", "seccion": "RAMPS", "nota": "Ver Switch tips" },
- { "articulo": "COCKPit cap (fino)", "pn": "69-44578-2", "seccion": "RAMPS", "nota": "Ver Switch tips" },
- { "articulo": "Cabin Temp sensor filter (small)", "pn": "412A1605-41", "seccion": "RAMPS", "nota": "" },
- { "articulo": "Flt comp temp sensor filter (big)", "pn": "213A6404-1", "seccion": "RAMPS", "nota": "" },
- { "articulo": "INOP STICKER", "pn": "INT1072", "seccion": "RAMPS", "nota": "" },
- { "articulo": "GRILLE (FILTRO CABINA)", "pn": "412N1122-3A", "seccion": "RAMPS", "nota": "" },
- { "articulo": "BULB GALLEY", "pn": "MSC115", "seccion": "RAMPS", "nota": "" },
- { "articulo": "BEZEL", "pn": "11-6557-7GATS", "seccion": "RAMPS", "nota": "" },
- { "articulo": "COVER CALL LIGHT FOR CABIN CREW", "pn": "25-1734-15", "seccion": "RAMPS", "nota": "" },
- { "articulo": "LACING TAPE", "pn": "BMS13-54TY3CL1FC", "seccion": "SKEW SENSOR", "nota": "" },
- { "articulo": "TAPE", "pn": "SCOTH70", "seccion": "SKEW SENSOR", "nota": "" },
- { "articulo": "AV25", "pn": "AV25", "seccion": "SKEW SENSOR", "nota": "" },
- { "articulo": "D50", "pn": "D5026NS", "seccion": "SKEW SENSOR", "nota": "" },
- { "articulo": "NUT SCREWS HARNESS EGT", "pn": "AS3486-10", "seccion": "ENGINES", "nota": "" },
- { "articulo": "MOX TAPE", "pn": "M0XNESS620B1", "seccion": "ENGINES", "nota": "" },
- { "articulo": "TAPE HIGH TEMP ALUMINIUM FOIL", "pn": "3M363", "seccion": "ENGINES", "nota": "" },
- { "articulo": "TAPE GLASS CLOTH HIGH TEMP", "pn": "3M361", "seccion": "ENGINES", "nota": "" },
- { "articulo": "LOCKWIRE FOR HARNESS REPAIR", "pn": "MS20995C15", "seccion": "ENGINES", "nota": "" },
- { "articulo": "CLAMP BANDS CONNECTOR", "pn": "600-052", "seccion": "ENGINES", "nota": "TOOL: DBS-1101" },
- { "articulo": "YELLOW / WHITE", "pn": "M81969-14-04", "seccion": "INSERTS/EXTRACTORS", "nota": "" },
- { "articulo": "BLUE / WHITE", "pn": "M81969-14-03", "seccion": "INSERTS/EXTRACTORS", "nota": "" },
- { "articulo": "RED / WHITE", "pn": "M81969-14-02", "seccion": "INSERTS/EXTRACTORS", "nota": "" },
- { "articulo": "RED / WHITE (VARIANT)", "pn": "M81969-14-11", "seccion": "INSERTS/EXTRACTORS", "nota": "" },
- { "articulo": "GREEN / WHITE", "pn": "M81969-14-01", "seccion": "INSERTS/EXTRACTORS", "nota": "" },
- { "articulo": "VERDE / ROJO", "pn": "CTA1160", "seccion": "INSERTS/EXTRACTORS", "nota": "" },
- { "articulo": "GREEN / WHITE METAL", "pn": "M81969-1-01", "seccion": "INSERTS/EXTRACTORS", "nota": "" },
- { "articulo": "RED / WHITE METAL", "pn": "M81969-1-02", "seccion": "INSERTS/EXTRACTORS", "nota": "" },
- { "articulo": "BLUE / WHITE METAL", "pn": "M81969-1-03", "seccion": "INSERTS/EXTRACTORS", "nota": "" },
- { "articulo": "ELEVATOR PLUG FOR LEAK TEST", "pn": "MS21913V6P", "seccion": "OTHERS", "nota": "" },
- { "articulo": "LOCKWIRE FLIGHT DECK SWITCHES", "pn": "MS20995CY15", "seccion": "OTHERS", "nota": "" },
- { "articulo": "RODFILLER CLAMPS", "pn": "69B47961-2", "seccion": "OTHERS", "nota": "" },
- { "articulo": "ANTISTATIC BAGS", "pn": "ESDBAG62X48", "seccion": "OTHERS", "nota": "" },
- { "articulo": "STATIC DISCHARGER LARGE", "pn": "740001", "seccion": "OTHERS", "nota": "" },
- { "articulo": "STATIC DISCHARGER SHORT", "pn": "740007", "seccion": "OTHERS", "nota": "" },
- { "articulo": "SPLICE MOISTURE RED", "pn": "D436-36", "seccion": "SPLICES", "nota": "" },
- { "articulo": "SPLICE MOISTURE BLUE", "pn": "D436-37", "seccion": "SPLICES", "nota": "" },
- { "articulo": "SPLICE MOISTURE YELLOW", "pn": "D436-38", "seccion": "SPLICES", "nota": "" },
- { "articulo": "END CAP CRIMP TYPE (RED)", "pn": "324485", "seccion": "SPLICES", "nota": "CRIMP TOOL: 58573-1" },
- { "articulo": "Terminal lug landing light", "pn": "323750", "seccion": "SPLICES", "nota": "CRIMP TOOL: 59461" },
- { "articulo": "TERMINAL SPADE TYPE", "pn": "3-350816-2", "seccion": "SPLICES", "nota": "CRIMP TOOL: 9-1478240-0" },
- { "articulo": "TEFLON TAPE", "pn": "P421", "seccion": "TAPES TO REPAIR HARNESS", "nota": "" },
- { "articulo": "HEATSHRINK 1/4 YELLOW", "pn": "RNF100-1-4-4", "seccion": "HEATSHRINKS", "nota": "" },
- { "articulo": "SMALL SCREW RACK CONNECTOR", "pn": "BACS12HN06-6", "seccion": "RACKS & SCREWS", "nota": "" },
- { "articulo": "CABLE TIE (BACS38K6)", "pn": "BACS38K6", "seccion": "STRAP - CABLE TIE", "nota": "1st Longest" },
- { "articulo": "CABLE TIE (BACS38K3)", "pn": "BACS38K3", "seccion": "STRAP - CABLE TIE", "nota": "2nd Longest" },
- { "articulo": "CABLE TIE (BACS38K2)", "pn": "BACS38K2", "seccion": "STRAP - CABLE TIE", "nota": "Medium" },
- { "articulo": "CABLE TIE (BACS38K7)", "pn": "BACS38K7", "seccion": "STRAP - CABLE TIE", "nota": "Medium" },
- { "articulo": "CABLE TIE (BACS38K10)", "pn": "BACS38K10", "seccion": "STRAP - CABLE TIE", "nota": "Small" },
- { "articulo": "CABLE TIE (BACS38K1)", "pn": "BACS38K1", "seccion": "STRAP - CABLE TIE", "nota": "Small" },
- { "articulo": "CABLE TIE (BACS38K4)", "pn": "BACS38K4", "seccion": "STRAP - CABLE TIE", "nota": "Small (Typical)" },
- { "articulo": "CABLE TIE (BACS38K9)", "pn": "BACS38K9", "seccion": "STRAP - CABLE TIE", "nota": "Smallest" },
- { "articulo": "CABLE TIE (BACS38K5)", "pn": "BACS38K5", "seccion": "STRAP - CABLE TIE", "nota": "Smallest" },
- { "articulo": "MCP SCREW (BLACK)", "pn": "BACS12CK3H7", "seccion": "COCKPIT", "nota": "" },
- { "articulo": "MCP WASHER (BLACK)", "pn": "NAS1149C0332B", "seccion": "COCKPIT", "nota": "" },
- { "articulo": "CAP PSU CONNECTORS", "pn": "M85049/138-47A", "seccion": "CABIN PARTS", "nota": "" },
- { "articulo": "AIRSTAIRS LAMPS", "pn": "1864", "seccion": "AIRSTAIRS", "nota": "" },
- { "articulo": "AIRSTAIR LIGHT LENS", "pn": "870661-1", "seccion": "AIRSTAIRS", "nota": "" },
- { "articulo": "Inop tag label (small size)", "pn": "CBTAG", "seccion": "TAGS AND COLLARS", "nota": "" },
- { "articulo": "Collars inop system", "pn": "S4933959-523", "seccion": "TAGS AND COLLARS", "nota": "" },
- { "articulo": "White collar", "pn": "10164-3", "seccion": "TAGS AND COLLARS", "nota": "" },
- { "articulo": "Red collar (inop system)", "pn": "10237-1", "seccion": "TAGS AND COLLARS", "nota": "" },
- { "articulo": "Wire mount sliding windows", "pn": "MB-3", "seccion": "WINDOWS PARTS", "nota": "" },
- { "articulo": "SCREW TERMINAL LUG WINDOW", "pn": "BACS12HN06-4", "seccion": "WINDOWS PARTS", "nota": "" },
- { "articulo": "WASHER TERMINAL LUG WINDOW", "pn": "MS35338-98", "seccion": "WINDOWS PARTS", "nota": "" }
- ];
-
- const HERRAMIENTAS_INICIALES = [
- { "articulo": "QUICKSET", "pn": "QUICKSET", "nota": "" },
- { "articulo": "FLUKE117", "pn": "FLUKE117", "nota": "" },
- { "articulo": "STAB TRIM CUTOUT TESTER", "pn": "C27007-46", "nota": "" },
- { "articulo": "ELT ADT406AP 50 OHM DUMMY LOAD KIT", "pn": "112-3148", "nota": "" },
- { "articulo": "PROBE OVHT AND TESTER", "pn": "BH17336A // BH16440-40", "nota": "" },
- { "articulo": "TEMPCAL TESTER", "pn": "H394-230", "nota": "" },
- { "articulo": "BONDING METER", "pn": "M1", "nota": "" },
- { "articulo": "HAND HELD MULTIPURPOSE I/FACE HHMPI", "pn": "FDS400-301", "nota": "" },
- { "articulo": "FIREX TEST CARGO", "pn": "C26006-1", "nota": "" },
- { "articulo": "TEST SET / PITOT STATIC", "pn": "MPS45", "nota": "" },
- { "articulo": "GROUND FAULT PROTECTION SYS TEST SET", "pn": "F72917-19", "nota": "" },
- { "articulo": "PDL LAPTOP WITH TECHSAT PDL MKII", "pn": "TECHSATPDLLAPT0P", "nota": "" },
- { "articulo": "FLUKE324 (CLAMP)", "pn": "FLUKE324", "nota": "" },
- { "articulo": "CAJA RADIOALTIMETRO", "pn": "C34005-16", "nota": "" },
- { "articulo": "RADIO ALTIMETER TEST SET", "pn": "DRA707", "nota": "" },
- { "articulo": "TRAMMEL BAR", "pn": "F80055-1", "nota": "" },
- { "articulo": "RUDDER PCU TEST SET", "pn": "C29002-17", "nota": "" },
- { "articulo": "HIRFS", "pn": "906-10247-3 OR XLR-9703-01", "nota": "" },
- { "articulo": "WTB FEEDTHROUGH CONNECTORS ADAPTER (HIRFS)", "pn": "WTBADAPTER", "nota": "" },
- { "articulo": "TOOL CONNECTORS FOR BACKSHELLS", "pn": "CMS837", "nota": "" },
- { "articulo": "KNIPEX CUTTING SAFTGLO", "pn": "9435215", "nota": "" },
- { "articulo": "FIRE EXTINGUISHER BOTTLE SQUIB TESTER", "pn": "F80229-69", "nota": "" },
- { "articulo": "WIRE JUMPER KIT MID-CABIN B737MAX", "pn": "RYR-EXITS-DDG-JUMPER-KIT", "nota": "" }
- ];
-
- const DOCUMENTOS_INICIALES = [
- { id: "1LGKOrWHK4XtMfJx0blT1F68qGqQtQ-WB", nombre: "Buscar un conector.pdf" },
- { id: "1SfKknSDXAUEzawX_0hoeBc2b-7JVM74e", nombre: "Buscar un splice.pdf" },
- { id: "136Sy63TSLSPhAWHXx1a5G0Bg5NJq_AFQ", nombre: "Buscar un cable.pdf" },
- { id: "1FL2GrFNo6Nayxkg80e4tW1XFqgzDldlO", nombre: "TAGS & TOOLS.pdf" },
- { id: "1yncOpHr8G60YE1aRBH0LbeEiAnb0Mf01", nombre: "Tie straps picture.jpg" },
- { id: "1Kk6nv4PKqwEijjieckj081bB9Tv4x09c", nombre: "SPARE BULB.jpeg" },
- { id: "1qn4OZjnpeNwWW4NtTpGrv4kvcJeZiLD3", nombre: "WRN PTT CPT.jpeg" },
- { id: "1nfwnqDNmkyoSoosPNvxx_YCHedUvBC5Y", nombre: "WRN PTT FO.jpeg" },
- { id: "1mYzFByujXZWq0JvgF6ILP0B8D2Ap45pj", nombre: "Rellenar Tech log.jpeg" },
- { id: "1d0vSLLoPVselONZSwlKyAuXFiW3cwJvS", nombre: "Clamp" },
- { id: "1uOID8H4gmVmeWIEOfcf3MqhTZam9bXjT", nombre: "BSI LIGHTING SYSTEM.pdf" },
- { id: "17Z8lUXNcySm2L8DImPs9xw8qnus6i0aK", nombre: "Flight Deck & CB Panels.pdf" },
- { id: "10lMqgWVcna_bWoToLCjfEgM_BFlvNPqB", nombre: "737NG Flight Deck Panels.pdf" },
- { id: "1ATcDP2bmVb-FyoMRpGKirJN-4sylB5BB", nombre: "AOG PARTS LIST.pdf" },
- { id: "1YGZ0bcZLz9s97gmVz4Um-hFacdmU-ZV5", nombre: "APU SCMM_49.pdf" },
- { id: "1adDKrCHrUkUIaukFjtEb-Y_cAQbaVV0L", nombre: "737NG COMPONENT LOCATOR GUIDE.pdf" }
- ];
-
  let listaArticulos = [];
  let listaHerramientas = [];
  let listaDocumentos = [];
  let feedbackList = [];
+ let auditoriaList = [];
  let seccionesAbiertas = {};
  let autenticado = false;
  let adminTipoFiltro = 'consumible';
+ let inactivityTimer;
+
+ // CONTROL DE INACTIVIDAD (15 MINUTOS)
+ function resetInactivityTimer() {
+ clearTimeout(inactivityTimer);
+ if (autenticado) {
+ inactivityTimer = setTimeout(() => {
+ cerrarSesion();
+ alert("⚠️ Sesión de administrador cerrada automáticamente por inactividad (15 minutos).");
+ }, 15 * 60 * 1000);
+ }
+ }
+
+ ['mousemove', 'keydown', 'click', 'touchstart'].forEach(evt => {
+ window.addEventListener(evt, resetInactivityTimer);
+ });
 
  async function cargarDatosNube() {
  try {
  let { data: cons } = await _supabase.from('consumibles').select('*');
- if (!cons || cons.length === 0) {
- await _supabase.from('consumibles').insert(ARTICULOS_INICIALES);
- let { data: cons2 } = await _supabase.from('consumibles').select('*');
- listaArticulos = cons2 || ARTICULOS_INICIALES;
- } else {
- listaArticulos = cons;
- }
+ listaArticulos = cons || [];
 
  let { data: tools } = await _supabase.from('herramientas').select('*');
- if (!tools || tools.length === 0) {
- await _supabase.from('herramientas').insert(HERRAMIENTAS_INICIALES);
- let { data: tools2 } = await _supabase.from('herramientas').select('*');
- listaHerramientas = tools2 || HERRAMIENTAS_INICIALES;
- } else {
- listaHerramientas = tools;
- }
+ listaHerramientas = tools || [];
  listaHerramientas.sort((a, b) => a.articulo.localeCompare(b.articulo));
 
  let { data: docs } = await _supabase.from('documentos').select('*');
- if (!docs || docs.length === 0) {
- await _supabase.from('documentos').insert(DOCUMENTOS_INICIALES);
- let { data: docs2 } = await _supabase.from('documentos').select('*');
- listaDocumentos = docs2 || DOCUMENTOS_INICIALES;
- } else {
- listaDocumentos = docs;
- }
+ listaDocumentos = docs || [];
 
  let { data: fb } = await _supabase.from('buzon').select('*').order('id', { ascending: false });
  feedbackList = fb || [];
+
+ await cargarAuditoria();
  } catch (e) {
- console.error("Usando datos locales por fallo de red:", e);
- listaArticulos = ARTICULOS_INICIALES;
- listaHerramientas = HERRAMIENTAS_INICIALES;
- listaHerramientas.sort((a, b) => a.articulo.localeCompare(b.articulo));
- listaDocumentos = DOCUMENTOS_INICIALES;
+ console.error("Error al conectar con Supabase:", e);
  }
 
  filtrarYAgrupar();
@@ -593,19 +429,30 @@
  renderizarAdminGestion();
  renderizarDocsAdmin();
  renderizarFeedbackAdmin();
+ renderizarAuditoriaAdmin();
  }
  }
 
- // FUNCIÓN MANUAL PARA REFRESCAR EL BUZÓN DESDE ADMIN SIN PERDER LA SESIÓN
- async function refrescarBuzonAdmin() {
- let { data: fb, error } = await _supabase.from('buzon').select('*').order('id', { ascending: false });
- if (error) {
- alert("Error al actualizar el buzón: " + error.message);
- return;
+ async function cargarAuditoria() {
+ let { data: aud } = await _supabase.from('auditoria').select('*').order('id', { ascending: false }).limit(30);
+ auditoriaList = aud || [];
+ renderizarAuditoriaAdmin();
  }
- feedbackList = fb || [];
- renderizarFeedbackAdmin();
- alert("¡Buzón actualizado correctamente!");
+
+ async function registrarAuditoria(accion, detalles) {
+ const fechaUniversal = new Date().toISOString().replace('T', ' ').substring(0, 19);
+ await _supabase.from('auditoria').insert([{ accion, detalles, fecha: fechaUniversal }]);
+ }
+
+ function renderizarAuditoriaAdmin() {
+ const contenedor = document.getElementById('lista-auditoria-admin');
+ if (!contenedor) return;
+ contenedor.innerHTML = auditoriaList.length === 0 ? '<div class="text-slate-500">No hay registros de auditoría.</div>' : auditoriaList.map(item => `
+ <div class="bg-slate-950 p-2 rounded-xl border border-slate-800 space-y-0.5">
+ <div class="flex justify-between text-[9px] text-slate-400"><span class="text-purple-400 font-bold">${item.accion}</span><span>${item.fecha}</span></div>
+ <div class="text-slate-300">${item.detalles}</div>
+ </div>
+ `).join('');
  }
 
  // CONFIGURACIÓN DE TIEMPO REAL (SUPABASE REALTIME)
@@ -613,7 +460,7 @@
  _supabase
  .channel('public-db-changes')
  .on('postgres_changes', { event: '*', schema: 'public' }, (payload) => {
- console.log('Cambio detectado en la base de datos, sincronizando...', payload);
+ console.log('Cambio detectado en base de datos:', payload);
  cargarDatosNube();
  })
  .subscribe();
@@ -641,7 +488,7 @@
  if (target === 'tools') filtrarTools();
  if (target === 'ramps') cargarEstadoChecks();
  if (target === 'docs') renderizarSelectorDocumentos();
- if (target === 'admin') { evaluarAuthUI(); renderizarFeedbackAdmin(); renderizarAdminGestion(); renderizarDocsAdmin(); actualizarDatalistSecciones(); }
+ if (target === 'admin') { evaluarAuthUI(); renderizarFeedbackAdmin(); renderizarAdminGestion(); renderizarDocsAdmin(); renderizarAuditoriaAdmin(); actualizarDatalistSecciones(); }
  }
 
  function renderizarSelectorDocumentos() {
@@ -676,7 +523,6 @@
  const mensaje = document.getElementById('feed-mensaje').value.trim();
  if (!elemento || !mensaje) { alert("Rellena todos los campos"); return; }
  
- // Formato de fecha universal compatible con Safari / iOS
  const fechaUniversal = new Date().toISOString().replace('T', ' ').substring(0, 19);
  const nuevoFeedback = { tipo, elemento, mensaje, fecha: fechaUniversal };
 
@@ -700,6 +546,13 @@
  <button onclick="eliminarFeedback(${fb.id})" class="absolute top-2 right-2 bg-rose-500/20 text-rose-400 p-1.5 rounded-lg text-[10px]" title="Eliminar mensaje">🗑️</button>
  </div>
  `).join('');
+ }
+
+ async function refrescarBuzonAdmin() {
+ let { data: fb } = await _supabase.from('buzon').select('*').order('id', { ascending: false });
+ feedbackList = fb || [];
+ renderizarFeedbackAdmin();
+ alert("¡Buzón actualizado correctamente!");
  }
 
  async function eliminarFeedback(id) {
@@ -820,7 +673,7 @@
  }
  }
 
- // OCR INTELIGENTE
+ // OCR INTELIGENTE ADAPTADO A ETIQUETAS DE AVIACIÓN (RYR Y ESTÁNDAR)
  function procesarFotoCamara(event) {
  const archivo = event.target.files[0];
  if (!archivo) return;
@@ -843,25 +696,43 @@
  if (statusEl) statusEl.classList.add('hidden');
  console.log("Texto OCR:\n", text);
 
- const lineas = text.split('\n').map(l => l.trim()).filter(l => l.length > 1);
+ const lineas = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
  let descDetectada = "";
  let pnDetectado = "";
 
- for (let linea of lineas) {
- const lUpper = linea.toUpperCase();
- if ((lUpper.includes("PART") || lUpper.includes("P/N") || lUpper.includes("PN") || lUpper.startsWith("P:")) && !pnDetectado) {
- const partes = linea.split(/[:|]/);
- pnDetectado = partes.length > 1 ? partes[1].trim() : linea.replace(/^(PART|P\/N|PN|P:)\s*/i, '').trim();
- } else if ((lUpper.includes("DESC") || lUpper.includes("DESCRIPTION") || lUpper.startsWith("D:")) && !descDetectada) {
- const partes = linea.split(/[:|]/);
- descDetectada = partes.length > 1 ? partes[1].trim() : linea.replace(/^(DESC|DESCRIPTION|D:)\s*/i, '').trim();
+ for (let i = 0; i < lineas.length; i++) {
+ let linea = lineas[i];
+ let lUpper = linea.toUpperCase();
+
+ // Detección para etiquetas tipo Ryanair ("Desc:" o "Desc :")
+ if (lUpper.startsWith("DESC") || lUpper.startsWith("D:")) {
+ let partes = linea.split(/[:|]/);
+ if (partes.length > 1 && partes[1].trim().length > 1) {
+ descDetectada = partes[1].trim();
+ } else if (i + 1 < lineas.length) {
+ descDetectada = lineas[i + 1].trim();
  }
  }
 
- if (!descDetectada && lineas.length > 0) descDetectada = lineas[0];
- if (!pnDetectado && lineas.length > 1) {
- const candidato = lineas.find(l => /[0-9-]/.test(l) && l !== descDetectada);
- pnDetectado = candidato || lineas[1];
+ // Detección para Part Number ("Part:", "Part Number", "P/N", etc.)
+ if (lUpper.startsWith("PART") || lUpper.startsWith("P/N") || lUpper.startsWith("PN") || lUpper.startsWith("P:")) {
+ let partes = linea.split(/[:|]/);
+ if (partes.length > 1 && partes[1].trim().length > 1) {
+ pnDetectado = partes[1].trim();
+ } else if (i + 1 < lineas.length) {
+ pnDetectado = lineas[i + 1].trim();
+ }
+ }
+ }
+
+ // Fallbacks de etiquetas si el texto está en la línea siguiente
+ if (!descDetectada) {
+ let idx = lineas.findIndex(l => l.toUpperCase() === "DESCRIPTION" || l.toUpperCase() === "DESC");
+ if (idx !== -1 && idx + 1 < lineas.length) descDetectada = lineas[idx + 1];
+ }
+ if (!pnDetectado) {
+ let idx = lineas.findIndex(l => l.toUpperCase() === "PART NUMBER" || l.toUpperCase() === "PART" || l.toUpperCase() === "P/N");
+ if (idx !== -1 && idx + 1 < lineas.length) pnDetectado = lineas[idx + 1];
  }
 
  if (descDetectada) document.getElementById('admin-articulo').value = descDetectada;
@@ -929,7 +800,7 @@
  if (editIndex === "") {
  const yaExiste = dataActual.some(i => i.pn.toUpperCase() === pn.toUpperCase());
  if (yaExiste) {
- alert(`⚠️ Error: El Part Number "${pn}" ya existe en la base de datos. No se permiten elementos duplicados.`);
+ alert(`⚠️ Error: El Part Number "${pn}" ya existe en la base de datos.`);
  return;
  }
  }
@@ -938,18 +809,18 @@
 
  if (editIndex === "") {
  let { error } = await _supabase.from(tabla).insert([nuevoItem]);
- if (error) { alert("Error al guardar en Supabase: " + error.message); return; }
+ if (error) { alert("Error al guardar: " + error.message); return; }
+ await registrarAuditoria("CREAR", `Añadido ${tipo}: ${articulo} (P/N: ${pn})`);
  } else {
  const itemOriginal = dataActual[parseInt(editIndex)];
  let query = _supabase.from(tabla).update(nuevoItem);
- if (itemOriginal.id) {
- query = query.eq('id', itemOriginal.id);
- } else {
- query = query.eq('pn', itemOriginal.pn);
- }
+ if (itemOriginal.id) query = query.eq('id', itemOriginal.id);
+ else query = query.eq('pn', itemOriginal.pn);
+ 
  let { error } = await query;
  if (error) { alert("Error al actualizar: " + error.message); return; }
 
+ await registrarAuditoria("MODIFICAR", `Actualizado ${tipo}: ${articulo} (P/N: ${pn})`);
  document.getElementById('admin-edit-index').value = '';
  document.getElementById('admin-form-title').innerText = "➕ Añadir Nuevo Consumible o Herramienta";
  }
@@ -987,13 +858,13 @@
 
  const tabla = tipo === 'consumible' ? 'consumibles' : 'herramientas';
  let query = _supabase.from(tabla).delete();
- if (item.id) {
- query = query.eq('id', item.id);
- } else {
- query = query.eq('pn', item.pn);
- }
+ if (item.id) query = query.eq('id', item.id);
+ else query = query.eq('pn', item.pn);
+
  let { error } = await query;
  if (error) { alert("Error al eliminar: " + error.message); return; }
+
+ await registrarAuditoria("ELIMINAR", `Eliminado ${tipo}: ${item.articulo} (P/N: ${item.pn})`);
  await cargarDatosNube();
  alert("¡Elemento eliminado correctamente!");
  }
@@ -1018,6 +889,7 @@
  let { error } = await _supabase.from('documentos').insert([{ id, nombre }]);
  if (error) { alert("Error al añadir documento: " + error.message); return; }
 
+ await registrarAuditoria("DOCUMENTO", `Añadido documento Drive: ${nombre}`);
  document.getElementById('admin-doc-nombre').value = '';
  document.getElementById('admin-doc-id').value = '';
  await cargarDatosNube();
@@ -1028,6 +900,7 @@
  if (confirm("¿Eliminar este documento de la nube?")) {
  let { error } = await _supabase.from('documentos').delete().eq('id', id);
  if (error) { alert("Error al eliminar documento: " + error.message); return; }
+ await registrarAuditoria("DOCUMENTO", `Eliminado documento ID: ${id}`);
  await cargarDatosNube();
  }
  }
@@ -1037,9 +910,11 @@
  if (passInput && passInput.value === "@vioTech1993") { 
  autenticado = true; 
  evaluarAuthUI(); 
+ resetInactivityTimer();
  renderizarFeedbackAdmin(); 
  renderizarAdminGestion();
  renderizarDocsAdmin();
+ renderizarAuditoriaAdmin();
  actualizarDatalistSecciones();
  } else { 
  alert("Contraseña incorrecta"); 
@@ -1055,6 +930,7 @@
 
  function cerrarSesion() { 
  autenticado = false; 
+ clearTimeout(inactivityTimer);
  evaluarAuthUI(); 
  }
 
