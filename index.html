@@ -42,7 +42,6 @@
  </div>
  </div>
 
-
  <!-- Header Principal -->
  <header class="text-center my-3">
  <h1 class="text-2xl font-black text-sky-400 tracking-wider">AvioTech</h1>
@@ -296,7 +295,7 @@
  </div>
 
  <div id="panel-admin-contenido" class="hidden space-y-4">
- <!-- FORMULARIO CREAR / EDITAR (CON MAYÚSCULAS Y ENTER) -->
+ <!-- FORMULARIO CREAR / EDITAR -->
  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
  <h3 id="admin-form-title" class="font-bold text-amber-400 text-xs">➕ Añadir Nuevo Consumible o Herramienta</h3>
  <input type="hidden" id="admin-edit-index" value="">
@@ -322,7 +321,14 @@
  </div>
  </div>
 
- <!-- GESTIÓN DE REGISTROS (CON BUSCADOR Y COPIA DE SEGURIDAD) -->
+ <!-- GESTIÓN DE SECCIONES / CARPETAS (NUEVO) -->
+ <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
+ <h3 class="font-bold text-sky-400 text-xs">📁 Gestionar Secciones y Carpetas</h3>
+ <p class="text-[10px] text-slate-400">Renombra o elimina carpetas completas de consumibles de golpe.</p>
+ <div id="lista-secciones-admin" class="space-y-2 max-h-48 overflow-y-auto pr-1 text-xs"></div>
+ </div>
+
+ <!-- GESTIÓN DE REGISTROS -->
  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
  <div class="flex justify-between items-center">
  <h3 class="font-bold text-amber-400 text-xs">📋 Gestionar Registros en la Nube</h3>
@@ -332,7 +338,6 @@
  <button onclick="filtrarAdminList('consumible')" id="btn-admin-cons" class="flex-1 py-1 text-[10px] rounded-lg bg-sky-500 text-white font-bold">Consumibles</button>
  <button onclick="filtrarAdminList('tool')" id="btn-admin-tls" class="flex-1 py-1 text-[10px] rounded-lg bg-slate-950 text-slate-400 font-bold">Herramientas</button>
  </div>
- <!-- Buscador interno de gestión -->
  <input type="text" id="buscador-admin-gestion" oninput="renderizarAdminGestion()" placeholder="Filtrar registros para editar..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
  <div id="lista-gestion-admin" class="space-y-2 max-h-60 overflow-y-auto pr-1 text-xs"></div>
  </div>
@@ -386,10 +391,9 @@
  let adminTipoFiltro = 'consumible';
  let inactivityTimer;
 
-// CONFIGURACIÓN TELEGRAM
-const TELEGRAM_BOT_TOKEN = '8800369778:AAFLcpMZ-wu30wWghScj5oEYgok_j5pMtgo'; 
-const TELEGRAM_CHAT_ID = '568455286';
-
+ // CONFIGURACIÓN TELEGRAM
+ const TELEGRAM_BOT_TOKEN = '8800369778:AAFLcpMZ-wu30wWghScj5oEYgok_j5pMtgo'; 
+ const TELEGRAM_CHAT_ID = '568455286';
 
  function mostrarSyncToast() {
  const toast = document.getElementById('sync-toast');
@@ -443,6 +447,7 @@ const TELEGRAM_CHAT_ID = '568455286';
  renderizarDocsAdmin();
  renderizarFeedbackAdmin();
  renderizarAuditoriaAdmin();
+ renderizarSeccionesAdmin();
  }
  }
 
@@ -523,7 +528,7 @@ const TELEGRAM_CHAT_ID = '568455286';
  if (target === 'tools') filtrarTools();
  if (target === 'ramps') cargarEstadoChecks();
  if (target === 'docs') renderizarSelectorDocumentos();
- if (target === 'admin') { evaluarAuthUI(); renderizarFeedbackAdmin(); renderizarAdminGestion(); renderizarDocsAdmin(); renderizarAuditoriaAdmin(); actualizarSelectSecciones(); }
+ if (target === 'admin') { evaluarAuthUI(); renderizarFeedbackAdmin(); renderizarAdminGestion(); renderizarDocsAdmin(); renderizarAuditoriaAdmin(); renderizarSeccionesAdmin(); actualizarSelectSecciones(); }
  }
 
  function renderizarSelectorDocumentos() {
@@ -567,7 +572,6 @@ const TELEGRAM_CHAT_ID = '568455286';
  console.error("Error enviando Telegram:", e);
  }
  }
-
 
  async function enviarFeedback() {
  const tipo = document.getElementById('feed-tipo').value;
@@ -768,6 +772,67 @@ const TELEGRAM_CHAT_ID = '568455286';
  }).join('');
  }
 
+ // GESTIÓN DE SECCIONES / CARPETAS (NUEVO)
+ function renderizarSeccionesAdmin() {
+ const contenedor = document.getElementById('lista-secciones-admin');
+ if (!contenedor) return;
+ const seccionesUnicas = [...new Set(listaArticulos.map(item => item.seccion))].sort();
+ 
+ contenedor.innerHTML = seccionesUnicas.length === 0 ? '<div class="text-slate-500">No hay secciones creadas.</div>' : seccionesUnicas.map(sec => {
+ const count = listaArticulos.filter(i => i.seccion === sec).length;
+ return `
+ <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
+ <div>
+ <span class="font-bold text-sky-400 uppercase">📂 ${sec}</span>
+ <span class="text-[10px] text-slate-400 block">${count} consumibles</span>
+ </div>
+ <div class="flex space-x-1.5">
+ <button onclick="renombrarSeccion('${sec}')" class="bg-sky-500/20 text-sky-400 px-2.5 py-1 rounded-lg text-[10px] font-bold" title="Renombrar sección">✏️ Renombrar</button>
+ <button onclick="eliminarSeccionCompleta('${sec}')" class="bg-rose-500/20 text-rose-400 px-2.5 py-1 rounded-lg text-[10px] font-bold" title="Eliminar sección completa">🗑️ Eliminar</button>
+ </div>
+ </div>
+ `;
+ }).join('');
+ }
+
+ async function renombrarSeccion(nombreActual) {
+ const nuevoNombre = prompt(`Renombrar la sección "${nombreActual}" a:`, nombreActual);
+ if (!nuevoNombre || nuevoNombre.trim() === "") return;
+ const nombreLimpio = nuevoNombre.trim().toUpperCase();
+
+ if (nombreLimpio === nombreActual) return;
+
+ let { error } = await _supabase.from('consumibles')
+ .update({ seccion: nombreLimpio })
+ .eq('seccion', nombreActual);
+
+ if (error) {
+ alert("Error al renombrar sección: " + error.message);
+ return;
+ }
+
+ await registrarAuditoria("MODIFICAR", `Sección renombrada de "${nombreActual}" a "${nombreLimpio}"`);
+ await cargarDatosNube();
+ alert("¡Sección renombrada con éxito en todos sus consumibles!");
+ }
+
+ async function eliminarSeccionCompleta(nombreSeccion) {
+ if (confirm(`⚠️ ¿ESTÁS SEGURO?\n\nVas a eliminar la sección "${nombreSeccion}" y TODOS los consumibles que contiene de forma permanente.\n\nPulsa Aceptar para confirmar.`)) {
+ let { error } = await _supabase.from('consumibles')
+ .delete()
+ .eq('seccion', nombreSeccion);
+
+ if (error) {
+ alert("Error al eliminar la sección: " + error.message);
+ return;
+ }
+
+ await registrarAuditoria("ELIMINAR", `Eliminada sección completa y sus ítems: ${nombreSeccion}`);
+ await cargarDatosNube();
+ alert("¡Sección y sus consumibles eliminados con éxito!");
+ }
+ }
+
  async function guardarRegistroAdmin() {
  const tipo = document.getElementById('admin-tipo-reg').value;
  const articulo = document.getElementById('admin-articulo').value.trim();
@@ -955,6 +1020,7 @@ const TELEGRAM_CHAT_ID = '568455286';
  renderizarAdminGestion();
  renderizarDocsAdmin();
  renderizarAuditoriaAdmin();
+ renderizarSeccionesAdmin();
  actualizarSelectSecciones();
  } else { 
  alert("Contraseña incorrecta"); 
