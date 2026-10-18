@@ -554,17 +554,20 @@ const TELEGRAM_CHAT_ID = '568455286';
 
  async function enviarNotificacionTelegram(tipo, elemento, mensaje) {
  if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;
- const texto = `📥 *Nuevo aviso en AvioTech*\n• *Tipo:* ${tipo}\n• *Elemento:* ${elemento}\n• *Mensaje:* ${mensaje}`;
+ const texto = `[AVISO AVIOTECH]\nTipo: ${tipo}\nElemento: ${elemento}\nMensaje: ${mensaje}`;
  try {
- await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+ let respuesta = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
  method: 'POST',
  headers: { 'Content-Type': 'application/json' },
- body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: texto, parse_mode: 'Markdown' })
+ body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: texto })
  });
+ let resultado = await respuesta.json();
+ console.log("Respuesta Telegram:", resultado);
  } catch (e) {
  console.error("Error enviando Telegram:", e);
  }
  }
+
 
  async function enviarFeedback() {
  const tipo = document.getElementById('feed-tipo').value;
