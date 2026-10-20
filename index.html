@@ -13,11 +13,13 @@
  <title>AvioTech - Avionics Solutions</title>
  <!-- Tailwind CSS desde CDN -->
  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
- <!-- Supabase JS SDK -->
- <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+ <!-- Supabase JS SDK (versión fijada para que una actualización externa no rompa la web) -->
+ <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
  <style>
  :root { --bg-main: #080c19; --text-main: #f8fafc; }
  body { background-color: var(--bg-main); color: var(--text-main); font-family: system-ui, -apple-system, sans-serif; user-select: none; -webkit-user-select: none; }
+ /* Los campos de texto siguen siendo editables aunque el resto no se pueda seleccionar */
+ input, textarea { user-select: text; -webkit-user-select: text; }
  .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
  .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
  .custom-scrollbar::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: 9999px; }
@@ -278,9 +280,9 @@
  <option value="Falta Artículo">📦 Falta un artículo</option>
  <option value="Other">💬 Other / Opinión</option>
  </select>
- <input type="text" id="feed-elemento" placeholder="Elemento afectado o asunto" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
- <textarea id="feed-mensaje" rows="3" placeholder="Descripción..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white"></textarea>
- <button onclick="enviarFeedback()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition">Enviar</button>
+ <input type="text" id="feed-elemento" maxlength="200" placeholder="Elemento afectado o asunto" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+ <textarea id="feed-mensaje" rows="3" maxlength="2000" placeholder="Descripción..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white"></textarea>
+ <button id="btn-enviar-feedback" onclick="enviarFeedback()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition">Enviar</button>
  </div>
  </div>
  </div>
@@ -290,7 +292,7 @@
  <div id="bloqueo-auth" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center space-y-4 shadow-xl">
  <div class="text-4xl">🔒</div>
  <h3 class="text-base font-bold text-white">Panel de Administración</h3>
- <input type="password" id="input-password" placeholder="Password" class="w-full bg-slate-950 border border-slate-800 text-center rounded-xl px-4 py-2.5 text-sm text-white">
+ <input type="password" id="input-password" autocomplete="current-password" onkeydown="if(event.key==='Enter') verificarPassword()" placeholder="Password" class="w-full bg-slate-950 border border-slate-800 text-center rounded-xl px-4 py-2.5 text-sm text-white">
  <button onclick="verificarPassword()" class="w-full bg-sky-500 font-bold py-2.5 rounded-xl text-sm">Acceder</button>
  </div>
 
@@ -321,7 +323,7 @@
  </div>
  </div>
 
- <!-- GESTIÓN DE SECCIONES / CARPETAS (NUEVO) -->
+ <!-- GESTIÓN DE SECCIONES / CARPETAS -->
  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
  <h3 class="font-bold text-sky-400 text-xs">📁 Gestionar Secciones y Carpetas</h3>
  <p class="text-[10px] text-slate-400">Renombra o elimina carpetas completas de consumibles de golpe.</p>
@@ -347,7 +349,7 @@
  <h3 class="font-bold text-sky-400 text-xs">📄 Gestionar Documentos de Google Drive</h3>
  <div class="space-y-2">
  <input type="text" id="admin-doc-nombre" placeholder="Nombre del documento" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
- <input type="text" id="admin-doc-id" placeholder="ID de Google Drive" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+ <input type="text" id="admin-doc-id" placeholder="ID de Google Drive (o enlace completo)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
  <button onclick="agregarDocumentoAdmin()" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-2 rounded-xl text-xs transition">Añadir Documento</button>
  </div>
  <div id="lista-docs-admin" class="space-y-2 max-h-40 overflow-y-auto pr-1 text-xs mt-2"></div>
@@ -377,9 +379,22 @@
 
  <!-- Script Principal -->
  <script>
+ // =====================================================================
+ // 1) CONFIGURACIÓN  (aquí es donde pones TUS datos)
+ // =====================================================================
  const SUPABASE_URL = 'https://vlrloizxrvklkzdvgkii.supabase.co';
+ // Esta clave "publishable" SÍ puede estar en el código: es pública por diseño.
+ // Lo que realmente protege tus datos son las políticas RLS (ver sql.txt).
  const SUPABASE_KEY = 'sb_publishable_veJeqUFfhqIVoCk0JLma6A_fN9llMru';
- const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+ // Email del usuario administrador creado en Supabase > Authentication > Users.
+ // El email NO es secreto; la contraseña se escribe en la pantalla de Admin.
+ const ADMIN_EMAIL = 'apuigruiz@gmail.com';
+
+ // persistSession:false -> al recargar la página hay que volver a entrar como admin.
+ const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+ auth: { persistSession: false, autoRefreshToken: true, detectSessionInUrl: false }
+ });
 
  let listaArticulos = [];
  let listaHerramientas = [];
@@ -390,10 +405,38 @@
  let autenticado = false;
  let adminTipoFiltro = 'consumible';
  let inactivityTimer;
+ let realtimeTimer;
+ let cargando = false;
 
- // CONFIGURACIÓN TELEGRAM
- const TELEGRAM_BOT_TOKEN = '8800369778:AAFLcpMZ-wu30wWghScj5oEYgok_j5pMtgo'; 
- const TELEGRAM_CHAT_ID = '568455286';
+ // =====================================================================
+ // 2) UTILIDADES DE SEGURIDAD
+ // =====================================================================
+ // Convierte texto en "texto seguro" para pintarlo con innerHTML.
+ // Evita que alguien meta código (<script>, <img onerror=...>) desde el buzón o la base de datos.
+ function esc(valor) {
+ return String(valor ?? '')
+ .replace(/&/g, '&amp;')
+ .replace(/</g, '&lt;')
+ .replace(/>/g, '&gt;')
+ .replace(/"/g, '&quot;')
+ .replace(/'/g, '&#39;');
+ }
+
+ // Fecha en formato "AAAA-MM-DD HH:MM:SS" (UTC)
+ function fechaAhora() {
+ return new Date().toISOString().replace('T', ' ').substring(0, 19);
+ }
+
+ // Clave única de un registro: su id si existe, si no su P/N
+ function claveItem(item) {
+ return String(item.id !== undefined && item.id !== null ? item.id : item.pn);
+ }
+
+ // Filtro para actualizar/borrar el registro correcto
+ function filtroItem(query, item) {
+ if (item.id !== undefined && item.id !== null) return query.eq('id', item.id);
+ return query.eq('pn', item.pn);
+ }
 
  function mostrarSyncToast() {
  const toast = document.getElementById('sync-toast');
@@ -402,12 +445,14 @@
  setTimeout(() => toast.classList.add('hidden'), 2000);
  }
 
- // CONTROL DE INACTIVIDAD (15 MINUTOS)
+ // =====================================================================
+ // 3) CONTROL DE INACTIVIDAD (15 MINUTOS)
+ // =====================================================================
  function resetInactivityTimer() {
  clearTimeout(inactivityTimer);
  if (autenticado) {
- inactivityTimer = setTimeout(() => {
- cerrarSesion();
+ inactivityTimer = setTimeout(async () => {
+ await cerrarSesion();
  alert("⚠️ Sesión de administrador cerrada automáticamente por inactividad (15 minutos).");
  }, 15 * 60 * 1000);
  }
@@ -417,26 +462,38 @@
  window.addEventListener(evt, resetInactivityTimer);
  });
 
+ // =====================================================================
+ // 4) CARGA DE DATOS
+ // =====================================================================
  async function cargarDatosNube() {
+ if (cargando) return;
+ cargando = true;
  try {
- let { data: cons } = await _supabase.from('consumibles').select('*');
- listaArticulos = cons || [];
+ const [rCons, rTools, rDocs] = await Promise.all([
+ _supabase.from('consumibles').select('*'),
+ _supabase.from('herramientas').select('*'),
+ _supabase.from('documentos').select('*')
+ ]);
 
- let { data: tools } = await _supabase.from('herramientas').select('*');
- listaHerramientas = tools || [];
+ // Solo se sustituyen los datos si la consulta ha ido bien (si falla, no se vacía la pantalla)
+ if (!rCons.error) listaArticulos = rCons.data || []; else console.error('consumibles:', rCons.error);
+ if (!rTools.error) {
+ listaHerramientas = rTools.data || [];
  listaHerramientas.sort((a, b) => a.articulo.localeCompare(b.articulo));
+ } else console.error('herramientas:', rTools.error);
+ if (!rDocs.error) listaDocumentos = rDocs.data || []; else console.error('documentos:', rDocs.error);
 
- let { data: docs } = await _supabase.from('documentos').select('*');
- listaDocumentos = docs || [];
-
- let { data: fb } = await _supabase.from('buzon').select('*').order('id', { ascending: false });
- feedbackList = fb || [];
-
+ // Buzón y auditoría: solo el admin (con sesión) puede leerlos
+ if (autenticado) {
+ const rFb = await _supabase.from('buzon').select('*').order('id', { ascending: false });
+ if (!rFb.error) feedbackList = rFb.data || []; else console.error('buzon:', rFb.error);
  await cargarAuditoria();
+ }
  mostrarSyncToast();
  } catch (e) {
  console.error("Error al conectar con Supabase:", e);
  }
+ cargando = false;
 
  filtrarYAgrupar();
  filtrarTools();
@@ -452,14 +509,17 @@
  }
 
  async function cargarAuditoria() {
- let { data: aud } = await _supabase.from('auditoria').select('*').order('id', { ascending: false }).limit(30);
+ if (!autenticado) return;
+ let { data: aud, error } = await _supabase.from('auditoria').select('*').order('id', { ascending: false }).limit(30);
+ if (error) { console.error('auditoria:', error); return; }
  auditoriaList = aud || [];
  renderizarAuditoriaAdmin();
  }
 
  async function registrarAuditoria(accion, detalles) {
- const fechaUniversal = new Date().toISOString().replace('T', ' ').substring(0, 19);
- await _supabase.from('auditoria').insert([{ accion, detalles, fecha: fechaUniversal }]);
+ if (!autenticado) return;
+ const { error } = await _supabase.from('auditoria').insert([{ accion, detalles, fecha: fechaAhora() }]);
+ if (error) console.error('No se pudo registrar la auditoría:', error);
  }
 
  function renderizarAuditoriaAdmin() {
@@ -467,37 +527,48 @@
  if (!contenedor) return;
  contenedor.innerHTML = auditoriaList.length === 0 ? '<div class="text-slate-500">No hay registros de auditoría.</div>' : auditoriaList.map(item => `
  <div class="bg-slate-950 p-2 rounded-xl border border-slate-800 space-y-0.5">
- <div class="flex justify-between text-[9px] text-slate-400"><span class="text-purple-400 font-bold">${item.accion}</span><span>${item.fecha}</span></div>
- <div class="text-slate-300">${item.detalles}</div>
+ <div class="flex justify-between text-[9px] text-slate-400"><span class="text-purple-400 font-bold">${esc(item.accion)}</span><span>${esc(item.fecha)}</span></div>
+ <div class="text-slate-300">${esc(item.detalles)}</div>
  </div>
  `).join('');
  }
 
- // CONFIGURACIÓN DE TIEMPO REAL (SUPABASE REALTIME)
+ // =====================================================================
+ // 5) TIEMPO REAL (con "debounce": si llegan muchos cambios seguidos, recarga una sola vez)
+ // =====================================================================
  function configurarRealtime() {
+ const recargarConRetraso = () => {
+ clearTimeout(realtimeTimer);
+ realtimeTimer = setTimeout(cargarDatosNube, 800);
+ };
  _supabase
  .channel('public-db-changes')
- .on('postgres_changes', { event: '*', schema: 'public' }, (payload) => {
- console.log('Cambio detectado en base de datos:', payload);
- cargarDatosNube();
- })
+ .on('postgres_changes', { event: '*', schema: 'public', table: 'consumibles' }, recargarConRetraso)
+ .on('postgres_changes', { event: '*', schema: 'public', table: 'herramientas' }, recargarConRetraso)
+ .on('postgres_changes', { event: '*', schema: 'public', table: 'documentos' }, recargarConRetraso)
  .subscribe();
  }
 
  function actualizarSelectSecciones() {
  const select = document.getElementById('admin-seccion-select');
  if (!select) return;
+ const valorPrevio = select.value;
  const seccionesUnicas = [...new Set(listaArticulos.map(item => item.seccion))].sort();
  
  let html = '<option value="" disabled selected>-- Seleccionar sección existente --</option>';
  seccionesUnicas.forEach(sec => {
- html += `<option value="${sec}">${sec}</option>`;
+ html += `<option value="${esc(sec)}">${esc(sec)}</option>`;
  });
  html += '<option value="__nueva__">➕ Crear sección nueva...</option>';
  select.innerHTML = html;
 
+ // Conserva lo que estabas eligiendo si una recarga en tiempo real ocurre mientras editas
+ if (valorPrevio && [...select.options].some(o => o.value === valorPrevio)) {
+ select.value = valorPrevio;
+ } else {
  const inputNueva = document.getElementById('admin-seccion-nueva');
- if (inputNueva) inputNueva.classList.add('hidden');
+ if (inputNueva && valorPrevio !== '__nueva__') inputNueva.classList.add('hidden');
+ }
  }
 
  function toggleNuevaSeccion(val) {
@@ -534,8 +605,11 @@
  function renderizarSelectorDocumentos() {
  const select = document.getElementById('select-doc');
  if (!select) return;
+ const valorPrevio = select.value;
  select.innerHTML = '<option value="" disabled selected>-- Elige un documento --</option>' +
- listaDocumentos.map(doc => `<option value="${doc.id}">${doc.nombre}</option>`).join('');
+ listaDocumentos.map(doc => `<option value="${esc(doc.id)}">${esc(doc.nombre)}</option>`).join('');
+ // Mantiene el documento seleccionado tras una recarga automática
+ if (valorPrevio && [...select.options].some(o => o.value === valorPrevio)) select.value = valorPrevio;
  }
 
  function cambiarFlotaRamp(flota) {
@@ -557,35 +631,33 @@
  }
  }
 
- async function enviarNotificacionTelegram(tipo, elemento, mensaje) {
- if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;
- const texto = `[AVISO AVIOTECH]\nTipo: ${tipo}\nElemento: ${elemento}\nMensaje: ${mensaje}`;
- try {
- let respuesta = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
- method: 'POST',
- headers: { 'Content-Type': 'application/json' },
- body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: texto })
- });
- let resultado = await respuesta.json();
- console.log("Respuesta Telegram:", resultado);
- } catch (e) {
- console.error("Error enviando Telegram:", e);
- }
- }
-
+ // =====================================================================
+ // 6) BUZÓN
+ //    El aviso a Telegram YA NO se envía desde aquí (el token estaba expuesto).
+ //    Ahora lo envía una función segura en el servidor (ver telegram-function.ts).
+ // =====================================================================
  async function enviarFeedback() {
  const tipo = document.getElementById('feed-tipo').value;
  const elemento = document.getElementById('feed-elemento').value.trim();
  const mensaje = document.getElementById('feed-mensaje').value.trim();
  if (!elemento || !mensaje) { alert("Rellena todos los campos"); return; }
- 
- const fechaUniversal = new Date().toISOString().replace('T', ' ').substring(0, 19);
- const nuevoFeedback = { tipo, elemento, mensaje, fecha: fechaUniversal };
+ if (elemento.length > 200 || mensaje.length > 2000) { alert("El texto es demasiado largo"); return; }
 
+ // Anti-spam sencillo: un mensaje cada 30 segundos por dispositivo
+ try {
+ const ultimo = parseInt(localStorage.getItem('ultimo-feedback') || '0', 10);
+ if (Date.now() - ultimo < 30000) { alert("Espera unos segundos antes de enviar otro mensaje."); return; }
+ } catch (e) { /* localStorage no disponible: se ignora */ }
+
+ const boton = document.getElementById('btn-enviar-feedback');
+ if (boton) boton.disabled = true;
+
+ const nuevoFeedback = { tipo, elemento, mensaje, fecha: fechaAhora() };
  let { error } = await _supabase.from('buzon').insert([nuevoFeedback]);
+ if (boton) boton.disabled = false;
  if (error) { alert("Error al enviar el mensaje al buzón: " + error.message); return; }
 
- await enviarNotificacionTelegram(tipo, elemento, mensaje);
+ try { localStorage.setItem('ultimo-feedback', String(Date.now())); } catch (e) { }
 
  alert("¡Enviado con éxito al administrador en la nube!");
  document.getElementById('feed-elemento').value = '';
@@ -598,22 +670,25 @@
  if(!contenedor) return;
  contenedor.innerHTML = feedbackList.length === 0 ? '<div class="text-slate-500">No hay avisos pendientes en la nube.</div>' : feedbackList.map((fb) => `
  <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1 relative">
- <div class="flex justify-between text-[10px] text-slate-400"><span>${fb.fecha}</span><span class="text-amber-400 font-bold">${fb.tipo}</span></div>
- <div class="font-bold text-white">${fb.elemento}</div>
- <div class="text-slate-300 text-[11px]">${fb.mensaje}</div>
- <button onclick="eliminarFeedback(${fb.id})" class="absolute top-2 right-2 bg-rose-500/20 text-rose-400 p-1.5 rounded-lg text-[10px]" title="Eliminar mensaje">🗑️</button>
+ <div class="flex justify-between text-[10px] text-slate-400"><span>${esc(fb.fecha || fb.created_at)}</span><span class="text-amber-400 font-bold">${esc(fb.tipo)}</span></div>
+ <div class="font-bold text-white">${esc(fb.elemento)}</div>
+ <div class="text-slate-300 text-[11px]">${esc(fb.mensaje)}</div>
+ <button data-accion="borrar-feedback" data-id="${esc(fb.id)}" class="absolute top-2 right-2 bg-rose-500/20 text-rose-400 p-1.5 rounded-lg text-[10px]" title="Eliminar mensaje">🗑️</button>
  </div>
  `).join('');
  }
 
  async function refrescarBuzonAdmin() {
- let { data: fb } = await _supabase.from('buzon').select('*').order('id', { ascending: false });
+ if (!autenticado) return;
+ let { data: fb, error } = await _supabase.from('buzon').select('*').order('id', { ascending: false });
+ if (error) { alert("Error al actualizar el buzón: " + error.message); return; }
  feedbackList = fb || [];
  renderizarFeedbackAdmin();
  alert("¡Buzón actualizado correctamente!");
  }
 
  async function eliminarFeedback(id) {
+ if (!autenticado) return;
  if (confirm("¿Eliminar este mensaje del buzón?")) {
  let { error } = await _supabase.from('buzon').delete().eq('id', id);
  if (error) { alert("Error al eliminar mensaje: " + error.message); return; }
@@ -621,6 +696,9 @@
  }
  }
 
+ // =====================================================================
+ // 7) PESTAÑA TOOLS (sin cambios de diseño ni funcionamiento)
+ // =====================================================================
  function filtrarTools() {
  const buscadorEl = document.getElementById('buscador-tools');
  const contenedor = document.getElementById('contenedor-tools');
@@ -637,18 +715,21 @@
  filtrados.forEach(tool => {
  const div = document.createElement('div');
  div.className = "bg-slate-900 border border-slate-800 rounded-xl p-3 flex justify-between items-center text-xs";
- const notaBadge = tool.nota ? `<span class="bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[9px] px-1.5 py-0.5 rounded font-bold block mt-1">${tool.nota}</span>` : '';
+ const notaBadge = tool.nota ? `<span class="bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[9px] px-1.5 py-0.5 rounded font-bold block mt-1">${esc(tool.nota)}</span>` : '';
  div.innerHTML = `
  <div class="space-y-1">
- <span class="font-bold text-white uppercase block">${tool.articulo}</span>
+ <span class="font-bold text-white uppercase block">${esc(tool.articulo)}</span>
  ${notaBadge}
  </div>
- <code class="text-amber-400 font-mono">${tool.pn}</code>
+ <code class="text-amber-400 font-mono">${esc(tool.pn)}</code>
  `;
  contenedor.appendChild(div);
  });
  }
 
+ // =====================================================================
+ // 8) PESTAÑA SEARCH (sin cambios de diseño ni funcionamiento)
+ // =====================================================================
  function filtrarYAgrupar() {
  const buscadorEl = document.getElementById('buscador');
  const contenedor = document.getElementById('contenedor-secciones');
@@ -668,19 +749,19 @@
  const div = document.createElement('div');
  div.className = "bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden shadow";
  div.innerHTML = `
- <button onclick="toggleAcordeon('${sec}')" class="w-full bg-slate-900 px-4 py-3.5 flex justify-between items-center text-left">
- <span class="font-bold text-xs text-sky-400 uppercase">📂 ${sec} (${items.length})</span>
+ <button data-sec="${esc(sec)}" onclick="toggleAcordeon(this.dataset.sec)" class="w-full bg-slate-900 px-4 py-3.5 flex justify-between items-center text-left">
+ <span class="font-bold text-xs text-sky-400 uppercase">📂 ${esc(sec)} (${items.length})</span>
  <span class="text-slate-400 text-xs">${estaAbierto ? '▲' : '▼'}</span>
  </button>
  <div class="p-3 space-y-2 ${estaAbierto ? '' : 'hidden'}">
  ${items.map(i => {
- const notaBadge = i.nota ? `<span class="bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[9px] px-1.5 py-0.5 rounded font-bold">${i.nota}</span>` : '';
+ const notaBadge = i.nota ? `<span class="bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[9px] px-1.5 py-0.5 rounded font-bold">${esc(i.nota)}</span>` : '';
  return `
  <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex justify-between items-center text-xs">
  <div class="space-y-1">
- <span class="font-bold text-white uppercase block">${i.articulo}</span>${notaBadge}
+ <span class="font-bold text-white uppercase block">${esc(i.articulo)}</span>${notaBadge}
  </div>
- <code class="text-amber-400 font-mono">${i.pn}</code>
+ <code class="text-amber-400 font-mono">${esc(i.pn)}</code>
  </div>
  `;
  }).join('')}
@@ -692,21 +773,33 @@
 
  function toggleAcordeon(sec) { seccionesAbiertas[sec] = !seccionesAbiertas[sec]; filtrarYAgrupar(); }
 
- function guardarEstadoCheck(checkbox) { localStorage.setItem(checkbox.id, checkbox.checked); }
+ // =====================================================================
+ // 9) PESTAÑA RAMPS (mismo funcionamiento; solo protegido por si el navegador bloquea localStorage)
+ // =====================================================================
+ function guardarEstadoCheck(checkbox) {
+ try { localStorage.setItem(checkbox.id, checkbox.checked); } catch (e) { }
+ }
  function cargarEstadoChecks() {
  const checkboxes = document.querySelectorAll('#pestana-ramps input[type="checkbox"]');
  checkboxes.forEach(chk => {
- const guardado = localStorage.getItem(chk.id);
+ let guardado = null;
+ try { guardado = localStorage.getItem(chk.id); } catch (e) { }
  if (guardado !== null) chk.checked = (guardado === 'true');
  });
  }
  function resetearChecklist() {
  if (confirm("¿Resetear todas las marcas de las rampas?")) {
  const checkboxes = document.querySelectorAll('#pestana-ramps input[type="checkbox"]');
- checkboxes.forEach(chk => { chk.checked = false; localStorage.removeItem(chk.id); });
+ checkboxes.forEach(chk => {
+ chk.checked = false;
+ try { localStorage.removeItem(chk.id); } catch (e) { }
+ });
  }
  }
 
+ // =====================================================================
+ // 10) CALCULADORA
+ // =====================================================================
  function convertirTorque(tipo) {
  const inlb = document.getElementById('calc-inlb');
  const ftlb = document.getElementById('calc-ftlb');
@@ -731,6 +824,9 @@
  }
  }
 
+ // =====================================================================
+ // 11) ADMIN: LISTA DE REGISTROS (ahora identifica cada registro por su id, no por su posición)
+ // =====================================================================
  function filtrarAdminList(tipo) {
  adminTipoFiltro = tipo;
  const btnCons = document.getElementById('btn-admin-cons');
@@ -755,24 +851,25 @@
  }
 
  contenedor.innerHTML = filtrados.map((item) => {
- const originalIndex = data.indexOf(item);
  return `
- <div onclick="editarRegistroAdmin('${adminTipoFiltro}', ${originalIndex})" class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center cursor-pointer hover:border-sky-500/50 transition">
+ <div data-accion="editar-registro" data-tipo="${adminTipoFiltro}" data-key="${esc(claveItem(item))}" class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center cursor-pointer hover:border-sky-500/50 transition">
  <div>
- <span class="font-bold text-white block uppercase">${item.articulo}</span>
- <span class="text-[10px] text-amber-400 font-mono">${item.pn}</span>
- ${item.seccion ? `<span class="text-[9px] text-sky-400 block">${item.seccion}</span>` : ''}
- ${item.nota ? `<span class="text-[9px] text-rose-400 block">${item.nota}</span>` : ''}
+ <span class="font-bold text-white block uppercase">${esc(item.articulo)}</span>
+ <span class="text-[10px] text-amber-400 font-mono">${esc(item.pn)}</span>
+ ${item.seccion ? `<span class="text-[9px] text-sky-400 block">${esc(item.seccion)}</span>` : ''}
+ ${item.nota ? `<span class="text-[9px] text-rose-400 block">${esc(item.nota)}</span>` : ''}
  </div>
  <div>
- <button onclick="event.stopPropagation(); eliminarRegistroAdmin('${adminTipoFiltro}', ${originalIndex})" class="bg-rose-500/20 text-rose-400 p-2 rounded-lg" title="Eliminar">🗑️</button>
+ <button data-accion="eliminar-registro" data-tipo="${adminTipoFiltro}" data-key="${esc(claveItem(item))}" class="bg-rose-500/20 text-rose-400 p-2 rounded-lg" title="Eliminar">🗑️</button>
  </div>
  </div>
  `;
  }).join('');
  }
 
- // GESTIÓN DE SECCIONES / CARPETAS (NUEVO)
+ // =====================================================================
+ // 12) ADMIN: SECCIONES / CARPETAS
+ // =====================================================================
  function renderizarSeccionesAdmin() {
  const contenedor = document.getElementById('lista-secciones-admin');
  if (!contenedor) return;
@@ -783,12 +880,12 @@
  return `
  <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
  <div>
- <span class="font-bold text-sky-400 uppercase">📂 ${sec}</span>
+ <span class="font-bold text-sky-400 uppercase">📂 ${esc(sec)}</span>
  <span class="text-[10px] text-slate-400 block">${count} consumibles</span>
  </div>
  <div class="flex space-x-1.5">
- <button onclick="renombrarSeccion('${sec}')" class="bg-sky-500/20 text-sky-400 px-2.5 py-1 rounded-lg text-[10px] font-bold" title="Renombrar sección">✏️ Renombrar</button>
- <button onclick="eliminarSeccionCompleta('${sec}')" class="bg-rose-500/20 text-rose-400 px-2.5 py-1 rounded-lg text-[10px] font-bold" title="Eliminar sección completa">🗑️ Eliminar</button>
+ <button data-accion="renombrar-seccion" data-sec="${esc(sec)}" class="bg-sky-500/20 text-sky-400 px-2.5 py-1 rounded-lg text-[10px] font-bold" title="Renombrar sección">✏️ Renombrar</button>
+ <button data-accion="eliminar-seccion" data-sec="${esc(sec)}" class="bg-rose-500/20 text-rose-400 px-2.5 py-1 rounded-lg text-[10px] font-bold" title="Eliminar sección completa">🗑️ Eliminar</button>
  </div>
  </div>
  `;
@@ -796,6 +893,7 @@
  }
 
  async function renombrarSeccion(nombreActual) {
+ if (!autenticado) return;
  const nuevoNombre = prompt(`Renombrar la sección "${nombreActual}" a:`, nombreActual);
  if (!nuevoNombre || nuevoNombre.trim() === "") return;
  const nombreLimpio = nuevoNombre.trim().toUpperCase();
@@ -817,7 +915,16 @@
  }
 
  async function eliminarSeccionCompleta(nombreSeccion) {
- if (confirm(`⚠️ ¿ESTÁS SEGURO?\n\nVas a eliminar la sección "${nombreSeccion}" y TODOS los consumibles que contiene de forma permanente.\n\nPulsa Aceptar para confirmar.`)) {
+ if (!autenticado) return;
+ const total = listaArticulos.filter(i => i.seccion === nombreSeccion).length;
+ // Doble seguridad: hay que escribir el nombre exacto de la sección para borrarla
+ const escrito = prompt(`⚠️ VAS A ELIMINAR la sección "${nombreSeccion}" y sus ${total} consumibles de forma permanente.\n\nPara confirmar, escribe el nombre exacto de la sección:`);
+ if (escrito === null) return;
+ if (escrito.trim().toUpperCase() !== nombreSeccion.toUpperCase()) {
+ alert("El nombre no coincide. No se ha eliminado nada.");
+ return;
+ }
+
  let { error } = await _supabase.from('consumibles')
  .delete()
  .eq('seccion', nombreSeccion);
@@ -827,13 +934,16 @@
  return;
  }
 
- await registrarAuditoria("ELIMINAR", `Eliminada sección completa y sus ítems: ${nombreSeccion}`);
+ await registrarAuditoria("ELIMINAR", `Eliminada sección completa y sus ítems: ${nombreSeccion} (${total})`);
  await cargarDatosNube();
  alert("¡Sección y sus consumibles eliminados con éxito!");
  }
- }
 
+ // =====================================================================
+ // 13) ADMIN: CREAR / EDITAR / ELIMINAR REGISTROS
+ // =====================================================================
  async function guardarRegistroAdmin() {
+ if (!autenticado) { alert("Sesión caducada. Vuelve a entrar como administrador."); return; }
  const tipo = document.getElementById('admin-tipo-reg').value;
  const articulo = document.getElementById('admin-articulo').value.trim();
  const pn = document.getElementById('admin-pn').value.trim();
@@ -849,34 +959,33 @@
  }
 
  const nota = document.getElementById('admin-nota').value.trim();
- const editIndex = document.getElementById('admin-edit-index').value;
+ const editKey = document.getElementById('admin-edit-index').value;
 
  if (!articulo || !pn) { alert("Rellena el nombre y el Part Number"); return; }
 
  const tabla = tipo === 'consumible' ? 'consumibles' : 'herramientas';
  const dataActual = tipo === 'consumible' ? listaArticulos : listaHerramientas;
 
- if (editIndex === "") {
- const yaExiste = dataActual.some(i => i.pn.toUpperCase() === pn.toUpperCase());
+ if (editKey === "") {
+ // Un mismo P/N puede existir en secciones distintas (ej. SEALANT en ATC ANTENNAS y LRRA).
+ // Solo se bloquea si el P/N se repite DENTRO de la misma sección (o entre herramientas).
+ const yaExiste = dataActual.some(i => i.pn.toUpperCase() === pn.toUpperCase() && (tipo === 'tool' || (i.seccion || '').toUpperCase() === seccion.toUpperCase()));
  if (yaExiste) {
- alert(`⚠️ Error: El Part Number "${pn}" ya existe en la base de datos.`);
+ alert(`⚠️ Error: El Part Number "${pn}" ya existe${tipo === 'consumible' ? ' en la sección ' + seccion : ''}.`);
  return;
  }
  }
 
  const nuevoItem = tipo === 'consumible' ? { articulo, pn, seccion, nota } : { articulo, pn, nota };
 
- if (editIndex === "") {
+ if (editKey === "") {
  let { error } = await _supabase.from(tabla).insert([nuevoItem]);
  if (error) { alert("Error al guardar: " + error.message); return; }
  await registrarAuditoria("CREAR", `Añadido ${tipo}: ${articulo} (P/N: ${pn})`);
  } else {
- const itemOriginal = dataActual[parseInt(editIndex)];
- let query = _supabase.from(tabla).update(nuevoItem);
- if (itemOriginal.id) query = query.eq('id', itemOriginal.id);
- else query = query.eq('pn', itemOriginal.pn);
- 
- let { error } = await query;
+ const itemOriginal = dataActual.find(i => claveItem(i) === editKey);
+ if (!itemOriginal) { alert("No se encontró el registro original (¿lo han borrado?). Recarga la página."); return; }
+ let { error } = await filtroItem(_supabase.from(tabla).update(nuevoItem), itemOriginal);
  if (error) { alert("Error al actualizar: " + error.message); return; }
 
  await registrarAuditoria("MODIFICAR", `Actualizado ${tipo}: ${articulo} (P/N: ${pn})`);
@@ -899,9 +1008,9 @@
  alert("¡Guardado y sincronizado en la nube con éxito!");
  }
 
- function editarRegistroAdmin(tipo, index) {
+ function editarRegistroAdmin(tipo, key) {
  const data = tipo === 'consumible' ? listaArticulos : listaHerramientas;
- const item = data[index];
+ const item = data.find(i => claveItem(i) === key);
  if (!item) return;
 
  document.getElementById('admin-tipo-reg').value = tipo;
@@ -933,24 +1042,21 @@
  }
 
  document.getElementById('admin-nota').value = item.nota || '';
- document.getElementById('admin-edit-index').value = index;
+ document.getElementById('admin-edit-index').value = key;
  document.getElementById('admin-form-title').innerText = "✏️ Editando Registro (Pulsa Guardar para aplicar)";
  
  window.scrollTo({ top: 0, behavior: 'smooth' });
  }
 
- async function eliminarRegistroAdmin(tipo, index) {
- if (confirm("¿Seguro que deseas eliminar este registro de la nube?")) {
+ async function eliminarRegistroAdmin(tipo, key) {
+ if (!autenticado) return;
  const data = tipo === 'consumible' ? listaArticulos : listaHerramientas;
- const item = data[index];
+ const item = data.find(i => claveItem(i) === key);
  if (!item) return;
 
+ if (confirm(`¿Seguro que deseas eliminar "${item.articulo}" (${item.pn}) de la nube?`)) {
  const tabla = tipo === 'consumible' ? 'consumibles' : 'herramientas';
- let query = _supabase.from(tabla).delete();
- if (item.id) query = query.eq('id', item.id);
- else query = query.eq('pn', item.pn);
-
- let { error } = await query;
+ let { error } = await filtroItem(_supabase.from(tabla).delete(), item);
  if (error) { alert("Error al eliminar: " + error.message); return; }
 
  await registrarAuditoria("ELIMINAR", `Eliminado ${tipo}: ${item.articulo} (P/N: ${item.pn})`);
@@ -975,21 +1081,35 @@
  downloadAnchor.remove();
  }
 
+ // =====================================================================
+ // 14) ADMIN: DOCUMENTOS DE GOOGLE DRIVE
+ // =====================================================================
  function renderizarDocsAdmin() {
  const contenedor = document.getElementById('lista-docs-admin');
  if (!contenedor) return;
  contenedor.innerHTML = listaDocumentos.map((doc) => `
  <div class="bg-slate-950 p-2 rounded-xl border border-slate-800 flex justify-between items-center text-[11px]">
- <span class="font-bold text-white truncate max-w-[200px]">${doc.nombre}</span>
- <button onclick="eliminarDocumentoAdmin('${doc.id}')" class="bg-rose-500/20 text-rose-400 px-2 py-1 rounded-lg">🗑️</button>
+ <span class="font-bold text-white truncate max-w-[200px]">${esc(doc.nombre)}</span>
+ <button data-accion="eliminar-doc" data-id="${esc(doc.id)}" class="bg-rose-500/20 text-rose-400 px-2 py-1 rounded-lg">🗑️</button>
  </div>
  `).join('');
  }
 
+ // Acepta el ID suelto o el enlace completo de Drive y devuelve solo el ID
+ function extraerIdDrive(texto) {
+ const t = texto.trim();
+ const m = t.match(/\/d\/([A-Za-z0-9_-]+)/) || t.match(/[?&]id=([A-Za-z0-9_-]+)/);
+ const id = m ? m[1] : t;
+ return /^[A-Za-z0-9_-]{10,}$/.test(id) ? id : null;
+ }
+
  async function agregarDocumentoAdmin() {
+ if (!autenticado) return;
  const nombre = document.getElementById('admin-doc-nombre').value.trim();
- const id = document.getElementById('admin-doc-id').value.trim();
- if (!nombre || !id) { alert("Rellena el nombre y el ID del documento"); return; }
+ const idBruto = document.getElementById('admin-doc-id').value;
+ if (!nombre || !idBruto.trim()) { alert("Rellena el nombre y el ID del documento"); return; }
+ const id = extraerIdDrive(idBruto);
+ if (!id) { alert("El ID de Google Drive no es válido. Pega el ID o el enlace completo del archivo."); return; }
  
  let { error } = await _supabase.from('documentos').insert([{ id, nombre }]);
  if (error) { alert("Error al añadir documento: " + error.message); return; }
@@ -1002,6 +1122,7 @@
  }
 
  async function eliminarDocumentoAdmin(id) {
+ if (!autenticado) return;
  if (confirm("¿Eliminar este documento de la nube?")) {
  let { error } = await _supabase.from('documentos').delete().eq('id', id);
  if (error) { alert("Error al eliminar documento: " + error.message); return; }
@@ -1010,21 +1131,32 @@
  }
  }
 
- function verificarPassword() { 
+ function cargarDocumentoSeleccionado(id) { 
+ if(!id || !/^[A-Za-z0-9_-]+$/.test(id)) return; 
+ const placeholder = document.getElementById('doc-placeholder');
+ const iframe = document.getElementById('iframe-doc-viewer');
+ if (placeholder) placeholder.classList.add('hidden'); 
+ if (iframe) iframe.src = `https://drive.google.com/file/d/${encodeURIComponent(id)}/preview?rm=minimal`; 
+ }
+
+ // =====================================================================
+ // 15) LOGIN DE ADMIN (ahora con Supabase Auth: la contraseña ya NO está en el código)
+ // =====================================================================
+ async function verificarPassword() { 
  const passInput = document.getElementById('input-password');
- if (passInput && passInput.value === "@vioTech1993") { 
+ if (!passInput || !passInput.value) { alert("Escribe la contraseña"); return; }
+
+ const { error } = await _supabase.auth.signInWithPassword({ email: ADMIN_EMAIL, password: passInput.value });
+ passInput.value = '';
+ if (error) { 
+ alert("Contraseña incorrecta"); 
+ return;
+ }
+
  autenticado = true; 
  evaluarAuthUI(); 
  resetInactivityTimer();
- renderizarFeedbackAdmin(); 
- renderizarAdminGestion();
- renderizarDocsAdmin();
- renderizarAuditoriaAdmin();
- renderizarSeccionesAdmin();
- actualizarSelectSecciones();
- } else { 
- alert("Contraseña incorrecta"); 
- } 
+ await cargarDatosNube(); // carga también buzón y auditoría, que solo el admin puede leer
  }
 
  function evaluarAuthUI() { 
@@ -1034,19 +1166,32 @@
  if (panelAdmin) panelAdmin.classList.toggle('hidden', !autenticado); 
  }
 
- function cerrarSesion() { 
+ async function cerrarSesion() { 
  autenticado = false; 
  clearTimeout(inactivityTimer);
+ feedbackList = [];
+ auditoriaList = [];
+ renderizarFeedbackAdmin();
+ renderizarAuditoriaAdmin();
+ try { await _supabase.auth.signOut(); } catch (e) { }
  evaluarAuthUI(); 
  }
 
- function cargarDocumentoSeleccionado(id) { 
- if(!id) return; 
- const placeholder = document.getElementById('doc-placeholder');
- const iframe = document.getElementById('iframe-doc-viewer');
- if (placeholder) placeholder.classList.add('hidden'); 
- if (iframe) iframe.src = `https://drive.google.com/file/d/${id}/preview?rm=minimal`; 
- }
+ // =====================================================================
+ // 16) CLICS EN LISTAS DEL ADMIN (en vez de onclick con texto pegado, que fallaba con comillas)
+ // =====================================================================
+ document.addEventListener('click', (ev) => {
+ const el = ev.target.closest('[data-accion]');
+ if (!el) return;
+ const accion = el.dataset.accion;
+ ev.stopPropagation();
+ if (accion === 'editar-registro') editarRegistroAdmin(el.dataset.tipo, el.dataset.key);
+ else if (accion === 'eliminar-registro') eliminarRegistroAdmin(el.dataset.tipo, el.dataset.key);
+ else if (accion === 'renombrar-seccion') renombrarSeccion(el.dataset.sec);
+ else if (accion === 'eliminar-seccion') eliminarSeccionCompleta(el.dataset.sec);
+ else if (accion === 'eliminar-doc') eliminarDocumentoAdmin(el.dataset.id);
+ else if (accion === 'borrar-feedback') eliminarFeedback(el.dataset.id);
+ });
 
  window.onload = function() {
  cargarDatosNube();
