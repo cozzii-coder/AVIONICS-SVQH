@@ -62,6 +62,9 @@
  <button id="btn-ramps" onclick="cambiarPestana('ramps')" class="px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1">
  <span class="text-sm leading-none">📋</span><span>Ramps</span>
  </button>
+ <button id="btn-pins" onclick="cambiarPestana('pins')" class="px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1">
+ <span class="text-sm leading-none">🔌</span><span>Pin &amp; Socket</span>
+ </button>
  <button id="btn-calc" onclick="cambiarPestana('calc')" class="px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1">
  <span class="text-sm leading-none">🧮</span><span>Calc</span>
  </button>
@@ -226,6 +229,16 @@
  </div>
  </div>
  </div>
+ </div>
+
+ <!-- PESTAÑA: PIN & SOCKET -->
+ <div id="pestana-pins" class="hidden space-y-3">
+ <div class="relative">
+ <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-500">🔍</span>
+ <input type="text" id="buscador-pins" oninput="this.value = this.value.toUpperCase(); buscarPinSocket()" autocomplete="off" autocapitalize="characters" placeholder="Escribe el nombre de la ficha (ej. NAS1387-4)..."
+ class="w-full bg-slate-900/90 border border-slate-800 text-white placeholder-slate-500 rounded-2xl pl-11 pr-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/50 shadow-inner">
+ </div>
+ <div id="contenedor-pins" class="space-y-2.5"></div>
  </div>
 
  <!-- PESTAÑA 4: CALCULATOR -->
@@ -585,12 +598,12 @@
  }
 
  function cambiarPestana(target) {
- const btns = ['btn-lista', 'btn-tools', 'btn-ramps', 'btn-calc', 'btn-docs', 'btn-feedback', 'btn-admin'];
- const ps = ['pestana-lista', 'pestana-tools', 'pestana-ramps', 'pestana-calc', 'pestana-docs', 'pestana-feedback', 'pestana-admin'];
+ const btns = ['btn-lista', 'btn-tools', 'btn-ramps', 'btn-pins', 'btn-calc', 'btn-docs', 'btn-feedback', 'btn-admin'];
+ const ps = ['pestana-lista', 'pestana-tools', 'pestana-ramps', 'pestana-pins', 'pestana-calc', 'pestana-docs', 'pestana-feedback', 'pestana-admin'];
  btns.forEach(b => document.getElementById(b).className = "px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1");
  ps.forEach(p => document.getElementById(p).classList.add('hidden'));
 
- const mapping = { lista: 0, tools: 1, ramps: 2, calc: 3, docs: 4, feedback: 5, admin: 6 };
+ const mapping = { lista: 0, tools: 1, ramps: 2, pins: 3, calc: 4, docs: 5, feedback: 6, admin: 7 };
  const idx = mapping[target];
  document.getElementById(btns[idx]).className = "px-4 py-2.5 rounded-xl text-center bg-sky-500 text-white shadow-lg transition-all flex flex-col items-center justify-center space-y-1";
  document.getElementById(ps[idx]).classList.remove('hidden');
@@ -773,6 +786,80 @@
 
  function toggleAcordeon(sec) { seccionesAbiertas[sec] = !seccionesAbiertas[sec]; filtrarYAgrupar(); }
 
+ // =====================================================================
+ // 8b) PESTAÑA PIN & SOCKET (buscador de fichas de pines, sockets y terminales)
+ //     Las fichas NO están en este archivo: viven en la tabla "pins_sockets" de Supabase.
+ //     Para cargar o actualizar fichas ver la guía, receta K (conversor + importar CSV).
+ // =====================================================================
+ let pinsTimer = null;
+ let pinsPeticion = 0;
+
+ // Deja solo letras y números en mayúsculas: "nas 1387-4" y "NAS1387-4" se buscan igual
+ function normalizarPN(texto) {
+ return String(texto ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+ }
+
+ // Los campos se guardan como texto JSON: [["Basic Tool","49935"],["Nest","22-18"]]
+ function leerCamposPin(texto) {
+ try {
+ const lista = JSON.parse(texto);
+ return Array.isArray(lista) ? lista.filter(c => Array.isArray(c) && c.length >= 2) : [];
+ } catch (e) {
+ return [];
+ }
+ }
+
+ // Espera 0,3 s tras la última tecla antes de consultar (evita una consulta por letra)
+ function buscarPinSocket() {
+ clearTimeout(pinsTimer);
+ pinsTimer = setTimeout(ejecutarBusquedaPins, 300);
+ }
+
+ async function ejecutarBusquedaPins() {
+ const input = document.getElementById('buscador-pins');
+ const contenedor = document.getElementById('contenedor-pins');
+ if (!input || !contenedor) return;
+ const q = normalizarPN(input.value);
+ const miPeticion = ++pinsPeticion;
+
+ // Con menos de 3 caracteres no se muestra nada: solo el campo de búsqueda
+ if (q.length < 3) { contenedor.innerHTML = ''; return; }
+
+ // Busca las fichas cuyo nombre EMPIEZA por lo escrito (el nombre completo siempre aparece)
+ const { data, error } = await _supabase
+ .from('pins_sockets')
+ .select('pn, categoria, datos')
+ .like('pn_norm', q + '%')
+ .order('pn_norm')
+ .limit(20);
+
+ // Si mientras tanto has escrito otra cosa, se descarta esta respuesta antigua
+ if (miPeticion !== pinsPeticion) return;
+
+ if (error) {
+ console.error('pins_sockets:', error);
+ contenedor.innerHTML = '<div class="text-center text-xs text-slate-500 py-12">No se pudo consultar la base de datos. Inténtalo de nuevo.</div>';
+ return;
+ }
+ if (!data || data.length === 0) {
+ contenedor.innerHTML = '<div class="text-center text-xs text-slate-500 py-12">No se encontró ningún resultado.</div>';
+ return;
+ }
+
+ contenedor.innerHTML = data.map(r => `
+ <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
+ <div class="flex justify-between items-center space-x-2">
+ <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">${esc(r.pn)}</h3>
+ ${r.categoria ? `<span class="text-[10px] text-slate-500 uppercase">${esc(r.categoria)}</span>` : ''}
+ </div>
+ <div class="text-xs text-slate-300 space-y-2">
+ ${leerCamposPin(r.datos).map(c => `<div><span class="font-semibold text-slate-400">${esc(c[0])} :</span> ${esc(c[1])}</div>`).join('')}
+ </div>
+ </div>
+ `).join('');
+ }
+
+ 
  // =====================================================================
  // 9) PESTAÑA RAMPS (mismo funcionamiento; solo protegido por si el navegador bloquea localStorage)
  // =====================================================================
