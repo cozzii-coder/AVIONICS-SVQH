@@ -241,8 +241,17 @@
  <div id="contenedor-pins" class="space-y-2.5"></div>
  </div>
 
- <!-- PESTAÑA 4: CALCULATOR -->
+ <!-- PESTAÑA 4: CALCULATOR (CON SUB-PESTAÑAS: TORQUE, ALTIMETRY, FIRE CIRCUIT) -->
  <div id="pestana-calc" class="hidden space-y-4">
+ <!-- Selector de Sub-Calculadoras -->
+ <div class="grid grid-cols-3 gap-1 bg-slate-900 p-1 rounded-2xl border border-slate-800 text-[11px] font-bold">
+ <button onclick="cambiarSubCalc('torque')" id="subbtn-torque" class="py-2.5 rounded-xl bg-sky-500 text-white transition shadow">🔧 Torque</button>
+ <button onclick="cambiarSubCalc('altimetry')" id="subbtn-altimetry" class="py-2.5 rounded-xl text-slate-400 hover:text-slate-200 transition">✈️ Altimetry</button>
+ <button onclick="cambiarSubCalc('fire')" id="subbtn-fire" class="py-2.5 rounded-xl text-slate-400 hover:text-slate-200 transition">🔥 Fire Circuit</button>
+ </div>
+
+ <!-- 1. TORQUE CALCULATOR -->
+ <div id="subcalc-torque" class="space-y-4">
  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-4 shadow-xl">
  <h3 class="font-bold text-amber-400 text-xs uppercase tracking-wide">🔧 Conversión de Torque (In-Lb / Ft-Lb / Nm)</h3>
  <div class="space-y-3">
@@ -258,6 +267,42 @@
  <label class="block text-[11px] text-slate-400 mb-1">Newton-metro (Nm)</label>
  <input type="number" id="calc-nm" oninput="convertirTorque('nm')" placeholder="Ej. 5.65" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
  </div>
+ </div>
+ </div>
+ </div>
+
+ <!-- 2. ALTIMETRY TEST CALCULATOR -->
+ <div id="subcalc-altimetry" class="hidden space-y-4">
+ <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-xl">
+ <div class="border-b border-slate-800 pb-2">
+ <h3 class="font-bold text-sky-400 text-xs uppercase tracking-wide">✈️ Altimetry Test Calculator (SVQH)</h3>
+ <p class="text-[10px] text-slate-400 mt-0.5">Cálculo de presiones diferenciales y tolerancia (A - B - C / D - E - F)</p>
+ </div>
+ <div id="altimetry-container" class="space-y-3"></div>
+ </div>
+ </div>
+
+ <!-- 3. FIRE CIRCUIT TEST CALCULATOR -->
+ <div id="subcalc-fire" class="hidden space-y-4">
+ <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-4 shadow-xl">
+ <div class="border-b border-slate-800 pb-2 flex justify-between items-center">
+ <div>
+ <h3 class="font-bold text-rose-400 text-xs uppercase tracking-wide">🔥 Fire Loop Resistance Calculator</h3>
+ <p class="text-[10px] text-slate-400 mt-0.5">RC = RL × (V1 / V2) - RL</p>
+ </div>
+ <!-- RL Editable en tiempo real -->
+ <div class="flex items-center space-x-1.5">
+ <span class="text-[10px] text-slate-400 font-bold">RL (Ω):</span>
+ <input type="number" id="fire-rl-input" value="6.2" step="0.1" oninput="renderizarFireCalculator()" class="w-16 bg-slate-950 border border-slate-800 rounded-lg px-2 py-1 text-xs text-amber-400 font-mono text-center font-bold">
+ </div>
+ </div>
+
+ <div class="flex space-x-2 bg-slate-950 p-1 rounded-xl border border-slate-800">
+ <button onclick="cambiarZonaFire('engines')" id="btn-fire-eng" class="flex-1 py-1.5 text-[11px] font-bold rounded-lg bg-rose-500 text-white transition">Engines (#1 / #2)</button>
+ <button onclick="cambiarZonaFire('apu')" id="btn-fire-apu" class="flex-1 py-1.5 text-[11px] font-bold rounded-lg text-slate-400 transition">APU Loops</button>
+ </div>
+
+ <div id="fire-inputs-container" class="space-y-3"></div>
  </div>
  </div>
  </div>
@@ -393,18 +438,12 @@
  <!-- Script Principal -->
  <script>
  // =====================================================================
- // 1) CONFIGURACIÓN  (aquí es donde pones TUS datos)
+ // 1) CONFIGURACIÓN
  // =====================================================================
  const SUPABASE_URL = 'https://vlrloizxrvklkzdvgkii.supabase.co';
- // Esta clave "publishable" SÍ puede estar en el código: es pública por diseño.
- // Lo que realmente protege tus datos son las políticas RLS (ver sql.txt).
  const SUPABASE_KEY = 'sb_publishable_veJeqUFfhqIVoCk0JLma6A_fN9llMru';
-
- // Email del usuario administrador creado en Supabase > Authentication > Users.
- // El email NO es secreto; la contraseña se escribe en la pantalla de Admin.
  const ADMIN_EMAIL = 'apuigruiz@gmail.com';
 
- // persistSession:false -> al recargar la página hay que volver a entrar como admin.
  const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
  auth: { persistSession: false, autoRefreshToken: true, detectSessionInUrl: false }
  });
@@ -421,11 +460,33 @@
  let realtimeTimer;
  let cargando = false;
 
+ // DATOS PARA LAS CALCULADORAS DE ALTIMETRY Y FIRE CIRCUIT
+ const altimetryDefaultData = [
+ { point: 1, staticDesc: '1013 +/- 1.0', pitotStatic: 1013, pitotHCorr: 0.256, pitotRec: 1013.1, staticOutput: 1013, staticHCorr: 0.33, staticRec: 1012.9, tol: 0.48 },
+ { point: 2, staticDesc: '314 +/- 1', pitotStatic: 314, pitotHCorr: 0.1, pitotRec: 314.18, staticOutput: 314, staticHCorr: 0.128, staticRec: 314.06, tol: 0.41 },
+ { point: 3, staticDesc: '190 +/- 1', pitotStatic: 190, pitotHCorr: 0.066, pitotRec: 190.18, staticOutput: 190, staticHCorr: 0.085, staticRec: 190.09, tol: 0.41 },
+ { point: 4, staticDesc: '314 +/- 1', pitotStatic: 314, pitotHCorr: 0.1, pitotRec: 314.15, staticOutput: 314, staticHCorr: 0.128, staticRec: 314.06, tol: 0.41 },
+ { point: 5, staticDesc: '1013 +/- 1', pitotStatic: 1013, pitotHCorr: 0.256, pitotRec: 1013.03, staticOutput: 1013, staticHCorr: 0.33, staticRec: 1012.96, tol: 0.48 }
+ ];
+
+ const fireEnginesData = [
+ { label: 'D582 CCW (#1)', pV1: 27.31, pV2: 21.26, aV1: 27.28, aV2: 21.12 },
+ { label: 'D1322 CCW (#2)', pV1: 27.28, pV2: 20.51, aV1: 27.27, aV2: 20.80 },
+ { label: 'D584 CW (#1)', pV1: 27.27, pV2: 20.50, aV1: 27.27, aV2: 20.33 },
+ { label: 'D1324 CW (#2)', pV1: 27.28, pV2: 20.79, aV1: 27.27, aV2: 20.58 }
+ ];
+
+ const fireApuData = [
+ { label: 'D594 CCW', v1: 27.31, v2: 20.12 },
+ { label: 'D594 CW', v1: 27.25, v2: 19.92 },
+ { label: 'D594 W/W', v1: 27.28, v2: 15.73 }
+ ];
+
+ let zonaFireActual = 'engines';
+
  // =====================================================================
  // 2) UTILIDADES DE SEGURIDAD
  // =====================================================================
- // Convierte texto en "texto seguro" para pintarlo con innerHTML.
- // Evita que alguien meta código (<script>, <img onerror=...>) desde el buzón o la base de datos.
  function esc(valor) {
  return String(valor ?? '')
  .replace(/&/g, '&amp;')
@@ -435,17 +496,14 @@
  .replace(/'/g, '&#39;');
  }
 
- // Fecha en formato "AAAA-MM-DD HH:MM:SS" (UTC)
  function fechaAhora() {
  return new Date().toISOString().replace('T', ' ').substring(0, 19);
  }
 
- // Clave única de un registro: su id si existe, si no su P/N
  function claveItem(item) {
  return String(item.id !== undefined && item.id !== null ? item.id : item.pn);
  }
 
- // Filtro para actualizar/borrar el registro correcto
  function filtroItem(query, item) {
  if (item.id !== undefined && item.id !== null) return query.eq('id', item.id);
  return query.eq('pn', item.pn);
@@ -488,7 +546,6 @@
  _supabase.from('documentos').select('*')
  ]);
 
- // Solo se sustituyen los datos si la consulta ha ido bien (si falla, no se vacía la pantalla)
  if (!rCons.error) listaArticulos = rCons.data || []; else console.error('consumibles:', rCons.error);
  if (!rTools.error) {
  listaHerramientas = rTools.data || [];
@@ -496,7 +553,6 @@
  } else console.error('herramientas:', rTools.error);
  if (!rDocs.error) listaDocumentos = rDocs.data || []; else console.error('documentos:', rDocs.error);
 
- // Buzón y auditoría: solo el admin (con sesión) puede leerlos
  if (autenticado) {
  const rFb = await _supabase.from('buzon').select('*').order('id', { ascending: false });
  if (!rFb.error) feedbackList = rFb.data || []; else console.error('buzon:', rFb.error);
@@ -512,6 +568,8 @@
  filtrarTools();
  renderizarSelectorDocumentos();
  actualizarSelectSecciones();
+ renderizarAltimetryCalculator();
+ renderizarFireCalculator();
  if (autenticado) {
  renderizarAdminGestion();
  renderizarDocsAdmin();
@@ -547,7 +605,7 @@
  }
 
  // =====================================================================
- // 5) TIEMPO REAL (con "debounce": si llegan muchos cambios seguidos, recarga una sola vez)
+ // 5) TIEMPO REAL
  // =====================================================================
  function configurarRealtime() {
  const recargarConRetraso = () => {
@@ -575,7 +633,6 @@
  html += '<option value="__nueva__">➕ Crear sección nueva...</option>';
  select.innerHTML = html;
 
- // Conserva lo que estabas eligiendo si una recarga en tiempo real ocurre mientras editas
  if (valorPrevio && [...select.options].some(o => o.value === valorPrevio)) {
  select.value = valorPrevio;
  } else {
@@ -612,6 +669,7 @@
  if (target === 'tools') filtrarTools();
  if (target === 'ramps') cargarEstadoChecks();
  if (target === 'docs') renderizarSelectorDocumentos();
+ if (target === 'calc') { renderizarAltimetryCalculator(); renderizarFireCalculator(); }
  if (target === 'admin') { evaluarAuthUI(); renderizarFeedbackAdmin(); renderizarAdminGestion(); renderizarDocsAdmin(); renderizarAuditoriaAdmin(); renderizarSeccionesAdmin(); actualizarSelectSecciones(); }
  }
 
@@ -621,7 +679,6 @@
  const valorPrevio = select.value;
  select.innerHTML = '<option value="" disabled selected>-- Elige un documento --</option>' +
  listaDocumentos.map(doc => `<option value="${esc(doc.id)}">${esc(doc.nombre)}</option>`).join('');
- // Mantiene el documento seleccionado tras una recarga automática
  if (valorPrevio && [...select.options].some(o => o.value === valorPrevio)) select.value = valorPrevio;
  }
 
@@ -646,8 +703,6 @@
 
  // =====================================================================
  // 6) BUZÓN
- //    El aviso a Telegram YA NO se envía desde aquí (el token estaba expuesto).
- //    Ahora lo envía una función segura en el servidor (ver telegram-function.ts).
  // =====================================================================
  async function enviarFeedback() {
  const tipo = document.getElementById('feed-tipo').value;
@@ -656,11 +711,10 @@
  if (!elemento || !mensaje) { alert("Rellena todos los campos"); return; }
  if (elemento.length > 200 || mensaje.length > 2000) { alert("El texto es demasiado largo"); return; }
 
- // Anti-spam sencillo: un mensaje cada 30 segundos por dispositivo
  try {
  const ultimo = parseInt(localStorage.getItem('ultimo-feedback') || '0', 10);
  if (Date.now() - ultimo < 30000) { alert("Espera unos segundos antes de enviar otro mensaje."); return; }
- } catch (e) { /* localStorage no disponible: se ignora */ }
+ } catch (e) { }
 
  const boton = document.getElementById('btn-enviar-feedback');
  if (boton) boton.disabled = true;
@@ -710,7 +764,7 @@
  }
 
  // =====================================================================
- // 7) PESTAÑA TOOLS (sin cambios de diseño ni funcionamiento)
+ // 7) PESTAÑA TOOLS
  // =====================================================================
  function filtrarTools() {
  const buscadorEl = document.getElementById('buscador-tools');
@@ -731,8 +785,7 @@
  const notaBadge = tool.nota ? `<span class="bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[9px] px-1.5 py-0.5 rounded font-bold block mt-1">${esc(tool.nota)}</span>` : '';
  div.innerHTML = `
  <div class="space-y-1">
- <span class="font-bold text-white uppercase block">${esc(tool.articulo)}</span>
- ${notaBadge}
+ <span class="font-bold text-white uppercase block">${esc(tool.articulo)}</span>${notaBadge}
  </div>
  <code class="text-amber-400 font-mono">${esc(tool.pn)}</code>
  `;
@@ -741,7 +794,7 @@
  }
 
  // =====================================================================
- // 8) PESTAÑA SEARCH (sin cambios de diseño ni funcionamiento)
+ // 8) PESTAÑA SEARCH
  // =====================================================================
  function filtrarYAgrupar() {
  const buscadorEl = document.getElementById('buscador');
@@ -787,19 +840,15 @@
  function toggleAcordeon(sec) { seccionesAbiertas[sec] = !seccionesAbiertas[sec]; filtrarYAgrupar(); }
 
  // =====================================================================
- // 8b) PESTAÑA PIN & SOCKET (buscador de fichas de pines, sockets y terminales)
- //     Las fichas NO están en este archivo: viven en la tabla "pins_sockets" de Supabase.
- //     Para cargar o actualizar fichas ver la guía, receta K (conversor + importar CSV).
+ // 8b) PESTAÑA PIN & SOCKET
  // =====================================================================
  let pinsTimer = null;
  let pinsPeticion = 0;
 
- // Deja solo letras y números en mayúsculas: "nas 1387-4" y "NAS1387-4" se buscan igual
  function normalizarPN(texto) {
  return String(texto ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '');
  }
 
- // Los campos se guardan como texto JSON: [["Basic Tool","49935"],["Nest","22-18"]]
  function leerCamposPin(texto) {
  try {
  const lista = JSON.parse(texto);
@@ -809,7 +858,6 @@
  }
  }
 
- // Espera 0,3 s tras la última tecla antes de consultar (evita una consulta por letra)
  function buscarPinSocket() {
  clearTimeout(pinsTimer);
  pinsTimer = setTimeout(ejecutarBusquedaPins, 300);
@@ -822,10 +870,8 @@
  const q = normalizarPN(input.value);
  const miPeticion = ++pinsPeticion;
 
- // Con menos de 3 caracteres no se muestra nada: solo el campo de búsqueda
  if (q.length < 3) { contenedor.innerHTML = ''; return; }
 
- // Busca las fichas cuyo nombre EMPIEZA por lo escrito (el nombre completo siempre aparece)
  const { data, error } = await _supabase
  .from('pins_sockets')
  .select('pn, categoria, datos')
@@ -833,7 +879,6 @@
  .order('pn_norm')
  .limit(20);
 
- // Si mientras tanto has escrito otra cosa, se descarta esta respuesta antigua
  if (miPeticion !== pinsPeticion) return;
 
  if (error) {
@@ -849,8 +894,7 @@
  contenedor.innerHTML = data.map(r => `
  <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
  <div class="flex justify-between items-center space-x-2">
- <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">${esc(r.pn)}</h3>
- ${r.categoria ? `<span class="text-[10px] text-slate-500 uppercase">${esc(r.categoria)}</span>` : ''}
+ <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">${esc(r.pn)}</h3>${r.categoria ? `<span class="text-[10px] text-slate-500 uppercase">${esc(r.categoria)}</span>` : ''}
  </div>
  <div class="text-xs text-slate-300 space-y-2">
  ${leerCamposPin(r.datos).map(c => `<div><span class="font-semibold text-slate-400">${esc(c[0])} :</span> ${esc(c[1])}</div>`).join('')}
@@ -859,9 +903,8 @@
  `).join('');
  }
 
- 
  // =====================================================================
- // 9) PESTAÑA RAMPS (mismo funcionamiento; solo protegido por si el navegador bloquea localStorage)
+ // 9) PESTAÑA RAMPS
  // =====================================================================
  function guardarEstadoCheck(checkbox) {
  try { localStorage.setItem(checkbox.id, checkbox.checked); } catch (e) { }
@@ -885,8 +928,28 @@
  }
 
  // =====================================================================
- // 10) CALCULADORA
+ // 10) CALCULATOR (TORQUE, ALTIMETRY & FIRE CIRCUIT)
  // =====================================================================
+ function cambiarSubCalc(tipo) {
+ const btnT = document.getElementById('subbtn-torque');
+ const btnA = document.getElementById('subbtn-altimetry');
+ const btnF = document.getElementById('subbtn-fire');
+ const secT = document.getElementById('subcalc-torque');
+ const secA = document.getElementById('subcalc-altimetry');
+ const secF = document.getElementById('subcalc-fire');
+
+ btnT.className = tipo === 'torque' ? "py-2.5 rounded-xl bg-sky-500 text-white transition shadow" : "py-2.5 rounded-xl text-slate-400 hover:text-slate-200 transition";
+ btnA.className = tipo === 'altimetry' ? "py-2.5 rounded-xl bg-sky-500 text-white transition shadow" : "py-2.5 rounded-xl text-slate-400 hover:text-slate-200 transition";
+ btnF.className = tipo === 'fire' ? "py-2.5 rounded-xl bg-sky-500 text-white transition shadow" : "py-2.5 rounded-xl text-slate-400 hover:text-slate-200 transition";
+
+ secT.classList.toggle('hidden', tipo !== 'torque');
+ secA.classList.toggle('hidden', tipo !== 'altimetry');
+ secF.classList.toggle('hidden', tipo !== 'fire');
+
+ if (tipo === 'altimetry') renderizarAltimetryCalculator();
+ if (tipo === 'fire') renderizarFireCalculator();
+ }
+
  function convertirTorque(tipo) {
  const inlb = document.getElementById('calc-inlb');
  const ftlb = document.getElementById('calc-ftlb');
@@ -911,380 +974,69 @@
  }
  }
 
- // =====================================================================
- // 11) ADMIN: LISTA DE REGISTROS (ahora identifica cada registro por su id, no por su posición)
- // =====================================================================
- function filtrarAdminList(tipo) {
- adminTipoFiltro = tipo;
- const btnCons = document.getElementById('btn-admin-cons');
- const btnTls = document.getElementById('btn-admin-tls');
- if (btnCons) btnCons.className = tipo === 'consumible' ? "flex-1 py-1 text-[10px] rounded-lg bg-sky-500 text-white font-bold" : "flex-1 py-1 text-[10px] rounded-lg bg-slate-950 text-slate-400 font-bold";
- if (btnTls) btnTls.className = tipo === 'tool' ? "flex-1 py-1 text-[10px] rounded-lg bg-sky-500 text-white font-bold" : "flex-1 py-1 text-[10px] rounded-lg bg-slate-950 text-slate-400 font-bold";
- renderizarAdminGestion();
- }
-
- function renderizarAdminGestion() {
- const contenedor = document.getElementById('lista-gestion-admin');
- const buscadorInput = document.getElementById('buscador-admin-gestion');
- if (!contenedor) return;
+ function renderizarAltimetryCalculator() {
+ const container = document.getElementById('altimetry-container');
+ if (!container) return;
  
- const query = buscadorInput ? buscadorInput.value.toLowerCase().trim() : '';
- const data = adminTipoFiltro === 'consumible' ? listaArticulos : listaHerramientas;
- 
- const filtrados = data.filter(item => item.articulo.toLowerCase().includes(query) || item.pn.toLowerCase().includes(query) || (item.seccion && item.seccion.toLowerCase().includes(query)));
+ container.innerHTML = altimetryDefaultData.map((item, idx) => {
+ const pDiff = (item.pitotStatic - item.pitotHCorr - item.pitotRec).toFixed(3);
+ const pOk = Math.abs(parseFloat(pDiff)) <= item.tol;
 
- if (adminTipoFiltro === 'tool') {
- filtrados.sort((a, b) => a.articulo.localeCompare(b.articulo));
- }
+ const sDiff = (item.staticOutput - item.staticHCorr - item.staticRec).toFixed(3);
+ const sOk = Math.abs(parseFloat(sDiff)) <= item.tol;
 
- contenedor.innerHTML = filtrados.map((item) => {
  return `
- <div data-accion="editar-registro" data-tipo="${adminTipoFiltro}" data-key="${esc(claveItem(item))}" class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center cursor-pointer hover:border-sky-500/50 transition">
- <div>
- <span class="font-bold text-white block uppercase">${esc(item.articulo)}</span>
- <span class="text-[10px] text-amber-400 font-mono">${esc(item.pn)}</span>
- ${item.seccion ? `<span class="text-[9px] text-sky-400 block">${esc(item.seccion)}</span>` : ''}
- ${item.nota ? `<span class="text-[9px] text-rose-400 block">${esc(item.nota)}</span>` : ''}
+ <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-2 text-xs">
+ <div class="flex justify-between items-center border-b border-slate-800/80 pb-1.5">
+ <span class="font-bold text-sky-400">Test Point #${esc(item.point)} (${esc(item.staticDesc)} mb)</span>
+ <span class="text-[10px] text-slate-400 font-mono">Tol: ±${esc(item.tol)} mb</span>
  </div>
- <div>
- <button data-accion="eliminar-registro" data-tipo="${adminTipoFiltro}" data-key="${esc(claveItem(item))}" class="bg-rose-500/20 text-rose-400 p-2 rounded-lg" title="Eliminar">🗑️</button>
+ <div class="grid grid-cols-2 gap-2">
+ <div class="bg-slate-900 p-2 rounded-lg space-y-1">
+ <div class="font-semibold text-slate-300 text-[11px]">Pitot Measurement</div>
+ <div class="text-[10px] text-slate-400">Output: ${esc(item.pitotStatic)} \vert{} H.Corr:${esc(item.pitotHCorr)}</div>
+ <div class="text-[10px] text-slate-400">Recorded (242): ${esc(item.pitotRec)}</div>
+ <div class="flex justify-between items-center pt-1 border-t border-slate-800">
+ <span class="font-mono text-amber-400">Diff: ${esc(pDiff)}</span>
+ <span class="text-[10px] px-2 py-0.5 rounded font-bold ${pOk ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'}">${pOk ? 'PASS' : 'FAIL'}</span>
+ </div>
+ </div>
+ <div class="bg-slate-900 p-2 rounded-lg space-y-1">
+ <div class="font-semibold text-slate-300 text-[11px]">Static Measurement</div>
+ <div class="text-[10px] text-slate-400">Output: ${esc(item.staticOutput)} \vert{} H.Corr:${esc(item.staticHCorr)}</div>
+ <div class="text-[10px] text-slate-400">Recorded (245): ${esc(item.staticRec)}</div>
+ <div class="flex justify-between items-center pt-1 border-t border-slate-800">
+ <span class="font-mono text-amber-400">Diff: ${esc(sDiff)}</span>
+ <span class="text-[10px] px-2 py-0.5 rounded font-bold ${sOk ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'}">${sOk ? 'PASS' : 'FAIL'}</span>
+ </div>
+ </div>
  </div>
  </div>
  `;
  }).join('');
  }
 
- // =====================================================================
- // 12) ADMIN: SECCIONES / CARPETAS
- // =====================================================================
- function renderizarSeccionesAdmin() {
- const contenedor = document.getElementById('lista-secciones-admin');
- if (!contenedor) return;
- const seccionesUnicas = [...new Set(listaArticulos.map(item => item.seccion))].sort();
- 
- contenedor.innerHTML = seccionesUnicas.length === 0 ? '<div class="text-slate-500">No hay secciones creadas.</div>' : seccionesUnicas.map(sec => {
- const count = listaArticulos.filter(i => i.seccion === sec).length;
+ function cambiarZonaFire(zona) {
+ zonaFireActual = zona;
+ document.getElementById('btn-fire-eng').className = zona === 'engines' ? "flex-1 py-1.5 text-[11px] font-bold rounded-lg bg-rose-500 text-white transition" : "flex-1 py-1.5 text-[11px] font-bold rounded-lg text-slate-400 transition";
+ document.getElementById('btn-fire-apu').className = zona === 'apu' ? "flex-1 py-1.5 text-[11px] font-bold rounded-lg bg-rose-500 text-white transition" : "flex-1 py-1.5 text-[11px] font-bold rounded-lg text-slate-400 transition";
+ renderizarFireCalculator();
+ }
+
+ function renderizarFireCalculator() {
+ const container = document.getElementById('fire-inputs-container');
+ const rlInput = document.getElementById('fire-rl-input');
+ const RL = rlInput ? parseFloat(rlInput.value) || 6.2 : 6.2;
+ if (!container) return;
+
+ if (zonaFireActual === 'engines') {
+ container.innerHTML = fireEnginesData.map((item, idx) => {
+ const pRC = (RL * (item.pV1 / item.pV2) - RL).toFixed(3);
+ const pOk = parseFloat(pRC) < 3.0;
+
+ const aRC = (RL * (item.aV1 / item.aV2) - RL).toFixed(3);
+ const aOk = parseFloat(aRC) < 3.0;
+
  return `
- <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
- <div>
- <span class="font-bold text-sky-400 uppercase">📂 ${esc(sec)}</span>
- <span class="text-[10px] text-slate-400 block">${count} consumibles</span>
- </div>
- <div class="flex space-x-1.5">
- <button data-accion="renombrar-seccion" data-sec="${esc(sec)}" class="bg-sky-500/20 text-sky-400 px-2.5 py-1 rounded-lg text-[10px] font-bold" title="Renombrar sección">✏️ Renombrar</button>
- <button data-accion="eliminar-seccion" data-sec="${esc(sec)}" class="bg-rose-500/20 text-rose-400 px-2.5 py-1 rounded-lg text-[10px] font-bold" title="Eliminar sección completa">🗑️ Eliminar</button>
- </div>
- </div>
- `;
- }).join('');
- }
-
- async function renombrarSeccion(nombreActual) {
- if (!autenticado) return;
- const nuevoNombre = prompt(`Renombrar la sección "${nombreActual}" a:`, nombreActual);
- if (!nuevoNombre || nuevoNombre.trim() === "") return;
- const nombreLimpio = nuevoNombre.trim().toUpperCase();
-
- if (nombreLimpio === nombreActual) return;
-
- let { error } = await _supabase.from('consumibles')
- .update({ seccion: nombreLimpio })
- .eq('seccion', nombreActual);
-
- if (error) {
- alert("Error al renombrar sección: " + error.message);
- return;
- }
-
- await registrarAuditoria("MODIFICAR", `Sección renombrada de "${nombreActual}" a "${nombreLimpio}"`);
- await cargarDatosNube();
- alert("¡Sección renombrada con éxito en todos sus consumibles!");
- }
-
- async function eliminarSeccionCompleta(nombreSeccion) {
- if (!autenticado) return;
- const total = listaArticulos.filter(i => i.seccion === nombreSeccion).length;
- // Doble seguridad: hay que escribir el nombre exacto de la sección para borrarla
- const escrito = prompt(`⚠️ VAS A ELIMINAR la sección "${nombreSeccion}" y sus ${total} consumibles de forma permanente.\n\nPara confirmar, escribe el nombre exacto de la sección:`);
- if (escrito === null) return;
- if (escrito.trim().toUpperCase() !== nombreSeccion.toUpperCase()) {
- alert("El nombre no coincide. No se ha eliminado nada.");
- return;
- }
-
- let { error } = await _supabase.from('consumibles')
- .delete()
- .eq('seccion', nombreSeccion);
-
- if (error) {
- alert("Error al eliminar la sección: " + error.message);
- return;
- }
-
- await registrarAuditoria("ELIMINAR", `Eliminada sección completa y sus ítems: ${nombreSeccion} (${total})`);
- await cargarDatosNube();
- alert("¡Sección y sus consumibles eliminados con éxito!");
- }
-
- // =====================================================================
- // 13) ADMIN: CREAR / EDITAR / ELIMINAR REGISTROS
- // =====================================================================
- async function guardarRegistroAdmin() {
- if (!autenticado) { alert("Sesión caducada. Vuelve a entrar como administrador."); return; }
- const tipo = document.getElementById('admin-tipo-reg').value;
- const articulo = document.getElementById('admin-articulo').value.trim();
- const pn = document.getElementById('admin-pn').value.trim();
- 
- let seccion = 'GENERAL';
- if (tipo === 'consumible') {
- const selectSec = document.getElementById('admin-seccion-select').value;
- if (selectSec === '__nueva__') {
- seccion = document.getElementById('admin-seccion-nueva').value.trim().toUpperCase() || 'GENERAL';
- } else {
- seccion = selectSec || 'GENERAL';
- }
- }
-
- const nota = document.getElementById('admin-nota').value.trim();
- const editKey = document.getElementById('admin-edit-index').value;
-
- if (!articulo || !pn) { alert("Rellena el nombre y el Part Number"); return; }
-
- const tabla = tipo === 'consumible' ? 'consumibles' : 'herramientas';
- const dataActual = tipo === 'consumible' ? listaArticulos : listaHerramientas;
-
- if (editKey === "") {
- // Un mismo P/N puede existir en secciones distintas (ej. SEALANT en ATC ANTENNAS y LRRA).
- // Solo se bloquea si el P/N se repite DENTRO de la misma sección (o entre herramientas).
- const yaExiste = dataActual.some(i => i.pn.toUpperCase() === pn.toUpperCase() && (tipo === 'tool' || (i.seccion || '').toUpperCase() === seccion.toUpperCase()));
- if (yaExiste) {
- alert(`⚠️ Error: El Part Number "${pn}" ya existe${tipo === 'consumible' ? ' en la sección ' + seccion : ''}.`);
- return;
- }
- }
-
- const nuevoItem = tipo === 'consumible' ? { articulo, pn, seccion, nota } : { articulo, pn, nota };
-
- if (editKey === "") {
- let { error } = await _supabase.from(tabla).insert([nuevoItem]);
- if (error) { alert("Error al guardar: " + error.message); return; }
- await registrarAuditoria("CREAR", `Añadido ${tipo}: ${articulo} (P/N: ${pn})`);
- } else {
- const itemOriginal = dataActual.find(i => claveItem(i) === editKey);
- if (!itemOriginal) { alert("No se encontró el registro original (¿lo han borrado?). Recarga la página."); return; }
- let { error } = await filtroItem(_supabase.from(tabla).update(nuevoItem), itemOriginal);
- if (error) { alert("Error al actualizar: " + error.message); return; }
-
- await registrarAuditoria("MODIFICAR", `Actualizado ${tipo}: ${articulo} (P/N: ${pn})`);
- document.getElementById('admin-edit-index').value = '';
- document.getElementById('admin-form-title').innerText = "➕ Añadir Nuevo Consumible o Herramienta";
- }
-
- document.getElementById('admin-articulo').value = '';
- document.getElementById('admin-pn').value = '';
- const selectSec = document.getElementById('admin-seccion-select');
- if (selectSec) selectSec.selectedIndex = 0;
- const inputNueva = document.getElementById('admin-seccion-nueva');
- if (inputNueva) {
- inputNueva.value = '';
- inputNueva.classList.add('hidden');
- }
- document.getElementById('admin-nota').value = '';
- 
- await cargarDatosNube();
- alert("¡Guardado y sincronizado en la nube con éxito!");
- }
-
- function editarRegistroAdmin(tipo, key) {
- const data = tipo === 'consumible' ? listaArticulos : listaHerramientas;
- const item = data.find(i => claveItem(i) === key);
- if (!item) return;
-
- document.getElementById('admin-tipo-reg').value = tipo;
- document.getElementById('admin-articulo').value = item.articulo;
- document.getElementById('admin-pn').value = item.pn;
- 
- if (tipo === 'consumible') {
- const selectSec = document.getElementById('admin-seccion-select');
- const inputNueva = document.getElementById('admin-seccion-nueva');
- const secItem = item.seccion || 'GENERAL';
- 
- let existe = false;
- for (let opt of selectSec.options) {
- if (opt.value === secItem) {
- existe = true;
- break;
- }
- }
- 
- if (existe) {
- selectSec.value = secItem;
- inputNueva.classList.add('hidden');
- inputNueva.value = '';
- } else {
- selectSec.value = '__nueva__';
- inputNueva.classList.remove('hidden');
- inputNueva.value = secItem;
- }
- }
-
- document.getElementById('admin-nota').value = item.nota || '';
- document.getElementById('admin-edit-index').value = key;
- document.getElementById('admin-form-title').innerText = "✏️ Editando Registro (Pulsa Guardar para aplicar)";
- 
- window.scrollTo({ top: 0, behavior: 'smooth' });
- }
-
- async function eliminarRegistroAdmin(tipo, key) {
- if (!autenticado) return;
- const data = tipo === 'consumible' ? listaArticulos : listaHerramientas;
- const item = data.find(i => claveItem(i) === key);
- if (!item) return;
-
- if (confirm(`¿Seguro que deseas eliminar "${item.articulo}" (${item.pn}) de la nube?`)) {
- const tabla = tipo === 'consumible' ? 'consumibles' : 'herramientas';
- let { error } = await filtroItem(_supabase.from(tabla).delete(), item);
- if (error) { alert("Error al eliminar: " + error.message); return; }
-
- await registrarAuditoria("ELIMINAR", `Eliminado ${tipo}: ${item.articulo} (P/N: ${item.pn})`);
- await cargarDatosNube();
- alert("¡Elemento eliminado correctamente!");
- }
- }
-
- function exportarBackupJSON() {
- const backupData = {
- fecha: new Date().toISOString(),
- consumibles: listaArticulos,
- herramientas: listaHerramientas,
- documentos: listaDocumentos
- };
- const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
- const downloadAnchor = document.createElement('a');
- downloadAnchor.setAttribute("href", dataStr);
- downloadAnchor.setAttribute("download", `aviotech_backup_${new Date().toISOString().substring(0,10)}.json`);
- document.body.appendChild(downloadAnchor);
- downloadAnchor.click();
- downloadAnchor.remove();
- }
-
- // =====================================================================
- // 14) ADMIN: DOCUMENTOS DE GOOGLE DRIVE
- // =====================================================================
- function renderizarDocsAdmin() {
- const contenedor = document.getElementById('lista-docs-admin');
- if (!contenedor) return;
- contenedor.innerHTML = listaDocumentos.map((doc) => `
- <div class="bg-slate-950 p-2 rounded-xl border border-slate-800 flex justify-between items-center text-[11px]">
- <span class="font-bold text-white truncate max-w-[200px]">${esc(doc.nombre)}</span>
- <button data-accion="eliminar-doc" data-id="${esc(doc.id)}" class="bg-rose-500/20 text-rose-400 px-2 py-1 rounded-lg">🗑️</button>
- </div>
- `).join('');
- }
-
- // Acepta el ID suelto o el enlace completo de Drive y devuelve solo el ID
- function extraerIdDrive(texto) {
- const t = texto.trim();
- const m = t.match(/\/d\/([A-Za-z0-9_-]+)/) || t.match(/[?&]id=([A-Za-z0-9_-]+)/);
- const id = m ? m[1] : t;
- return /^[A-Za-z0-9_-]{10,}$/.test(id) ? id : null;
- }
-
- async function agregarDocumentoAdmin() {
- if (!autenticado) return;
- const nombre = document.getElementById('admin-doc-nombre').value.trim();
- const idBruto = document.getElementById('admin-doc-id').value;
- if (!nombre || !idBruto.trim()) { alert("Rellena el nombre y el ID del documento"); return; }
- const id = extraerIdDrive(idBruto);
- if (!id) { alert("El ID de Google Drive no es válido. Pega el ID o el enlace completo del archivo."); return; }
- 
- let { error } = await _supabase.from('documentos').insert([{ id, nombre }]);
- if (error) { alert("Error al añadir documento: " + error.message); return; }
-
- await registrarAuditoria("DOCUMENTO", `Añadido documento Drive: ${nombre}`);
- document.getElementById('admin-doc-nombre').value = '';
- document.getElementById('admin-doc-id').value = '';
- await cargarDatosNube();
- alert("¡Documento añadido a la nube con éxito!");
- }
-
- async function eliminarDocumentoAdmin(id) {
- if (!autenticado) return;
- if (confirm("¿Eliminar este documento de la nube?")) {
- let { error } = await _supabase.from('documentos').delete().eq('id', id);
- if (error) { alert("Error al eliminar documento: " + error.message); return; }
- await registrarAuditoria("DOCUMENTO", `Eliminado documento ID: ${id}`);
- await cargarDatosNube();
- }
- }
-
- function cargarDocumentoSeleccionado(id) { 
- if(!id || !/^[A-Za-z0-9_-]+$/.test(id)) return; 
- const placeholder = document.getElementById('doc-placeholder');
- const iframe = document.getElementById('iframe-doc-viewer');
- if (placeholder) placeholder.classList.add('hidden'); 
- if (iframe) iframe.src = `https://drive.google.com/file/d/${encodeURIComponent(id)}/preview?rm=minimal`; 
- }
-
- // =====================================================================
- // 15) LOGIN DE ADMIN (ahora con Supabase Auth: la contraseña ya NO está en el código)
- // =====================================================================
- async function verificarPassword() { 
- const passInput = document.getElementById('input-password');
- if (!passInput || !passInput.value) { alert("Escribe la contraseña"); return; }
-
- const { error } = await _supabase.auth.signInWithPassword({ email: ADMIN_EMAIL, password: passInput.value });
- passInput.value = '';
- if (error) { 
- alert("Contraseña incorrecta"); 
- return;
- }
-
- autenticado = true; 
- evaluarAuthUI(); 
- resetInactivityTimer();
- await cargarDatosNube(); // carga también buzón y auditoría, que solo el admin puede leer
- }
-
- function evaluarAuthUI() { 
- const bloqueoAuth = document.getElementById('bloqueo-auth');
- const panelAdmin = document.getElementById('panel-admin-contenido');
- if (bloqueoAuth) bloqueoAuth.classList.toggle('hidden', autenticado); 
- if (panelAdmin) panelAdmin.classList.toggle('hidden', !autenticado); 
- }
-
- async function cerrarSesion() { 
- autenticado = false; 
- clearTimeout(inactivityTimer);
- feedbackList = [];
- auditoriaList = [];
- renderizarFeedbackAdmin();
- renderizarAuditoriaAdmin();
- try { await _supabase.auth.signOut(); } catch (e) { }
- evaluarAuthUI(); 
- }
-
- // =====================================================================
- // 16) CLICS EN LISTAS DEL ADMIN (en vez de onclick con texto pegado, que fallaba con comillas)
- // =====================================================================
- document.addEventListener('click', (ev) => {
- const el = ev.target.closest('[data-accion]');
- if (!el) return;
- const accion = el.dataset.accion;
- ev.stopPropagation();
- if (accion === 'editar-registro') editarRegistroAdmin(el.dataset.tipo, el.dataset.key);
- else if (accion === 'eliminar-registro') eliminarRegistroAdmin(el.dataset.tipo, el.dataset.key);
- else if (accion === 'renombrar-seccion') renombrarSeccion(el.dataset.sec);
- else if (accion === 'eliminar-seccion') eliminarSeccionCompleta(el.dataset.sec);
- else if (accion === 'eliminar-doc') eliminarDocumentoAdmin(el.dataset.id);
- else if (accion === 'borrar-feedback') eliminarFeedback(el.dataset.id);
- });
-
- window.onload = function() {
- cargarDatosNube();
- cargarEstadoChecks();
- configurarRealtime();
- };
- </script>
-</body>
-</html>
+ <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-2 text-xs">
+ <div
