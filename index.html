@@ -243,6 +243,12 @@
 
  <!-- PESTAÑA 4: CALCULATOR -->
  <div id="pestana-calc" class="hidden space-y-4">
+ <div class="flex space-x-2 bg-slate-900 p-1 rounded-xl border border-slate-800">
+ <button onclick="cambiarCalc('torque')" id="tab-calc-torque" class="flex-1 py-2 text-xs font-bold rounded-lg transition bg-sky-500 text-white">🔧 Torque</button>
+ <button onclick="cambiarCalc('fire')" id="tab-calc-fire" class="flex-1 py-2 text-xs font-bold rounded-lg transition text-slate-400">🔥 Fire Test</button>
+ <button onclick="cambiarCalc('alti')" id="tab-calc-alti" class="flex-1 py-2 text-xs font-bold rounded-lg transition text-slate-400">🛫 Altimetry</button>
+ </div>
+ <div id="calc-seccion-torque">
  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-4 shadow-xl">
  <h3 class="font-bold text-amber-400 text-xs uppercase tracking-wide">🔧 Conversión de Torque (In-Lb / Ft-Lb / Nm)</h3>
  <div class="space-y-3">
@@ -260,6 +266,10 @@
  </div>
  </div>
  </div>
+ </div>
+ <div id="calc-seccion-fire" class="hidden space-y-4"></div>
+ <div id="calc-seccion-alti" class="hidden space-y-4"></div>
+
  </div>
 
  <!-- PESTAÑA 5: DOCUMENTS -->
@@ -402,7 +412,7 @@
 
  // Email del usuario administrador creado en Supabase > Authentication > Users.
  // El email NO es secreto; la contraseña se escribe en la pantalla de Admin.
- const ADMIN_EMAIL = 'apuigruiz@gmail.com';
+ const ADMIN_EMAIL = 'PON_AQUI_EL_EMAIL_DEL_ADMIN@ejemplo.com';
 
  // persistSession:false -> al recargar la página hay que volver a entrar como admin.
  const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
@@ -883,6 +893,184 @@
  });
  }
  }
+
+ // =====================================================================
+ // 10b) CALCULADORAS DE TEST: FIRE CIRCUIT y ALTIMETRY
+ //      Basadas en las hojas de cálculo "SVQH by Mayo".
+ //      Los nombres y los LÍMITES están en las listas de abajo (ver guía, receta M).
+ // =====================================================================
+
+ // --- Fire Circuit Test:  RC = RL x (V1 / V2) - RL   (correcto si RC < límite) ---
+ const FIRE_RL_DEFECTO = 6.2;
+ const FIRE_GRUPOS = [
+ { id: 'p', titulo: 'PRIMARY', limite: 3, items: ['D582 CCW (#1)', 'D1322 CCW (#2)', 'D584 CW (#1)', 'D1324 CW (#2)'] },
+ { id: 'a', titulo: 'ALTERNATE', limite: 3, items: ['D582 CCW (#1)', 'D1322 CCW (#2)', 'D584 CW (#1)', 'D1324 CW (#2)'] },
+ { id: 'u', titulo: 'APU', limite: 5, items: ['D594 CCW', 'D594 CW', 'D594 W/W'] }
+ ];
+
+ // --- Altimetry Test:  Diferencia = A - B - C  (Pitot)  y  D - E - F  (Static) ---
+ //     correcto si la diferencia está entre -tol y +tol
+ //     ajuste = presión que se pone en el Air Data Test Set (mb);  tol = tolerancia (mb)
+ const ALTI_PUNTOS = [
+ { texto: '1013 +/- 1.0', ajuste: 1013, tol: 0.48 },
+ { texto: '314 +/- 1', ajuste: 314, tol: 0.41 },
+ { texto: '190 +/- 1', ajuste: 190, tol: 0.41 },
+ { texto: '314 +/- 1', ajuste: 314, tol: 0.41 },
+ { texto: '1013 +/- 1', ajuste: 1013, tol: 0.48 }
+ ];
+
+ const CLASE_INPUT_CALC = 'w-full bg-slate-950 border border-slate-800 rounded-xl px-2 py-2 text-xs text-white';
+
+ function leerNum(id) {
+ const el = document.getElementById(id);
+ if (!el || el.value.trim() === '') return null;
+ const n = parseFloat(el.value);
+ return isNaN(n) ? null : n;
+ }
+
+ // estado: 'ok' (verde) | 'fail' (rojo) | null (sin datos)
+ function pintarResultado(id, texto, estado) {
+ const el = document.getElementById(id);
+ if (!el) return;
+ const base = 'text-center text-[11px] font-bold rounded-lg px-2 py-2 border ';
+ if (estado === 'ok') {
+ el.className = base + 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30';
+ el.textContent = '✔ ' + texto;
+ } else if (estado === 'fail') {
+ el.className = base + 'bg-rose-500/15 text-rose-400 border-rose-500/30';
+ el.textContent = '✖ ' + texto;
+ } else {
+ el.className = base + 'border-slate-800 text-slate-500';
+ el.textContent = '—';
+ }
+ }
+
+ function recalcularFire() {
+ const rl = leerNum('fire-rl');
+ FIRE_GRUPOS.forEach(g => g.items.forEach((nombre, i) => {
+ const v1 = leerNum(`fire-${g.id}${i}-v1`);
+ const v2 = leerNum(`fire-${g.id}${i}-v2`);
+ if (rl === null || v1 === null || v2 === null || v2 <= 0) { pintarResultado(`fire-${g.id}${i}-rc`, '', null); return; }
+ const rc = rl * (v1 / v2) - rl;
+ pintarResultado(`fire-${g.id}${i}-rc`, rc.toFixed(3), rc < g.limite ? 'ok' : 'fail');
+ }));
+ }
+
+ function recalcularAlti() {
+ ALTI_PUNTOS.forEach((pt, i) => {
+ ['p', 's'].forEach(t => {
+ const a = leerNum(`alti-${i}-${t}-a`);
+ const b = leerNum(`alti-${i}-${t}-b`);
+ const c = leerNum(`alti-${i}-${t}-c`);
+ if (a === null || b === null || c === null) { pintarResultado(`alti-${i}-${t}-res`, '', null); return; }
+ const dif = a - b - c;
+ const texto = (dif > 0 ? '+' : '') + dif.toFixed(3);
+ pintarResultado(`alti-${i}-${t}-res`, texto, Math.abs(dif) <= pt.tol + 1e-9 ? 'ok' : 'fail');
+ });
+ });
+ }
+
+ function resetearFire() {
+ if (!confirm("¿Borrar todos los datos de esta calculadora?")) return;
+ document.querySelectorAll('#calc-seccion-fire input').forEach(inp => { inp.value = ''; });
+ document.getElementById('fire-rl').value = FIRE_RL_DEFECTO;
+ recalcularFire();
+ }
+
+ function resetearAlti() {
+ if (!confirm("¿Borrar todos los datos de esta calculadora?")) return;
+ document.querySelectorAll('#calc-seccion-alti input').forEach(inp => { inp.value = inp.dataset.defecto || ''; });
+ recalcularAlti();
+ }
+
+ function cambiarCalc(tipo) {
+ const secciones = { torque: 'calc-seccion-torque', fire: 'calc-seccion-fire', alti: 'calc-seccion-alti' };
+ Object.keys(secciones).forEach(k => {
+ document.getElementById(secciones[k]).classList.toggle('hidden', k !== tipo);
+ document.getElementById('tab-calc-' + k).className = 'flex-1 py-2 text-xs font-bold rounded-lg transition ' + (k === tipo ? 'bg-sky-500 text-white' : 'text-slate-400');
+ });
+ }
+
+ function renderizarCalculadoras() {
+ const fire = document.getElementById('calc-seccion-fire');
+ const alti = document.getElementById('calc-seccion-alti');
+
+ if (fire) {
+ fire.innerHTML = `
+ <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-xl">
+ <div class="flex justify-between items-center">
+ <h3 class="font-bold text-amber-400 text-xs uppercase tracking-wide">🔥 Fire Circuit Test</h3>
+ <button onclick="resetearFire()" class="text-[11px] bg-rose-500/15 text-rose-400 border border-rose-500/30 px-2.5 py-1 rounded-xl hover:bg-rose-500/25 font-bold transition">🔄 Reset</button>
+ </div>
+ <p class="text-[11px] text-slate-400">RC = RL × (V1 / V2) − RL</p>
+ <div>
+ <label class="block text-[11px] text-slate-400 mb-1">RL (Ω)</label>
+ <input type="number" inputmode="decimal" step="any" id="fire-rl" value="${FIRE_RL_DEFECTO}" oninput="recalcularFire()" class="${CLASE_INPUT_CALC}">
+ </div>
+ </div>
+ ${FIRE_GRUPOS.map(g => `
+ <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
+ <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">${g.titulo} · RC (&lt; ${g.limite} Ω)</h3>
+ <div class="grid grid-cols-3 gap-2 text-[10px] text-slate-400">
+ <span>(V1) Box OFF</span><span>(V2) Box ON</span><span class="text-center">RC (Ω)</span>
+ </div>
+ ${g.items.map((nombre, i) => `
+ <div class="space-y-1">
+ <div class="text-[11px] font-semibold text-slate-300">${nombre}</div>
+ <div class="grid grid-cols-3 gap-2 items-center">
+ <input type="number" inputmode="decimal" step="any" id="fire-${g.id}${i}-v1" oninput="recalcularFire()" class="${CLASE_INPUT_CALC}">
+ <input type="number" inputmode="decimal" step="any" id="fire-${g.id}${i}-v2" oninput="recalcularFire()" class="${CLASE_INPUT_CALC}">
+ <div id="fire-${g.id}${i}-rc"></div>
+ </div>
+ </div>
+ `).join('')}
+ </div>
+ `).join('')}
+ <p class="text-[10px] text-slate-500 px-1">Basado en la hoja "Fire Circuit Test Calculator SVQH by Mayo". Límites copiados de esa hoja: verifica siempre con la documentación vigente.</p>
+ `;
+ }
+
+ if (alti) {
+ const bloque = (i, t, titulo, etiquetas, pt) => `
+ <div class="space-y-2">
+ <div class="text-[11px] font-semibold text-slate-300">${titulo}</div>
+ <div class="grid grid-cols-3 gap-2">
+ ${['a', 'b', 'c'].map((k, n) => `
+ <div>
+ <label class="block text-[10px] text-slate-400 mb-1 leading-tight">${etiquetas[n]}</label>
+ <input type="number" inputmode="decimal" step="any" id="alti-${i}-${t}-${k}" ${k === 'a' ? `value="${pt.ajuste}" data-defecto="${pt.ajuste}"` : ''} oninput="recalcularAlti()" class="${CLASE_INPUT_CALC}">
+ </div>
+ `).join('')}
+ </div>
+ <div class="flex justify-between items-center space-x-2">
+ <span class="text-[10px] text-slate-400">Diferencia (tolerancia ± ${pt.tol} mb)</span>
+ <div id="alti-${i}-${t}-res" class="min-w-[90px]"></div>
+ </div>
+ </div>`;
+
+ alti.innerHTML = `
+ <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-2 shadow-xl">
+ <div class="flex justify-between items-center">
+ <h3 class="font-bold text-amber-400 text-xs uppercase tracking-wide">🛫 Altimetry Test</h3>
+ <button onclick="resetearAlti()" class="text-[11px] bg-rose-500/15 text-rose-400 border border-rose-500/30 px-2.5 py-1 rounded-xl hover:bg-rose-500/25 font-bold transition">🔄 Reset</button>
+ </div>
+ <p class="text-[11px] text-slate-400">Pitot: A − B − C &nbsp;·&nbsp; Static: D − E − F. Valores en mb.</p>
+ </div>
+ ${ALTI_PUNTOS.map((pt, i) => `
+ <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-4 shadow-lg">
+ <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">Test point ${i + 1} · ${pt.texto} mb</h3>
+ ${bloque(i, 'p', 'Total (Pitot) Pressure', ['A · Salida ADTS', 'B · Corrección altura', 'C · Pitot registrada (Label 242)'], pt)}
+ ${bloque(i, 's', 'Static Pressure', ['D · Salida ADTS', 'E · Corrección altura', 'F · Static registrada (Label 245)'], pt)}
+ </div>
+ `).join('')}
+ <p class="text-[10px] text-slate-500 px-1">Basado en la hoja "Altimetry Test Calculator SVQH by Mayo". Tolerancias copiadas de esa hoja: verifica siempre con la documentación vigente.</p>
+ `;
+ }
+
+ recalcularFire();
+ recalcularAlti();
+ }
+ renderizarCalculadoras();
 
  // =====================================================================
  // 10) CALCULADORA
