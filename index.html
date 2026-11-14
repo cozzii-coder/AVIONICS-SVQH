@@ -51,34 +51,14 @@
  </header>
 
  <!-- NAVEGACIÓN INFERIOR FLOTANTE -->
- <nav class="fixed bottom-3 left-3 right-3 z-40 bg-slate-950/95 backdrop-blur-md border border-slate-800/80 p-2 max-w-md mx-auto rounded-2xl shadow-2xl overflow-x-auto custom-scrollbar">
- <div class="flex space-x-2 min-w-max text-[11px] font-bold tracking-wide">
- <button id="btn-lista" onclick="cambiarPestana('lista')" class="px-4 py-2.5 rounded-xl text-center bg-sky-500 text-white shadow-lg transition-all flex flex-col items-center justify-center space-y-1">
- <span class="text-sm leading-none">🔍</span><span>Search</span>
- </button>
- <button id="btn-tools" onclick="cambiarPestana('tools')" class="px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1">
- <span class="text-sm leading-none">🧰</span><span>Tools</span>
- </button>
- <button id="btn-ramps" onclick="cambiarPestana('ramps')" class="px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1">
- <span class="text-sm leading-none">📋</span><span>Ramps</span>
- </button>
- <button id="btn-pins" onclick="cambiarPestana('pins')" class="px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1">
- <span class="text-sm leading-none">🔌</span><span>Pin &amp; Socket</span>
- </button>
- <button id="btn-calc" onclick="cambiarPestana('calc')" class="px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1">
- <span class="text-sm leading-none">🧮</span><span>Calc</span>
- </button>
- <button id="btn-docs" onclick="cambiarPestana('docs')" class="px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1">
- <span class="text-sm leading-none">📄</span><span>Docs</span>
- </button>
- <button id="btn-feedback" onclick="cambiarPestana('feedback')" class="px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1">
- <span class="text-sm leading-none">💬</span><span>Buzón</span>
- </button>
- <button id="btn-admin" onclick="cambiarPestana('admin')" class="px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1">
- <span class="text-sm leading-none">➕</span><span>Admin</span>
- </button>
- </div>
- </nav>
+ <nav class="fixed bottom-3 left-3 right-3 z-40 bg-slate-950/95 backdrop-blur-md border border-slate-800/80 p-2 max-w-md mx-auto rounded-2xl shadow-2xl">
+<div id="menu-mas" class="hidden absolute bottom-full mb-2 left-0 right-0 bg-slate-950/95 backdrop-blur-md border border-slate-800/80 rounded-2xl shadow-2xl p-2 grid grid-cols-4 gap-1 text-[11px] font-bold">
+<button id="btn-calc" onclick="cambiarPestana('calc')" class="px-1 py-2.5 rounded-xl text-center text-slate-300 transition-all flex flex-col items-center justify-center space-y-1"><span class="text-sm leading-none">🧮</span><span class="text-[10px]">Calc</span></button><button id="btn-docs" onclick="cambiarPestana('docs')" class="px-1 py-2.5 rounded-xl text-center text-slate-300 transition-all flex flex-col items-center justify-center space-y-1"><span class="text-sm leading-none">📄</span><span class="text-[10px]">Docs</span></button><button id="btn-feedback" onclick="cambiarPestana('feedback')" class="px-1 py-2.5 rounded-xl text-center text-slate-300 transition-all flex flex-col items-center justify-center space-y-1"><span class="text-sm leading-none">💬</span><span class="text-[10px]">Buzón</span></button><button id="btn-admin" onclick="cambiarPestana('admin')" class="px-1 py-2.5 rounded-xl text-center text-slate-300 transition-all flex flex-col items-center justify-center space-y-1"><span class="text-sm leading-none">⚙️</span><span class="text-[10px]">Admin</span></button>
+</div>
+<div class="grid grid-cols-5 gap-1 font-bold tracking-wide">
+<button id="btn-lista" onclick="cambiarPestana('lista')" class="px-1 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1"><span class="text-sm leading-none">🔍</span><span class="text-[10px]">Search</span></button><button id="btn-tools" onclick="cambiarPestana('tools')" class="px-1 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1"><span class="text-sm leading-none">🧰</span><span class="text-[10px]">Tools</span></button><button id="btn-ramps" onclick="cambiarPestana('ramps')" class="px-1 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1"><span class="text-sm leading-none">📋</span><span class="text-[10px]">Ramps</span></button><button id="btn-pins" onclick="cambiarPestana('pins')" class="px-1 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1"><span class="text-sm leading-none">🔌</span><span class="text-[10px]">Pin &amp; Socket</span></button><button id="btn-mas" onclick="toggleMas()" class="px-1 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1"><span class="text-sm leading-none">⋯</span><span class="text-[10px]">Más</span></button>
+</div>
+</nav>
 
  <!-- PESTAÑA 1: SEARCH -->
  <div id="pestana-lista" class="space-y-3">
@@ -190,6 +170,7 @@
  <option value="Falta Artículo">📦 Falta un artículo</option>
  <option value="Other">💬 Other / Opinión</option>
  </select>
+ <input type="text" id="feed-amos" maxlength="10" autocomplete="off" autocapitalize="characters" oninput="this.value = this.value.toUpperCase()" placeholder="Tu AMOS code (obligatorio)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
  <input type="text" id="feed-elemento" maxlength="200" placeholder="Elemento afectado o asunto" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
  <textarea id="feed-mensaje" rows="3" maxlength="2000" placeholder="Descripción..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white"></textarea>
  <button id="btn-enviar-feedback" onclick="enviarFeedback()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition">Enviar</button>
@@ -287,6 +268,21 @@
  <button onclick="agregarDocumentoAdmin()" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-2 rounded-xl text-xs transition">Añadir Documento</button>
  </div>
  <div id="lista-docs-admin" class="space-y-2 max-h-40 overflow-y-auto pr-1 text-xs mt-2"></div>
+ </div>
+
+ <!-- AMOS CODES -->
+ <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
+ <h3 id="amos-form-title" class="font-bold text-emerald-400 text-xs">👥 Gestionar AMOS codes</h3>
+ <div class="space-y-2">
+ <input type="text" id="amos-codigo" maxlength="10" oninput="this.value = this.value.toUpperCase()" placeholder="AMOS code (ej. ATG)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+ <input type="text" id="amos-nombre" placeholder="Nombre y apellidos" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+ <select id="amos-grupo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white"><option value="Avionics Junior">Avionics Junior</option><option value="Experienced">Experienced</option><option value="Basic">Basic</option><option value="B2">B2</option><option value="Lead">Lead</option></select>
+ <div class="flex gap-2">
+ <button onclick="guardarAmos()" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2 rounded-xl text-xs transition">Guardar AMOS code</button>
+ <button id="amos-cancelar" onclick="cancelarAmos()" class="hidden bg-slate-800 text-slate-300 px-3 rounded-xl text-xs">Cancelar</button>
+ </div>
+ </div>
+ <div id="lista-amos-admin" class="space-y-2 max-h-64 overflow-y-auto pr-1 text-xs mt-2"></div>
  </div>
 
  <!-- BUZÓN RECIBIDO -->
@@ -424,8 +420,9 @@
  const rFb = await _supabase.from('buzon').select('*').order('id', { ascending: false });
  if (!rFb.error) feedbackList = rFb.data || []; else console.error('buzon:', rFb.error);
  await cargarAuditoria();
- }
- mostrarSyncToast();
+          await cargarAmos();
+        }
+        mostrarSyncToast();
  } catch (e) {
  console.error("Error al conectar con Supabase:", e);
  }
@@ -521,23 +518,69 @@
  }
  }
 
- function cambiarPestana(target) {
- const btns = ['btn-lista', 'btn-tools', 'btn-ramps', 'btn-pins', 'btn-calc', 'btn-docs', 'btn-feedback', 'btn-admin'];
- const ps = ['pestana-lista', 'pestana-tools', 'pestana-ramps', 'pestana-pins', 'pestana-calc', 'pestana-docs', 'pestana-feedback', 'pestana-admin'];
- btns.forEach(b => document.getElementById(b).className = "px-4 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1");
- ps.forEach(p => document.getElementById(p).classList.add('hidden'));
+ 
+ // ----- Búsqueda tolerante: sin tildes, guiones ni espacios; varias palabras en cualquier orden; O = 0
+ function norm(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '').replace(/o/g, '0'); }
+ function tokensBusqueda(q) { return String(q || '').toLowerCase().split(/\s+/).filter(Boolean); }
+ function coincide(item, tokens) {
+ const h = [item.articulo, item.pn, item.seccion, item.nota].map(norm).join(' ');
+ return tokens.every(t => { const n = norm(t); return n === '' || h.includes(n); });
+ }
+ function resaltar(texto, tokens) {
+ const s = esc(texto);
+ const ts = (tokens || []).filter(t => t.length > 0).map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+ if (!ts.length) return s;
+ const re = new RegExp('(' + ts.join('|') + ')', 'gi');
+ return s.split(/(&[a-z#0-9]+;)/i).map(p => /^&[a-z#0-9]+;$/i.test(p) ? p : p.replace(re, '<mark class="bg-sky-500/30 text-sky-200 rounded px-0.5">$1</mark>')).join('');
+ }
+ function sinResultados(cont, esTools, tokens, query) {
+ const otra = esTools ? listaArticulos : listaHerramientas;
+ const n = query ? otra.filter(it => coincide(it, tokens)).length : 0;
+ cont.innerHTML = '<div class="text-center text-xs text-slate-500 py-10 space-y-3"><div>' + (esTools ? 'No se encontró ninguna herramienta.' : 'No se encontró ningún consumible.') + '</div>' +
+ (n ? '<button onclick="saltarBusqueda(\'' + (esTools ? 'lista' : 'tools') + '\')" class="bg-sky-500/20 text-sky-400 border border-sky-500/30 px-3 py-2 rounded-xl font-bold">Hay ' + n + (esTools ? ' en Search' : ' en Tools') + ' · Ver</button>' : '') + '</div>';
+ }
+ function saltarBusqueda(dest) {
+ const a = document.getElementById('buscador'), t = document.getElementById('buscador-tools');
+ if (dest === 'tools') t.value = a.value; else a.value = t.value;
+ cambiarPestana(dest);
+ }
+ function anadirLimpiar(id, fn) {
+ const inp = document.getElementById(id); if (!inp) return;
+ const bt = document.createElement('button'); bt.type = 'button'; bt.textContent = '✕'; bt.setAttribute('aria-label', 'Borrar búsqueda');
+ bt.className = 'absolute inset-y-0 right-0 px-4 text-slate-500 hover:text-slate-200 text-sm';
+ bt.onclick = () => { inp.value = ''; fn(); inp.focus(); };
+ inp.parentElement.appendChild(bt); inp.classList.add('pr-10');
+ }
+ function iniciarExtras() {
+ anadirLimpiar('buscador', filtrarYAgrupar); anadirLimpiar('buscador-tools', filtrarTools); anadirLimpiar('buscador-pins', buscarPinSocket);
+ try { const f = document.getElementById('feed-amos'); if (f) f.value = localStorage.getItem('amos-code') || ''; } catch (e) { }
+ }
 
- const mapping = { lista: 0, tools: 1, ramps: 2, pins: 3, calc: 4, docs: 5, feedback: 6, admin: 7 };
- const idx = mapping[target];
- document.getElementById(btns[idx]).className = "px-4 py-2.5 rounded-xl text-center bg-sky-500 text-white shadow-lg transition-all flex flex-col items-center justify-center space-y-1";
- document.getElementById(ps[idx]).classList.remove('hidden');
+ function cambiarPestana(target) {
+ const CLS_OFF = "px-1 py-2.5 rounded-xl text-center text-slate-400 hover:text-slate-200 transition-all flex flex-col items-center justify-center space-y-1";
+ const CLS_ON = "px-1 py-2.5 rounded-xl text-center bg-sky-500 text-white shadow-lg transition-all flex flex-col items-center justify-center space-y-1";
+ const MENU_OFF = "px-1 py-2.5 rounded-xl text-center text-slate-300 transition-all flex flex-col items-center justify-center space-y-1";
+ const MENU_ON = "px-1 py-2.5 rounded-xl text-center bg-sky-500/20 text-sky-300 border border-sky-500/40 transition-all flex flex-col items-center justify-center space-y-1";
+ const principales = { lista: 'btn-lista', tools: 'btn-tools', ramps: 'btn-ramps', pins: 'btn-pins' };
+ ['lista','tools','ramps','pins','calc','docs','feedback','admin'].forEach(t => document.getElementById('pestana-' + t).classList.add('hidden'));
+ ['btn-lista','btn-tools','btn-ramps','btn-pins','btn-mas'].forEach(x => document.getElementById(x).className = CLS_OFF);
+ ['calc','docs','feedback','admin'].forEach(t => document.getElementById('btn-' + t).className = MENU_OFF);
+ document.getElementById('pestana-' + target).classList.remove('hidden');
+ if (principales[target]) document.getElementById(principales[target]).className = CLS_ON;
+ else { document.getElementById('btn-mas').className = CLS_ON; document.getElementById('btn-' + target).className = MENU_ON; }
+ document.getElementById('menu-mas').classList.add('hidden');
 
  if (target === 'lista') filtrarYAgrupar();
  if (target === 'tools') filtrarTools();
  if (target === 'ramps') cargarEstadoChecks();
+ if (target === 'pins') buscarPinSocket();
  if (target === 'docs') renderizarSelectorDocumentos();
  if (target === 'admin') { evaluarAuthUI(); renderizarFeedbackAdmin(); renderizarAdminGestion(); renderizarDocsAdmin(); renderizarAuditoriaAdmin(); renderizarSeccionesAdmin(); actualizarSelectSecciones(); renderizarRampsAdmin(); }
  }
+ function toggleMas() { document.getElementById('menu-mas').classList.toggle('hidden'); }
+ document.addEventListener('click', (ev) => { const m = document.getElementById('menu-mas'); if (m && !m.classList.contains('hidden') && !ev.target.closest('nav')) m.classList.add('hidden'); });
+
+
 
  function renderizarSelectorDocumentos() {
  const select = document.getElementById('select-doc');
@@ -577,6 +620,8 @@
  const tipo = document.getElementById('feed-tipo').value;
  const elemento = document.getElementById('feed-elemento').value.trim();
  const mensaje = document.getElementById('feed-mensaje').value.trim();
+ const amos = (document.getElementById('feed-amos').value || '').trim().toUpperCase();
+ if (!amos) { alert("Escribe tu AMOS code (obligatorio)"); return; }
  if (!elemento || !mensaje) { alert("Rellena todos los campos"); return; }
  if (elemento.length > 200 || mensaje.length > 2000) { alert("El texto es demasiado largo"); return; }
 
@@ -589,12 +634,14 @@
  const boton = document.getElementById('btn-enviar-feedback');
  if (boton) boton.disabled = true;
 
- const nuevoFeedback = { tipo, elemento, mensaje, fecha: fechaAhora() };
+ const chk = await _supabase.rpc('amos_valido', { p: amos });
+ if (chk.error || chk.data !== true) { if (boton) boton.disabled = false; alert(chk.error ? "No se pudo comprobar el AMOS code. Inténtalo de nuevo." : "AMOS code no reconocido. Revisa que esté bien escrito."); return; }
+ const nuevoFeedback = { tipo, elemento, mensaje, amos, fecha: fechaAhora() };
  let { error } = await _supabase.from('buzon').insert([nuevoFeedback]);
  if (boton) boton.disabled = false;
  if (error) { alert("Error al enviar el mensaje al buzón: " + error.message); return; }
 
- try { localStorage.setItem('ultimo-feedback', String(Date.now())); } catch (e) { }
+ try { localStorage.setItem('ultimo-feedback', String(Date.now())); localStorage.setItem('amos-code', amos); } catch (e) { }
 
  alert("¡Enviado con éxito al administrador en la nube!");
  document.getElementById('feed-elemento').value = '';
@@ -602,12 +649,77 @@
  cambiarPestana('lista');
  }
 
+ 
+ // ----- AMOS codes (solo el admin puede leerlos y editarlos)
+ const GRUPOS_AMOS = ['Avionics Junior', 'Experienced', 'Basic', 'B2', 'Lead'];
+ let listaAmos = [];
+ let amosEditando = null;
+ function nombreAmos(c) { const a = listaAmos.find(x => x.codigo === String(c || '').toUpperCase()); return a ? a.nombre : ''; }
+ async function cargarAmos() {
+ if (!autenticado) return;
+ const r = await _supabase.from('amos_codes').select('*').order('codigo');
+ if (!r.error) listaAmos = r.data || []; else console.error('amos_codes:', r.error);
+ }
+ function renderizarAmosAdmin() {
+ const cont = document.getElementById('lista-amos-admin'); if (!cont) return;
+ if (!autenticado) { cont.innerHTML = ''; return; }
+ cont.innerHTML = listaAmos.length === 0 ? '<div class="text-slate-500">No hay AMOS codes.</div>' : GRUPOS_AMOS.concat([...new Set(listaAmos.map(a => a.grupo))].filter(g => !GRUPOS_AMOS.includes(g))).map(g => {
+ const items = listaAmos.filter(a => a.grupo === g); if (!items.length) return '';
+ return '<div class="text-[10px] font-bold text-slate-400 pt-2">' + esc(g) + ' (' + items.length + ')</div>' + items.map(a => `
+ <div class="bg-slate-950 p-2 rounded-xl border border-slate-800 flex justify-between items-center text-[11px]">
+ <span class="truncate pr-2"><span class="font-bold text-emerald-400">${esc(a.codigo)}</span> <span class="text-slate-300">${esc(a.nombre)}</span></span>
+ <span class="flex gap-1 shrink-0">
+ <button data-accion="editar-amos" data-cod="${esc(a.codigo)}" class="bg-sky-500/20 text-sky-400 px-2 py-1 rounded-lg">✏️</button>
+ <button data-accion="eliminar-amos" data-cod="${esc(a.codigo)}" class="bg-rose-500/20 text-rose-400 px-2 py-1 rounded-lg">🗑️</button>
+ </span></div>`).join('');
+ }).join('');
+ }
+ function cancelarAmos() {
+ amosEditando = null;
+ ['amos-codigo', 'amos-nombre'].forEach(i => document.getElementById(i).value = '');
+ document.getElementById('amos-cancelar').classList.add('hidden');
+ document.getElementById('amos-form-title').innerText = '👥 Gestionar AMOS codes';
+ }
+ function editarAmos(cod) {
+ const a = listaAmos.find(x => x.codigo === cod); if (!a) return;
+ amosEditando = a.codigo;
+ document.getElementById('amos-codigo').value = a.codigo;
+ document.getElementById('amos-nombre').value = a.nombre;
+ document.getElementById('amos-grupo').value = a.grupo;
+ document.getElementById('amos-cancelar').classList.remove('hidden');
+ document.getElementById('amos-form-title').innerText = '✏️ Editando AMOS code: ' + a.codigo;
+ }
+ async function guardarAmos() {
+ if (!autenticado) return;
+ const codigo = document.getElementById('amos-codigo').value.trim().toUpperCase();
+ const nombre = document.getElementById('amos-nombre').value.trim();
+ const grupo = document.getElementById('amos-grupo').value;
+ if (!codigo || !nombre) { alert("Rellena el AMOS code y el nombre"); return; }
+ let error;
+ if (amosEditando) ({ error } = await _supabase.from('amos_codes').update({ codigo, nombre, grupo }).eq('codigo', amosEditando));
+ else ({ error } = await _supabase.from('amos_codes').insert([{ codigo, nombre, grupo }]));
+ if (error) { alert("Error al guardar el AMOS code: " + (error.code === '23505' ? "ese AMOS code ya existe." : error.message)); return; }
+ await registrarAuditoria("AMOS", (amosEditando ? 'Editado' : 'Añadido') + ` AMOS code: ${codigo} (${nombre})`);
+ cancelarAmos();
+ await cargarAmos(); renderizarAmosAdmin(); renderizarFeedbackAdmin();
+ }
+ async function eliminarAmos(cod) {
+ if (!autenticado) return;
+ if (!confirm("¿Eliminar el AMOS code " + cod + "? Sus mensajes antiguos se conservan, pero ya no podrá enviar nuevos.")) return;
+ const { error } = await _supabase.from('amos_codes').delete().eq('codigo', cod);
+ if (error) { alert("Error al eliminar: " + error.message); return; }
+ await registrarAuditoria("AMOS", `Eliminado AMOS code: ${cod}`);
+ await cargarAmos(); renderizarAmosAdmin(); renderizarFeedbackAdmin();
+ }
+
  function renderizarFeedbackAdmin() {
+ renderizarAmosAdmin();
  const contenedor = document.getElementById('lista-feedback-admin');
  if(!contenedor) return;
  contenedor.innerHTML = feedbackList.length === 0 ? '<div class="text-slate-500">No hay avisos pendientes en la nube.</div>' : feedbackList.map((fb) => `
  <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1 relative">
  <div class="flex justify-between text-[10px] text-slate-400"><span>${esc(fb.fecha || fb.created_at)}</span><span class="text-amber-400 font-bold">${esc(fb.tipo)}</span></div>
+ <div class="text-[10px] text-emerald-400 font-bold">${fb.amos ? esc(fb.amos) + (nombreAmos(fb.amos) ? ' · ' + esc(nombreAmos(fb.amos)) : '') : 'Sin AMOS code'}</div>
  <div class="font-bold text-white">${esc(fb.elemento)}</div>
  <div class="text-slate-300 text-[11px]">${esc(fb.mensaje)}</div>
  <button data-accion="borrar-feedback" data-id="${esc(fb.id)}" class="absolute top-2 right-2 bg-rose-500/20 text-rose-400 p-1.5 rounded-lg text-[10px]" title="Eliminar mensaje">🗑️</button>
@@ -646,19 +758,20 @@
  
  listaHerramientas.sort((a, b) => a.articulo.localeCompare(b.articulo));
 
- const filtrados = listaHerramientas.filter(item => item.articulo.toLowerCase().includes(query) || item.pn.toLowerCase().includes(query));
+ const tokens = tokensBusqueda(query);
+ const filtrados = listaHerramientas.filter(item => coincide(item, tokens));
  if (contador) contador.innerText = filtrados.length;
- if (filtrados.length === 0) { contenedor.innerHTML = `<div class="text-center text-xs text-slate-500 py-12">No se encontraron herramientas.</div>`; return; }
+ if (filtrados.length === 0) { sinResultados(contenedor, true, tokens, query); return; }
  filtrados.forEach(tool => {
  const div = document.createElement('div');
  div.className = "bg-slate-900 border border-slate-800 rounded-xl p-3 flex justify-between items-center text-xs";
  const notaBadge = tool.nota ? `<span class="bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[9px] px-1.5 py-0.5 rounded font-bold block mt-1">${esc(tool.nota)}</span>` : '';
  div.innerHTML = `
  <div class="space-y-1">
- <span class="font-bold text-white uppercase block">${esc(tool.articulo)}</span>
+ <span class="font-bold text-white uppercase block">${resaltar(tool.articulo, tokens)}</span>
  ${notaBadge}
  </div>
- <code class="text-amber-400 font-mono">${esc(tool.pn)}</code>
+ <code class="text-amber-400 font-mono">${resaltar(tool.pn, tokens)}</code>
  `;
  contenedor.appendChild(div);
  });
@@ -674,8 +787,10 @@
  if (!contenedor) return;
  const query = buscadorEl ? buscadorEl.value.toLowerCase().trim() : '';
  contenedor.innerHTML = '';
- const filtrados = listaArticulos.filter(item => item.articulo.toLowerCase().includes(query) || item.pn.toLowerCase().includes(query) || item.seccion.toLowerCase().includes(query));
+ const tokens = tokensBusqueda(query);
+ const filtrados = listaArticulos.filter(item => coincide(item, tokens));
  if (contadorEl) contadorEl.innerText = filtrados.length;
+ if (filtrados.length === 0) { sinResultados(contenedor, false, tokens, query); return; }
  
  const grupos = {};
  filtrados.forEach(item => { if (!grupos[item.seccion]) grupos[item.seccion] = []; grupos[item.seccion].push(item); });
@@ -696,9 +811,9 @@
  return `
  <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex justify-between items-center text-xs">
  <div class="space-y-1">
- <span class="font-bold text-white uppercase block">${esc(i.articulo)}</span>${notaBadge}
+ <span class="font-bold text-white uppercase block">${resaltar(i.articulo, tokens)}</span>${notaBadge}
  </div>
- <code class="text-amber-400 font-mono">${esc(i.pn)}</code>
+ <code class="text-amber-400 font-mono">${resaltar(i.pn, tokens)}</code>
  </div>
  `;
  }).join('')}
@@ -747,7 +862,7 @@
  const miPeticion = ++pinsPeticion;
 
  // Con menos de 3 caracteres no se muestra nada: solo el campo de búsqueda
- if (q.length < 3) { contenedor.innerHTML = ''; return; }
+ if (q.length < 3) { contenedor.innerHTML = '<div class="text-center text-xs text-slate-500 py-10">Escribe al menos 3 caracteres del nombre de la ficha<br>(ej. NAS1387-4).</div>'; return; }
 
  // Busca las fichas cuyo nombre EMPIEZA por lo escrito (el nombre completo siempre aparece)
  const { data, error } = await _supabase
@@ -1457,9 +1572,12 @@
  else if (accion === 'eliminar-doc') eliminarDocumentoAdmin(el.dataset.id);
  else if (accion.startsWith('ramp-')) accionRamp(accion, el.dataset);
  else if (accion === 'borrar-feedback') eliminarFeedback(el.dataset.id);
+ else if (accion === 'editar-amos') editarAmos(el.dataset.cod);
+ else if (accion === 'eliminar-amos') eliminarAmos(el.dataset.cod);
  });
 
  window.onload = function() {
+ iniciarExtras();
  renderizarRamps();
  cargarDatosNube();
  cargarEstadoChecks();
