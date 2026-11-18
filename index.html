@@ -551,7 +551,103 @@
  bt.onclick = () => { inp.value = ''; fn(); inp.focus(); };
  inp.parentElement.appendChild(bt); inp.classList.add('pr-10');
  }
+
+ // ----- Calculadoras de altimetría y fire (basadas en las hojas "SVQH by Mayo")
+ // Todos los valores se pueden editar en pantalla; estos son los valores por defecto.
+ const ALT_DEFAULT = [
+ { n: 1, est: '1013 +/- 1.0', pit: 'No Entry', A: 1013, B: 0.256, C: 1013.1, tolP: 0.48, D: 1013, E: 0.33, F: 1012.9, tolS: 0.48 },
+ { n: 2, est: '314 +/- 1', pit: 'No Entry', A: 314, B: 0.1, C: 314.18, tolP: 0.41, D: 314, E: 0.128, F: 314.06, tolS: 0.41 },
+ { n: 3, est: '190 +/- 1', pit: 'No Entry', A: 190, B: 0.066, C: 190.18, tolP: 0.41, D: 190, E: 0.085, F: 190.09, tolS: 0.41 },
+ { n: 4, est: '314 +/- 1', pit: 'No Entry', A: 314, B: 0.1, C: 314.15, tolP: 0.41, D: 314, E: 0.128, F: 314.06, tolS: 0.41 },
+ { n: 5, est: '1013 +/- 1', pit: 'No Entry', A: 1013, B: 0.256, C: 1013.03, tolP: 0.48, D: 1013, E: 0.33, F: 1012.96, tolS: 0.48 }
+ ];
+ const FIRE_DEFAULT = {
+ RL: 6.2, limPri: 3, limAlt: 3, limApu: 5,
+ primary: [['D582 CCW (#1)', 27.31, 21.26], ['D1322 CCW (#2)', 27.28, 20.51], ['D584 CW (#1)', 27.27, 20.5], ['D1324 CW (#2)', 27.28, 20.79]],
+ alternate: [['D582 CCW (#1)', 27.28, 21.12], ['D1322 CCW (#2)', 27.27, 20.8], ['D584 CW (#1)', 27.27, 20.33], ['D1324 CW (#2)', 27.27, 20.58]],
+ apu: [['D594 CCW', 27.31, 20.12], ['D594 CW', 27.25, 19.92], ['D594 W/W', 27.28, 15.73]]
+ };
+ function difAlt(x, y, z) { return x - y - z; }
+ function resistenciaRC(rl, v1, v2) { return rl * (v1 / v2) - rl; }
+ function insignia(ok) { return ok === null ? '' : ok ? '<span class="text-emerald-400 font-bold">✔ DENTRO</span>' : '<span class="text-rose-400 font-bold">✖ FUERA</span>'; }
+ const CLS_INP = 'w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white';
+ function campoNum(k, val, lbl) { return '<label class="block"><span class="block text-[10px] text-slate-400 mb-1">' + lbl + '</span><input type="number" step="any" inputmode="decimal" data-k="' + k + '" value="' + val + '" class="' + CLS_INP + '"></label>'; }
+ function campoTxt(k, val, lbl) { return '<label class="block"><span class="block text-[10px] text-slate-400 mb-1">' + lbl + '</span><input type="text" data-k="' + k + '" value="' + esc(val) + '" class="' + CLS_INP + '"></label>'; }
+ function renderAltimetria() {
+ const cont = document.getElementById('alt-puntos'); if (!cont) return;
+ const bloque = (id, titulo, a, b, c, tol, p, la, lb, lc) =>
+ '<div class="text-[10px] font-bold text-slate-400">' + titulo + '</div>' +
+ '<div class="grid grid-cols-3 gap-2">' + campoNum(a, p[a], la) + campoNum(b, p[b], lb) + campoNum(c, p[c], lc) + '</div>' +
+ '<div class="grid grid-cols-[1fr_5.5rem] gap-2 items-end"><div data-out="' + id + '" class="text-xs text-slate-300 pb-2"></div>' + campoNum(tol, p[tol], 'Tolerancia ±') + '</div>';
+ cont.innerHTML = ALT_DEFAULT.map((p, i) => '<div data-alt="' + i + '" class="bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-3">' +
+ '<div class="text-[11px] font-bold text-sky-400">Punto de prueba ' + p.n + '</div>' +
+ '<div class="grid grid-cols-2 gap-2">' + campoTxt('est', p.est, 'Presión estática (mb)') + campoTxt('pit', p.pit, 'Pitot (entrada test set)') + '</div>' +
+ bloque('p', 'PITOT (presión total) · ARINC 429 Label 242 · Dif. = A − B − C', 'A', 'B', 'C', 'tolP', p, 'A · Salida test set', 'B · Corrección altura', 'C · Pitot registrado') +
+ bloque('s', 'ESTÁTICA · ARINC 429 Label 245 · Dif. = D − E − F', 'D', 'E', 'F', 'tolS', p, 'D · Salida test set', 'E · Corrección altura', 'F · Estática registrada') +
+ '</div>').join('');
+ recalcAlt();
+ }
+ function recalcAlt() {
+ document.querySelectorAll('#alt-puntos [data-alt]').forEach(card => {
+ const g = k => parseFloat(card.querySelector('[data-k="' + k + '"]').value);
+ [['A', 'B', 'C', 'tolP', 'p'], ['D', 'E', 'F', 'tolS', 's']].forEach(([a, b, c, t, id]) => {
+ const x = g(a), y = g(b), z = g(c), tol = Math.abs(g(t));
+ const out = card.querySelector('[data-out="' + id + '"]');
+ if ([x, y, z].some(isNaN)) { out.innerHTML = '<span class="text-slate-500">Introduce los 3 valores</span>'; return; }
+ const d = difAlt(x, y, z);
+ out.innerHTML = 'Dif.: <b class="text-white">' + d.toFixed(3) + ' mb</b> ' + insignia(isNaN(tol) ? null : Math.abs(d) <= tol + 1e-9);
+ });
+ });
+ }
+ function restaurarAlt() { renderAltimetria(); }
+ function renderFire() {
+ const cont = document.getElementById('fire-grupos'); if (!cont) return;
+ const F = FIRE_DEFAULT;
+ const grupo = (id, titulo, lim, filas) => '<div data-fg="' + id + '" class="bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-3">' +
+ '<div class="flex items-end justify-between gap-3"><div class="text-[11px] font-bold text-sky-400">' + titulo + '</div><div class="w-28">' + campoNum('lim', lim, 'RC máx. (Ω)') + '</div></div>' +
+ filas.map(f => '<div data-fr class="space-y-2 border-t border-slate-800 pt-2">' + campoTxt('lbl', f[0], 'Circuito') +
+ '<div class="grid grid-cols-3 gap-2">' + campoNum('v1', f[1], '(V1) Box OFF') + campoNum('v2', f[2], '(V2) Box ON') +
+ '<div><span class="block text-[10px] text-slate-400 mb-1">RC</span><div data-out="rc" class="text-xs text-slate-300 py-1.5"></div></div></div></div>').join('') + '</div>';
+ cont.innerHTML = grupo('pri', 'PRIMARY', F.limPri, F.primary) + grupo('alt', 'ALTERNATE', F.limAlt, F.alternate) + grupo('apu', 'APU', F.limApu, F.apu);
+ const rl = document.querySelector('#fire-card [data-k="rl"]'); if (rl) rl.value = F.RL;
+ recalcFire();
+ }
+ function recalcFire() {
+ const rl = parseFloat(document.querySelector('#fire-card [data-k="rl"]').value);
+ document.querySelectorAll('#fire-grupos [data-fg]').forEach(gr => {
+ const lim = parseFloat(gr.querySelector('[data-k="lim"]').value);
+ gr.querySelectorAll('[data-fr]').forEach(fr => {
+ const v1 = parseFloat(fr.querySelector('[data-k="v1"]').value), v2 = parseFloat(fr.querySelector('[data-k="v2"]').value);
+ const out = fr.querySelector('[data-out="rc"]');
+ if (isNaN(rl) || isNaN(v1) || isNaN(v2) || v2 === 0) { out.innerHTML = '<span class="text-slate-500">—</span>'; return; }
+ const rc = resistenciaRC(rl, v1, v2);
+ out.innerHTML = '<b class="text-white">' + rc.toFixed(2) + ' Ω</b><br>' + insignia(isNaN(lim) ? null : rc < lim);
+ });
+ });
+ }
+ function restaurarFire() { renderFire(); }
+ function montarCalculadoras() {
+ const p = document.getElementById('pestana-calc'); if (!p || document.getElementById('alt-card')) return;
+ const BTN = 'w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2 rounded-xl text-xs transition';
+ p.insertAdjacentHTML('beforeend',
+ '<details id="alt-card" class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">' +
+ '<summary class="cursor-pointer list-none flex items-center justify-between"><h3 class="font-bold text-amber-400 text-xs uppercase tracking-wide">✈️ Altimetry Test Calculator</h3><span class="text-slate-500 text-[10px]">tocar para abrir</span></summary>' +
+ '<div class="space-y-3 mt-4"><p class="text-[11px] text-slate-400">Presiones en mb. Dentro de tolerancia si |Dif.| ≤ Tolerancia. Todos los valores se pueden editar; por defecto vienen los de la hoja original.</p>' +
+ '<div id="alt-puntos" class="space-y-3"></div><button onclick="restaurarAlt()" class="' + BTN + '">↺ Restaurar valores por defecto</button>' +
+ '<p class="text-[10px] text-slate-600">Basada en "ALTIMETRY TEST CALCULATOR SVQH by Mayo".</p></div></details>' +
+ '<details id="fire-card" class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">' +
+ '<summary class="cursor-pointer list-none flex items-center justify-between"><h3 class="font-bold text-amber-400 text-xs uppercase tracking-wide">🔥 Fire Circuit Test Calculator</h3><span class="text-slate-500 text-[10px]">tocar para abrir</span></summary>' +
+ '<div class="space-y-3 mt-4"><p class="text-[11px] text-slate-400">RC = RL × (V1 / V2) − RL. Correcto si RC es menor que el máximo de cada grupo. Todos los valores se pueden editar; por defecto vienen los de la hoja original.</p>' +
+ '<div class="w-32">' + campoNum('rl', FIRE_DEFAULT.RL, 'RL (Ω)') + '</div>' +
+ '<div id="fire-grupos" class="space-y-3"></div><button onclick="restaurarFire()" class="' + BTN + '">↺ Restaurar valores por defecto</button>' +
+ '<p class="text-[10px] text-slate-600">Basada en "FIRE CIRCUIT TEST CALCULATOR SVQH by Mayo".</p></div></details>');
+ document.getElementById('alt-card').addEventListener('input', recalcAlt);
+ document.getElementById('fire-card').addEventListener('input', recalcFire);
+ renderAltimetria(); renderFire();
+ }
+
  function iniciarExtras() {
+ montarCalculadoras();
  anadirLimpiar('buscador', filtrarYAgrupar); anadirLimpiar('buscador-tools', filtrarTools); anadirLimpiar('buscador-pins', buscarPinSocket);
  try { const f = document.getElementById('feed-amos'); if (f) f.value = localStorage.getItem('amos-code') || ''; } catch (e) { }
  }
